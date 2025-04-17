@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Op_TecnicoController;
+use App\Http\Controllers\Op_ComercialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,18 @@ Route::controller(Op_TecnicoController::class)->group(function () {
     Route::post('/tecnico/alteracao/{id}','updateTecnico')->name('update.tecnico'); # faz o update do tecnico no banco
 
     Route::get('/tecnico/excluir/{id}','deleteTecnico')->name('delete.tecnico'); # faz a exclusão do tecnico no banco
+});
+
+/** --------------------------------------------- */
+/**              Rotas Classe Comercial           */
+Route::controller(Op_ComercialController::class)->group(function () {
+    Route::get('/comercial','readComercial')->name('readcomercial'); # retorna a view contendo todos os opcomercial cadastrados
+
+    Route::get('/comercial/cadastro','cadastroComercial')->name('cadastro.comercial'); # retorna a view de formulario de cadastro do opcomercial
+    Route::post('/comercial/cadastro', 'createComercial')->name('create.comercial'); # faz o cadastro do opcomercial no bd
+
+    Route::get('/comercial/alteracao/{id}','alteracaoComercial')->name('alteracao.comercial'); # retorna a view de formulario de cadastro do opcomercial
+    Route::post('/comercial/alteracao/{id}','updateComercial')->name('update.comercial'); # faz o update do opcomercial no banco
+
+    Route::get('/comercial/excluir/{id}','deleteComercial')->name('delete.comercial'); # faz a exclusão do opcomercial no banco
 });
