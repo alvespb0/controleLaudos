@@ -36,7 +36,7 @@ Route::controller(Op_TecnicoController::class)->group(function () {
 /** --------------------------------------------- */
 /**              Rotas Classe Comercial           */
 Route::controller(Op_ComercialController::class)->group(function () {
-    Route::get('/comercial','readComercial')->name('readcomercial'); # retorna a view contendo todos os opcomercial cadastrados
+    Route::get('/comercial','readComercial')->name('readComercial'); # retorna a view contendo todos os opcomercial cadastrados
 
     Route::get('/comercial/cadastro','cadastroComercial')->name('cadastro.comercial'); # retorna a view de formulario de cadastro do opcomercial
     Route::post('/comercial/cadastro', 'createComercial')->name('create.comercial'); # faz o cadastro do opcomercial no bd

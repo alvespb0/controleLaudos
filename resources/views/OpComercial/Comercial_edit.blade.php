@@ -13,17 +13,17 @@
                     </ul>
                 </div>
             @endif
-            <h3 class="card-title mb-4 text-center text-dark">Cadastro de Operador</h3>
-            <form action="{{ route('create.tecnico') }}" method="POST">
+            <h3 class="card-title mb-4 text-center text-dark">Edição de Operador</h3>
+            <form action="{{ route('update.comercial', ['id' => $comercial->id]) }}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuario</label>
-                    <input type="text" class="form-control" id="usuario" name="usuario" required>
+                    <input type="text" class="form-control" id="usuario" name="usuario" value = "{{$comercial->usuario}}"  required>
                 </div>
 
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <input type="email" class="form-control" id="email" name="email" value = "{{$comercial->email}}" required>
                 </div>
 
                 <div class="mb-3">

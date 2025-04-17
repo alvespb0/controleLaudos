@@ -105,8 +105,8 @@
                             Comercial
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Novo Operador Comercial</a></li>
-                            <li><a class="dropdown-item" href="#">Operadores Comercial Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/comercial/cadastro">Novo Operador Comercial</a></li>
+                            <li><a class="dropdown-item" href="/comercial">Operadores Comercial Cadastrados</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

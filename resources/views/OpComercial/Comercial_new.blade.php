@@ -14,7 +14,7 @@
                 </div>
             @endif
             <h3 class="card-title mb-4 text-center text-dark">Cadastro de Operador</h3>
-            <form action="{{ route('create.tecnico') }}" method="POST">
+            <form action="{{ route('create.comercial') }}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuario</label>
