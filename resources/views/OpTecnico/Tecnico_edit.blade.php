@@ -17,7 +17,7 @@
             <form action="{{ route('update.tecnico', ['id' => $tecnico->id]) }}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="usuario" class="form-label">Nome Completo</label>
+                    <label for="usuario" class="form-label">Usuario</label>
                     <input type="text" class="form-control" id="usuario" name="usuario" value = "{{ $tecnico->usuario }}" required>
                 </div>
 
@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary px-4">Editar</button>
                 </div>
             </form>
         </div>
