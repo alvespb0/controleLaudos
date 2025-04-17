@@ -97,7 +97,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/tecnico/cadastro">Novo Operador Segurança</a></li>
-                            <li><a class="dropdown-item" href="#">Operadores Segurança Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/tecnico">Operadores Segurança Cadastrados</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
