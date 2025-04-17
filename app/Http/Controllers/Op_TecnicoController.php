@@ -79,7 +79,7 @@ class Op_TecnicoController extends Controller
     }
 
     /**
-     * recebe o id e deleta o cliente vinculado nesse ID
+     * recebe o id e deleta o tecnico vinculado nesse ID
      * @param int $id
      * @return view
      */
