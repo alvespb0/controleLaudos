@@ -44,4 +44,52 @@ class Op_TecnicoController extends Controller
         $tecnicos = Op_Tecnico::all();
         return view('OpTecnico/Tecnico_show', ['tecnicos'=> $tecnicos]);
     }
+
+    /**
+     * recebe um ID valida se o ID é válido via find or fail
+     * se for válido retorna o formulario de edição do do tecnico 
+     * @param int $id
+     * @return array
+     */
+    public function alteracaoTecnico($id){
+        $tecnico = Op_Tecnico::findOrFail($id);
+        return view('OpTecnico/Tecnico_edit', ['tecnico' => $tecnico]);
+    }
+
+    /**
+     * Recebe uma request faz a validação dos dados e faz o update dado o id
+     * @param Request
+     * @param int $id
+     * @return Redirect
+     */
+    public function updateTecnico(Request $request, $id){
+        $request->validated();
+
+        $tecnico = Op_Tecnico::findOrFail($id);
+
+        $tecnico->update([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'usuario' => $request->usuario
+        ]);
+
+        session()->flash('mensagem', 'Técnico Alterado com sucesso');
+
+        return redirect('')->route('readTecnico');
+    }
+
+    /**
+     * recebe o id e deleta o cliente vinculado nesse ID
+     * @param int $id
+     * @return view
+     */
+    public function deleteTecnico($id){
+        $tecnico = Op_Tecnico::findOrFail($id);
+
+        $tecnico->delete();
+
+        return redirect()->route('readTecnico');
+    }
+
+    
 }
