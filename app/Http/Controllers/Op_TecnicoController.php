@@ -76,7 +76,7 @@ class Op_TecnicoController extends Controller
 
         session()->flash('mensagem', 'Técnico Alterado com sucesso');
 
-        return redirect('')->route('readTecnico');
+        return redirect()->route('readTecnico');
     }
 
     /**
