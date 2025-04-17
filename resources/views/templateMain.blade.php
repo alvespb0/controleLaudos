@@ -12,7 +12,6 @@
             --light-color: #dfeeec;
             --gray-color: #74948c;
             --accent-color: #5c9c90;
-            --mid-color: #ccf1ed;
         }
 
         body {
@@ -97,7 +96,7 @@
                             Segurança
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Novo Operador Segurança</a></li>
+                            <li><a class="dropdown-item" href="/tecnico/cadastro">Novo Operador Segurança</a></li>
                             <li><a class="dropdown-item" href="#">Operadores Segurança Cadastrados</a></li>
                         </ul>
                     </li>

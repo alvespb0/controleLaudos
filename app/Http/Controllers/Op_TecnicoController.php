@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\Op_Tecnico;
 use App\Http\Requests\Op_TecnicoRequest;
@@ -22,7 +23,7 @@ class Op_TecnicoController extends Controller
      * @param Request $request
      * @return Redirect
      */
-    public function createTecnico(Request $request){
+    public function createTecnico(Op_TecnicoRequest  $request){
         $request->validated();
 
         Op_Tecnico::create([
@@ -33,7 +34,7 @@ class Op_TecnicoController extends Controller
 
         session()->flash('mensagem', 'Técnico registrado com sucesso');
 
-        return redirect('')->route('readTecnico');
+        return redirect()->route('readTecnico');
     }
 
     /**
@@ -62,7 +63,7 @@ class Op_TecnicoController extends Controller
      * @param int $id
      * @return Redirect
      */
-    public function updateTecnico(Request $request, $id){
+    public function updateTecnico(Op_TecnicoRequest $request, $id){
         $request->validated();
 
         $tecnico = Op_Tecnico::findOrFail($id);
