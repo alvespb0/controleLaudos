@@ -13,7 +13,7 @@ class StatusController extends Controller
      * @return View
      */
     public function cadastroStatus(){
-        return view("Status/Status_New");
+        return view("Status/Status_new");
     }
 
     /**
