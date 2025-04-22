@@ -4,15 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StatusRequest extends FormRequest
+class ClienteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,7 +23,7 @@ class StatusRequest extends FormRequest
     {
         return [
             'nome' => 'required|string|min:5|max:255',
-            'cor'    => 'nullable', 'regex:/^#([a-fA-F0-9]{6})$/',
+            'cnpj' => 'required|string|size:14|unique:cliente,cnpj'
         ];
     }
 
@@ -34,7 +35,10 @@ class StatusRequest extends FormRequest
             'nome.min'      => 'O campo nome deve ter no mínimo :min caracteres.',
             'nome.max'      => 'O campo nome deve ter no máximo :max caracteres.',
 
-            'cor.regex' => 'A cor deve estar no formato hexadecimal válido (ex: #FF0000).',
+            'cnpj.required' => 'O campo CNPJ é obrigatório.',
+            'cnpj.string'   => 'O campo CNPJ deve conter apenas números.',
+            'cnpj.size'     => 'O CNPJ deve conter exatamente :size caracteres (sem pontuação).',
+            'cnpj.unique'   => 'Este CNPJ já está cadastrado.',    
         ];
     }
 }
