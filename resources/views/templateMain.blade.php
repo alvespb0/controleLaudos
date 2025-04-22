@@ -132,8 +132,8 @@
                             Clientes
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Novo Cliente</a></li>
-                            <li><a class="dropdown-item" href="#">Clientes Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/cliente/cadastro">Novo Cliente</a></li>
+                            <li><a class="dropdown-item" href="/cliente">Clientes Cadastrados</a></li>
                         </ul>
                     </li>
                 </ul>
