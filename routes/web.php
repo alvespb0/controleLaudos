@@ -5,6 +5,7 @@ use App\Http\Controllers\Op_TecnicoController;
 use App\Http\Controllers\Op_ComercialController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\LaudoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,5 +75,19 @@ Route::controller(ClienteController::class)->group(function () {
     Route::get('/cliente/alteracao/{id}','alteracaoCliente')->name('alteracao.cliente'); # retorna o formulario de edição do cliente
     Route::post('/cliente/alteracao/{id}','updateCliente')->name('update.cliente'); # faz o update do cliente no banco
 
-    Route::get('/cliente/excluir{id}','deleteCliente')->name('delete.cliente'); # faz a exclusão do cliente no banco
+    Route::get('/cliente/excluir/{id}','deleteCliente')->name('delete.cliente'); # faz a exclusão do cliente no banco
+});
+
+/** --------------------------------------------- */
+/**              Rotas Classe Laudo               */
+Route::controller(LaudoController::class)->group(function () {
+    Route::get('/laudo','readLaudo')->name('readLaudo'); # retorna a view contendo os laudos
+
+    Route::get('/laudo/cadastro','cadastroLaudo')->name('cadastro.laudo'); # retorna o formulario de cadastro do laudo
+    Route::post('/laudo/cadastro', 'createLaudo')->name('create.laudo'); # salva o laudo no bd
+
+    Route::get('/laudo/alteracao/{id}','alteracaoLaudo')->name('alteracao.laudo'); # retorna o formulario de edição do laudo cadastrado
+    Route::post('/laudo/alteracao/{id}','updateLaudo')->name('update.laudo'); # faz o update no banco
+
+    Route::get('/laudo/excluir/{id}','deleteLaudo')->name('delete.laudo');
 });

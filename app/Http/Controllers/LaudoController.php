@@ -71,7 +71,7 @@ class LaudoController extends Controller
 
     /**
      * Recebe uma request faz a validação dos dados e faz o update dado o id
-     * @param Request
+     * @param LaudoRequest
      * @param int $id
      * @return Redirect
      */
