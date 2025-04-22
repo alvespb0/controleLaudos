@@ -27,7 +27,7 @@
                             <tr>
                                 <td>{{ $tecnico->id }}</td>
                                 <td>{{ $tecnico->usuario }}</td>
-                                <td>{{ $tecnico->email }}</td>
+                                <td>{{ $tecnico->user->email }}</td>
                                 <td>
                                     <a href="{{ route('alteracao.tecnico', $tecnico->id) }}" class="btn btn-warning btn-sm">Editar</a>
                                     <a href="{{ route('delete.tecnico', $tecnico->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este operador?')">Excluir</a>

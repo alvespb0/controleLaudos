@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Models\Op_Comercial;
 use App\Http\Requests\Op_ComercialRequest;
+
+use App\Models\Op_Comercial;
+use App\Models\User;
 
 class Op_ComercialController extends Controller
 {
@@ -26,10 +28,16 @@ class Op_ComercialController extends Controller
     public function createComercial(Op_ComercialRequest $request){
         $request->validated();
 
-        Op_Comercial::create([
+        $user = User::create([
+            'name' => $request->usuario,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'usuario' => $request->usuario
+            'password' => $request->password,
+            'tipo' => 'comercial'
+        ]);
+
+        Op_Comercial::create([
+            'usuario' => $request->usuario,
+            'user_id' => $user->id
         ]);
 
         session()->flash('mensagem', 'Operador Comercial registrado com sucesso');
@@ -68,13 +76,19 @@ class Op_ComercialController extends Controller
 
         $Op_Comercial = Op_Comercial::findOrFail($id);
 
-        $Op_Comercial->update([
+        $user = $Op_Comercial->User;
+
+        $user->update([
+            'name' => $request->usuario,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
+        ]);
+
+        $Op_Comercial->update([
             'usuario' => $request->usuario
         ]);
 
-        session()->flash('mensagem', 'Operador Comerrcial Alterado com sucesso');
+        session()->flash('mensagem', 'Operador Comercial Alterado com sucesso');
 
         return redirect()->route('readComercial');
     }
@@ -87,8 +101,12 @@ class Op_ComercialController extends Controller
     public function deleteComercial($id){
         $Op_Comercial = Op_Comercial::findOrFail($id);
 
-        $Op_Comercial->delete();
+        $user = $Op_Comercial->User;
 
+        $user->delete();
+
+        #$Op_Comercial->delete();
+        
         return redirect()->route('readComercial');
     }
 
