@@ -123,8 +123,8 @@
                             Status
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Novo Status</a></li>
-                            <li><a class="dropdown-item" href="#">Status Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/status/cadastro">Novo Status</a></li>
+                            <li><a class="dropdown-item" href="/status">Status Cadastrados</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
