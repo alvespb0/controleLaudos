@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Op_TecnicoController;
 use App\Http\Controllers\Op_ComercialController;
-use App\Http\Controllers\Status;
+use App\Http\Controllers\StatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Route::controller(Op_ComercialController::class)->group(function () {
 
 /** --------------------------------------------- */
 /**              Rotas Classe Status              */
-Route::controller(Status::class)->group(function () { 
+Route::controller(StatusController::class)->group(function () { 
     Route::get('/status','readStatus')->name('readStatus'); # retorna a view contendo os status cadastrados
 
     Route::get('/status/cadastro','cadastroStatus')->name('cadastro.status'); # retorna o formulario de cadastro de status
