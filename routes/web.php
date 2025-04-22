@@ -19,7 +19,7 @@ use App\Http\Controllers\LaudoController;
 */
 
 Route::get('/', function () {
-    return view('templateMain');
+    return view('index');
 });
 
 /** --------------------------------------------- */
