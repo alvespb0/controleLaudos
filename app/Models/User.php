@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
 use App\Models\Op_Comercial;
+use App\Models\Op_Tecnico;
 
 class User extends Authenticatable
 {
@@ -17,6 +19,9 @@ class User extends Authenticatable
         return $this->hasOne(Op_Comercial::class);
     }
     
+    public function tecnico(){
+        return $this->hasOne(Op_Tecnico::class);
+    }
     /**
      * The attributes that are mass assignable.
      *

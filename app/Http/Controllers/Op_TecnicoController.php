@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Models\Op_Tecnico;
 use App\Http\Requests\Op_TecnicoRequest;
+
+use App\Models\User;
+use App\Models\Op_Tecnico;
 
 class Op_TecnicoController extends Controller
 {
@@ -26,10 +28,16 @@ class Op_TecnicoController extends Controller
     public function createTecnico(Op_TecnicoRequest  $request){
         $request->validated();
 
-        Op_Tecnico::create([
+        $user = User::create([
+            'name' => $request->usuario,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'usuario' => $request->usuario
+            'password' => $request->password,
+            'tipo' => 'seguranca'
+        ]);
+
+        Op_Tecnico::create([
+            'usuario' => $request->usuario,
+            'user_id' => $user->id
         ]);
 
         session()->flash('mensagem', 'Técnico registrado com sucesso');
@@ -67,10 +75,16 @@ class Op_TecnicoController extends Controller
         $request->validated();
 
         $tecnico = Op_Tecnico::findOrFail($id);
+        
+        $user = $tecnico->User;
+
+        $user->update([
+            'name' => $request->usuario,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
 
         $tecnico->update([
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
             'usuario' => $request->usuario
         ]);
 
@@ -87,7 +101,9 @@ class Op_TecnicoController extends Controller
     public function deleteTecnico($id){
         $tecnico = Op_Tecnico::findOrFail($id);
 
-        $tecnico->delete();
+        $user = $tecnico->User;
+
+        $user->delete();
 
         return redirect()->route('readTecnico');
     }
