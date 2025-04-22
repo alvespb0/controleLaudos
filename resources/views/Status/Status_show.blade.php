@@ -32,7 +32,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('alteracao.status', $s->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <a href="{{ route('delete.status', $s->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este s?')">Excluir</a>
+                                    <a href="{{ route('delete.status', $s->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este status?')">Excluir</a>
                                 </td>
                             </tr>
                         @endforeach
