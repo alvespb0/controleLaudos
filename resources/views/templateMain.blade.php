@@ -114,8 +114,8 @@
                             Laudos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Novo Laudo</a></li>
-                            <li><a class="dropdown-item" href="#">Laudos Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/laudo/cadastro">Novo Laudo</a></li>
+                            <li><a class="dropdown-item" href="/laudo">Laudos Cadastrados</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

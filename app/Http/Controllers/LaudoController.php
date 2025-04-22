@@ -66,7 +66,9 @@ class LaudoController extends Controller
      */
     public function alteracaoLaudo($id){
         $laudo = Laudo::findOrFail($id);
-        return view('Laudo/Laudo_edit', ['laudo' => $laudo]);
+        $clientes = Cliente::all();
+        $comercial = Op_Comercial::all();
+        return view('Laudo/Laudo_edit', ['laudo' => $laudo, 'clientes'=> $clientes, 'comerciais'=> $comercial]);
     }
 
     /**
