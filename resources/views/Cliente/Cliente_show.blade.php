@@ -9,7 +9,7 @@
             <!-- Verifica se há operadores cadastrados -->
             @if($clientes->isEmpty())
                 <div class="alert alert-warning text-center">
-                    Nenhum operador cadastrado.
+                    Nenhum Cliente cadastrado.
                 </div>
             @else
                 <table class="table table-bordered table-striped table-hover">
