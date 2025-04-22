@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Op_TecnicoController;
 use App\Http\Controllers\Op_ComercialController;
+use App\Http\Controllers\Status;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,4 +46,18 @@ Route::controller(Op_ComercialController::class)->group(function () {
     Route::post('/comercial/alteracao/{id}','updateComercial')->name('update.comercial'); # faz o update do opcomercial no banco
 
     Route::get('/comercial/excluir/{id}','deleteComercial')->name('delete.comercial'); # faz a exclusão do opcomercial no banco
+});
+
+/** --------------------------------------------- */
+/**              Rotas Classe Status              */
+Route::controller(Status::class)->group(function () { 
+    Route::get('/status','readStatus')->name('readStatus'); # retorna a view contendo os status cadastrados
+
+    Route::get('/status/cadastro','cadastroStatus')->name('cadastro.status'); # retorna o formulario de cadastro de status
+    Route::post('/status/cadastro','createStatus')->name('create.status'); # salva o status no banco
+
+    Route::get('/status/alteracao/{id}','alteracaoStatus')->name('alteracao.status'); # retorna o formulario de edição do status
+    Route::post('/status/alteracao/{id}','updateStatus')->name('update.status'); # faz o update do status no banco
+
+    Route::get('/status/excluir/{id}', 'deleteStatus')->name('delete.status'); # faz a exclusão do status no banco
 });
