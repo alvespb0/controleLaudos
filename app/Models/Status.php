@@ -12,6 +12,7 @@ class Status extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome'
+        'nome',
+        'cor'
     ];
 }
