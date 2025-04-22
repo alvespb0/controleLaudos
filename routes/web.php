@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Op_TecnicoController;
 use App\Http\Controllers\Op_ComercialController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\ClienteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,4 +61,18 @@ Route::controller(StatusController::class)->group(function () {
     Route::post('/status/alteracao/{id}','updateStatus')->name('update.status'); # faz o update do status no banco
 
     Route::get('/status/excluir/{id}', 'deleteStatus')->name('delete.status'); # faz a exclusão do status no banco
+});
+
+/** --------------------------------------------- */
+/**              Rotas Classe Cliente             */
+Route::controller(ClienteController::class)->group(function () {
+    Route::get('/cliente','readCliente')->name('readCliente'); # retorna a view contendo os clientes cadastrados
+
+    Route::get('/cliente/cadastro','cadastroCliente')->name('cadastro.cliente'); # retorna o formulario de cadastro de cliente
+    Route::post('/cliente/cadastro','createCliente')->name('create.cliente'); # salva o cliente no bd
+
+    Route::get('/cliente/alteracao/{id}','alteracaoCliente')->name('alteracao.cliente'); # retorna o formulario de edição do cliente
+    Route::post('/cliente/alteracao/{id}','updateCliente')->name('update.cliente'); # faz o update do cliente no banco
+
+    Route::get('/cliente/excluir{id}','deleteCliente')->name('delete.cliente'); # faz a exclusão do cliente no banco
 });
