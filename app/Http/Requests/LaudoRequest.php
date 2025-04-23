@@ -25,6 +25,7 @@ class LaudoRequest extends FormRequest
             'nome' => 'required|string|min:5|max:255',
             'dataPrevisao' => 'nullable|date',
             'dataFimContrato' => 'required|date',
+            'numFuncionarios' => 'required|integer|min:1',
             'cliente' => 'required|exists:cliente,id',
             'comercial' => 'required|exists:op_comercial,id'
         ];
@@ -44,6 +45,10 @@ class LaudoRequest extends FormRequest
 
             'cliente.required' => 'O cliente é obrigatório.',
             'cliente.exists' => 'O cliente selecionado é inválido.',
+
+            'numFuncionarios.required'=> 'O campo numero de funcionários é obrigatório',
+            'numFuncionarios.integer' => 'O campo é númerico',
+            'numFuncionarios.min'=> 'O valor mínimo de numero de funcionários é 1',
 
             'comercial.required' => 'O cliente é obrigatório.',
             'comercial.exists' => 'O cliente selecionado é inválido.',

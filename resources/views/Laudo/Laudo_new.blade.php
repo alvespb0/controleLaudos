@@ -40,6 +40,10 @@
                     </select>
                 </div>
                 <div class="mb-3">
+                    <label for="numFunc">Número de funcionários</label>
+                    <input type="number" name="numFuncionarios" class="form-control" id="" placeholder="insira o numero de funcionários" min=1 required>
+                </div>
+                <div class="mb-3">
                     <label for="Vendedor">Vendedor</label>
                     <select name="comercial" id="Vendedor" class = "form-control" required>
                         

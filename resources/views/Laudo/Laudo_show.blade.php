@@ -28,8 +28,8 @@
                             <tr>
                                 <td>{{ $laudo->id }}</td>
                                 <td>{{ $laudo->nome }}</td>
-                                <td>{{ $laudo->cliente->nome }}</td>
-                                <td>{{ $laudo->comercial->usuario }}</td>
+                                <td>{{ $laudo->cliente ? $laudo->cliente->nome : 'não definido'}}</td>
+                                <td>{{ $laudo->comercial ? $laudo->comercial->usuario : 'Não definido' }}</td>
                                 <td>
                                     <a href="{{ route('alteracao.laudo', $laudo->id) }}" class="btn btn-warning btn-sm">Editar</a>
                                     <a href="{{ route('delete.laudo', $laudo->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este laudo?')">Excluir</a>

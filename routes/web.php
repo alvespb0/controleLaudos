@@ -18,10 +18,6 @@ use App\Http\Controllers\LaudoController;
 |
 */
 
-Route::get('/', function () {
-    return view('templateMain');
-});
-
 /** --------------------------------------------- */
 /**              Rotas Classe Segurança           */
 Route::controller(Op_TecnicoController::class)->group(function () {
@@ -90,4 +86,15 @@ Route::controller(LaudoController::class)->group(function () {
     Route::post('/laudo/alteracao/{id}','updateLaudo')->name('update.laudo'); # faz o update no banco
 
     Route::get('/laudo/excluir/{id}','deleteLaudo')->name('delete.laudo');
+});
+
+/** --------------------------------------------- */
+/**    Rotas Classe Laudo para main dashboard     */
+Route::controller(LaudoController::class)->group(function (){
+    Route::get('/dashboard','showDashboard')->name('dashboard.show');
+
+    Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
+
+    Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
+
 });
