@@ -96,4 +96,7 @@ Route::controller(LaudoController::class)->group(function () {
 /**    Rotas Classe Laudo para main dashboard     */
 Route::controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashbboard.show');
+
+    Route::post('/dashboard','showDashboard')->name('update.laudoIndex');
+
 });

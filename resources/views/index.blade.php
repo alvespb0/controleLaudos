@@ -1,9 +1,7 @@
 @extends('templateMain')
 
 @section('content')
-@php
-var_dump($status);
-@endphp
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -15,9 +13,8 @@ var_dump($status);
                 </div>
                 <select name="status" class="form-select" id="statusFilter" style="width: 180px;">
                     <option value="" selected>Todos os status</option>
-
                     @foreach($status as $s)
-                        <option value="{{$s->id}}">{{$s->nome}}<div class="status-indicator" style="background-color: {{$s->cor}}"></div></option>
+                        <option value="{{$s->id}}">{{$s->nome}}</option>
                     @endforeach
                 </select>
                 <input type="date" class="form-control" id="dataFilter" style="width: 180px;">
@@ -29,101 +26,53 @@ var_dump($status);
     </div>
     
     <div class="row">
-        <!-- Card 1 -->
-        <div class="col-md-4 mb-4">
+        @foreach($laudos as $laudo)
+        <div class="col-md-4 mb-6">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h5 class="card-title">Laudo #001</h5>
-                        <div class="status-dropdown">
-                            <div class="status-indicator" style="background-color: #FFA500"></div>
-                            <span class="status-text">Pendente</span>
-                            <select class="form-select status-select">
-                                <option value="pendente" data-color="#FFA500">Pendente</option>
-                                <option value="em_andamento" data-color="#4169E1">Em Andamento</option>
-                                <option value="concluido" data-color="#32CD32">Concluído</option>
-                            </select>
+                    <form id="form-laudo-{{ $laudo->id }}" action="{{ route('update.laudoIndex') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="laudo_id" value="{{$laudo->id}}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">{{$laudo->nome}}</h5>
+                            <div class="status-container">
+                                <div class="status-indicator" style="background-color: {{ $laudo->status ? $laudo->status->cor : '#808080' }}"></div>
+                                <select class="status-select" name="status">
+                                    @if(!$laudo->status)
+                                        <option value="" selected disabled>Nenhum status definido</option>
+                                    @endif
+                                    @foreach($status as $s)
+                                        <option value="{{$s->id}}" data-color="{{$s->cor}}" {{ $laudo->status && $laudo->status->id === $s->id ? 'selected' : '' }}>
+                                            {{$s->nome}}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <p class="card-text">
-                        <strong>Nome:</strong> João Silva<br>
-                        <strong>Cliente: </strong> Adami <br>
-                        <strong>Data Previsão:</strong> 15/03/2024<br>
-                        <strong>Vendedor:</strong> Maria Oliveira<br>
-                        <strong>Técnico Responsável:</strong>
-                        <select class="form-select mt-2">
-                            <option value="1">Carlos Santos</option>
-                            <option value="2">Ana Pereira</option>
-                            <option value="3">Pedro Costa</option>
-                        </select>
-                    </p>
-                </div>
-            </div>
-        </div>
+                        <p class="card-text">
+                            <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}} <br>
+                            <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
+                            <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
+                            <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br>
+                            <Strong>Técnico Responsável: </Strong>
 
-        <!-- Card 2 -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h5 class="card-title">Laudo #002</h5>
-                        <div class="status-dropdown">
-                            <div class="status-indicator" style="background-color: #4169E1"></div>
-                            <span class="status-text">Em Andamento</span>
-                            <select class="form-select status-select">
-                                <option value="pendente" data-color="#FFA500">Pendente</option>
-                                <option value="em_andamento" data-color="#4169E1">Em Andamento</option>
-                                <option value="concluido" data-color="#32CD32">Concluído</option>
+                            <select name="tecnicoResponsavel" class="form-select mt-2">
+                                <option value="#" selected>Selecione um Técnico Responsável</option>
+                                @foreach($tecnicos as $tecnico)
+                                <option value="{{$tecnico->id}}" {{ ($laudo->tecnico && $laudo->tecnico->id == $tecnico->id) ? 'selected' : '' }}>
+                                    {{$tecnico->usuario}}
+                                </option>
+                                @endforeach
                             </select>
+                        </p>
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
                         </div>
-                    </div>
-                    <p class="card-text">
-                        <strong>Nome:</strong> Laudo Técnico <br>
-                        <strong>Cliente: </strong> Rumobrás <br>
-                        <strong>Data Previsão:</strong> 20/03/2024<br>
-                        <strong>Vendedor:</strong> José Almeida<br>
-                        <strong>Técnico Responsável:</strong>
-                        <select class="form-select mt-2">
-                            <option value="1">Carlos Santos</option>
-                            <option value="2">Ana Pereira</option>
-                            <option value="3">Pedro Costa</option>
-                        </select>
-                    </p>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <!-- Card 3 -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h5 class="card-title">Laudo #003</h5>
-                        <div class="status-dropdown">
-                            <div class="status-indicator" style="background-color: #32CD32"></div>
-                            <span class="status-text">Concluído</span>
-                            <select class="form-select status-select">
-                                <option value="pendente" data-color="#FFA500">Pendente</option>
-                                <option value="em_andamento" data-color="#4169E1">Em Andamento</option>
-                                <option value="concluido" data-color="#32CD32">Concluído</option>
-                            </select>
-                        </div>
-                    </div>
-                    <p class="card-text">
-                        <strong>Nome:</strong> Laudo Técnico<br>
-                        <strong>Cliente:</strong> Kewer <br>
-                        <strong>Data Previsão:</strong> 25/03/2024<br>
-                        <strong>Vendedor:</strong> Luiza Mendes<br>
-                        <strong>Técnico Responsável:</strong>
-                        <select class="form-select mt-2">
-                            <option value="1">Carlos Santos</option>
-                            <option value="2">Ana Pereira</option>
-                            <option value="3">Pedro Costa</option>
-                        </select>
-                    </p>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 
@@ -143,56 +92,56 @@ var_dump($status);
         font-weight: bold;
     }
 
-    .form-select {
-        border-color: var(--primary-color);
-    }
-
-    .form-select:focus {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 0.25rem rgba(121, 197, 182, 0.25);
-    }
-
-    .status-dropdown {
+    /* Estilos para o select de status */
+    .status-container {
         position: relative;
+        width: 150px;
         display: flex;
         align-items: center;
         gap: 8px;
-        cursor: pointer;
     }
 
     .status-indicator {
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        display: inline-block;
-    }
-
-    .status-text {
-        font-size: 0.9rem;
-        color: var(--gray-color);
+        flex-shrink: 0;
     }
 
     .status-select {
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
-        height: 100%;
-        opacity: 0;
+        height: 32px;
+        padding: 0 30px 0 10px;
+        border: none;
+        background-color: transparent;
         cursor: pointer;
+        font-size: 0.9rem;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        color: var(--gray-color);
     }
 
-    .status-dropdown::after {
+    .status-container::after {
         content: "▼";
-        font-size: 0.7rem;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
         color: var(--gray-color);
-        margin-left: 4px;
+        font-size: 0.8rem;
+        pointer-events: none;
+    }
+
+    .status-select option {
+        padding: 8px;
+        background-color: white;
+        color: black;
     }
 
     /* Estilos para os filtros */
     .form-control, .form-select {
         border-radius: 4px;
-        border: 1px solid #ced4da;
         padding: 0.375rem 0.75rem;
         font-size: 0.9rem;
     }
@@ -201,10 +150,86 @@ var_dump($status);
         border-color: var(--primary-color);
         box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.25);
     }
-</style>
+
+    /* Estilos para o botão de salvar */
+    .save-btn {
+        padding: 0.375rem 1.5rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .save-btn:disabled {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .save-btn:not(:disabled):hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
 </style>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    @foreach($laudos as $laudo)
+        const form = document.getElementById('form-laudo-{{ $laudo->id }}');
+        const saveBtn = form.querySelector('.save-btn');
+        const statusSelect = form.querySelector('.status-select');
+        const statusIndicator = form.querySelector('.status-indicator');
 
+        // Atualiza a cor do indicador baseado na opção selecionada
+        function updateStatusColor() {
+            const selectedOption = statusSelect.options[statusSelect.selectedIndex];
+            const color = selectedOption.dataset.color;
+            statusIndicator.style.backgroundColor = color;
+        }
+
+        // Inicializa a cor do status
+        updateStatusColor();
+
+        // Atualiza a cor quando o status muda
+        statusSelect.addEventListener('change', () => {
+            updateStatusColor();
+            saveBtn.disabled = false;
+        });
+
+        const inputs = form.querySelectorAll('select');
+        inputs.forEach(input => {
+            if (input !== statusSelect) {
+                input.addEventListener('change', () => {
+                    saveBtn.disabled = false;
+                });
+            }
+        });
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    saveBtn.disabled = true;
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar:', error);
+            });
+        });
+    @endforeach
+});
 </script>
 @endsection 
