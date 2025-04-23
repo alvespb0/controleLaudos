@@ -1,12 +1,29 @@
 @extends('templateMain')
 
 @section('content')
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <div class="container">
+    <!-- Modal de Mensagem -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Mensagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="messageModalBody">
+                    <!-- Mensagem será inserida aqui -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Laudos Cadastrados</h2>
-        <form action="" method="GET">
+        <form action="{{route('dashboard.filter')}}" method="GET">
             <div class="d-flex gap-3">
                 <div class="input-group" style="width: 200px;">
                     <input type="text" class="form-control" name="search" id="clienteFilter" placeholder="Buscar cliente...">
@@ -17,14 +34,26 @@
                         <option value="{{$s->id}}">{{$s->nome}}</option>
                     @endforeach
                 </select>
-                <input type="date" class="form-control" id="dataFilter" style="width: 180px;">
+                <input type="date" class="form-control" id="dataFilter" name ="dataConclusao" style="width: 180px;">
                 <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm" style="background-color: var(--primary-color); border: none;">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
         </form>
     </div>
-    
+    @if (session('mensagem'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ session('mensagem') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    @endif
+
+    @if($laudos->isEmpty())
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            Nenhum Laudo Cadastrado no sistema!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    @endif
     <div class="row g-4">
         @foreach($laudos as $laudo)
         <div class="col-md-4">
@@ -58,7 +87,7 @@
                             <Strong>Técnico Responsável: </Strong>
 
                             <select name="tecnicoResponsavel" class="form-select mt-2">
-                                <option value="#" selected>Selecione um Técnico Responsável</option>
+                                <option value="" selected>Selecione um Técnico Responsável</option>
                                 @foreach($tecnicos as $tecnico)
                                 <option value="{{$tecnico->id}}" {{ ($laudo->tecnico && $laudo->tecnico->id == $tecnico->id) ? 'selected' : '' }}>
                                     {{$tecnico->usuario}}
@@ -184,6 +213,16 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Inicializa a modal
+    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+    const messageModalBody = document.getElementById('messageModalBody');
+
+    // Função para mostrar mensagem na modal
+    function showMessage(message, isError = false) {
+        messageModalBody.innerHTML = message;
+        messageModal.show();
+    }
+
     // Função para inicializar um card específico
     function initializeCard(form) {
         const saveBtn = form.querySelector('.save-btn');
@@ -244,15 +283,15 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 if (data.message) {
-                    alert(data.message);
+                    showMessage(data.message);
                     saveBtn.disabled = true;
                 } else if (data.error) {
-                    alert(data.error);
+                    showMessage(data.error, true);
                 }
             })
             .catch(error => {
                 console.error('Erro ao atualizar o laudo:', error);
-                alert('Ocorreu um erro ao atualizar o laudo. Por favor, tente novamente.');
+                showMessage('Ocorreu um erro ao atualizar o laudo. Por favor, tente novamente.', true);
             });
         });
     }

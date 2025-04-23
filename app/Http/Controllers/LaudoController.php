@@ -119,13 +119,21 @@ class LaudoController extends Controller
     public function filterDashboard(Request $request){
         $laudos = Laudo::query();
 
+        $status = Status::all();
+        $tecnicos = Op_Tecnico::all(); 
+
         if($request->filled('search')){
-            $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id'); # pega o ID do cliente correspondente
+            $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id');
             if($clientes->isNotEmpty()){
-                $laudos = $laudos->where("cliente_id",$clientes);
+                $laudos = $laudos->whereIn('cliente_id', $clientes);
             }else{
                 session()->flash('mensagem', 'Nenhum cliente localizado');
-                return view("index", ["laudos" => $laudos->get()]);
+       
+                return view("index", [
+                    "laudos" => collect(), // array vazio em vez de query vazia
+                    "status" => $status,
+                    "tecnicos" => $tecnicos
+                ]);
             }
         }
 
@@ -137,7 +145,7 @@ class LaudoController extends Controller
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
 
-        return view("index", ["laudos"=> $laudos]);
+        return view("index", ["laudos"=> $laudos->get(), "status" => $status, "tecnicos"=> $tecnicos]);
     }
 
     /**

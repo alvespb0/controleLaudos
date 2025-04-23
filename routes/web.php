@@ -18,10 +18,6 @@ use App\Http\Controllers\LaudoController;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
-
 /** --------------------------------------------- */
 /**              Rotas Classe Segurança           */
 Route::controller(Op_TecnicoController::class)->group(function () {
@@ -95,7 +91,9 @@ Route::controller(LaudoController::class)->group(function () {
 /** --------------------------------------------- */
 /**    Rotas Classe Laudo para main dashboard     */
 Route::controller(LaudoController::class)->group(function (){
-    Route::get('/dashboard','showDashboard')->name('dashbboard.show');
+    Route::get('/dashboard','showDashboard')->name('dashboard.show');
+
+    Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
 
