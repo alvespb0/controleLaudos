@@ -25,9 +25,9 @@
         </form>
     </div>
     
-    <div class="row">
+    <div class="row g-4">
         @foreach($laudos as $laudo)
-        <div class="col-md-4 mb-6">
+        <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
                     <form id="form-laudo-{{ $laudo->id }}" action="{{ route('update.laudoIndex') }}" method="POST">
@@ -39,7 +39,7 @@
                                 <div class="status-indicator" style="background-color: {{ $laudo->status ? $laudo->status->cor : '#808080' }}"></div>
                                 <select class="status-select" name="status">
                                     @if(!$laudo->status)
-                                        <option value="" selected disabled>Nenhum status definido</option>
+                                        <option value="" selected disabled>Sem Status</option>
                                     @endif
                                     @foreach($status as $s)
                                         <option value="{{$s->id}}" data-color="{{$s->cor}}" {{ $laudo->status && $laudo->status->id === $s->id ? 'selected' : '' }}>
@@ -53,6 +53,7 @@
                             <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}} <br>
                             <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
                             <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
+                            <strong>Data Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$laudo->data_conclusao !== null ? $laudo->data_conclusao : ''}}"> <br> 
                             <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br>
                             <Strong>Técnico Responsável: </Strong>
 
@@ -168,15 +169,27 @@
         background-color: #218838;
         border-color: #1e7e34;
     }
+
+    /* Estilo para o input de data */
+    .border-light {
+        border-color: #ced4da !important;
+        border-radius: 4px;
+    }
+
+    .border-light:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.25);
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    @foreach($laudos as $laudo)
-        const form = document.getElementById('form-laudo-{{ $laudo->id }}');
+    // Função para inicializar um card específico
+    function initializeCard(form) {
         const saveBtn = form.querySelector('.save-btn');
         const statusSelect = form.querySelector('.status-select');
         const statusIndicator = form.querySelector('.status-indicator');
+        const dataConclusaoInput = form.querySelector('input[name="dataConclusao"]');
 
         // Atualiza a cor do indicador baseado na opção selecionada
         function updateStatusColor() {
@@ -194,6 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
             saveBtn.disabled = false;
         });
 
+        // Adiciona evento para o input de data de conclusão
+        dataConclusaoInput.addEventListener('change', () => {
+            saveBtn.disabled = false;
+        });
+
         const inputs = form.querySelectorAll('select');
         inputs.forEach(input => {
             if (input !== statusSelect) {
@@ -205,18 +223,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-
+            
             const formData = new FormData(this);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const laudoId = this.querySelector('input[name="laudo_id"]').value;
 
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.message) {
                     alert(data.message);
@@ -226,10 +251,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(error => {
-                console.error('Erro ao atualizar:', error);
+                console.error('Erro ao atualizar o laudo:', error);
+                alert('Ocorreu um erro ao atualizar o laudo. Por favor, tente novamente.');
             });
         });
-    @endforeach
+    }
+
+    // Inicializa todos os cards
+    const forms = document.querySelectorAll('form[id^="form-laudo-"]');
+    forms.forEach(form => {
+        initializeCard(form);
+    });
 });
 </script>
 @endsection 

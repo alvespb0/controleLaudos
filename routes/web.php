@@ -97,6 +97,6 @@ Route::controller(LaudoController::class)->group(function () {
 Route::controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashbboard.show');
 
-    Route::post('/dashboard','showDashboard')->name('update.laudoIndex');
+    Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
 
 });
