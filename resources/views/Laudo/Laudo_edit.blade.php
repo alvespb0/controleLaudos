@@ -39,6 +39,11 @@
                     </select>
                 </div>
                 <div class="mb-3">
+                    <label for="numFunc">Número de funcionários</label>
+                    <input type="number" name="numFuncionarios" class="form-control" id="" placeholder="insira o numero de funcionários" min=1 required value="{{$laudo->numero_clientes}}">
+                </div>
+
+                <div class="mb-3">
                     <label for="Vendedor">Vendedor</label>
                     <select name="comercial" id="Vendedor" class = "form-control" required>
                         @foreach($comerciais as $comercial)
@@ -47,7 +52,7 @@
                     </select>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary px-4">Editar</button>
                 </div>
             </form>
         </div>

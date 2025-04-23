@@ -91,3 +91,9 @@ Route::controller(LaudoController::class)->group(function () {
 
     Route::get('/laudo/excluir/{id}','deleteLaudo')->name('delete.laudo');
 });
+
+/** --------------------------------------------- */
+/**    Rotas Classe Laudo para main dashboard     */
+Route::controller(LaudoController::class)->group(function (){
+    Route::get('/dashboard','showDashboard')->name('dashbboard.show');
+});

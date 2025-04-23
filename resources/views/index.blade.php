@@ -1,21 +1,31 @@
 @extends('templateMain')
 
 @section('content')
+@php
+var_dump($status);
+@endphp
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <div class="container">
-<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Laudos Cadastrados</h2>
-        <div class="d-flex gap-3">
-            <div class="input-group" style="width: 200px;">
-                <input type="text" class="form-control" id="clienteFilter" placeholder="Buscar cliente...">
+        <form action="" method="GET">
+            <div class="d-flex gap-3">
+                <div class="input-group" style="width: 200px;">
+                    <input type="text" class="form-control" name="search" id="clienteFilter" placeholder="Buscar cliente...">
+                </div>
+                <select name="status" class="form-select" id="statusFilter" style="width: 180px;">
+                    <option value="" selected>Todos os status</option>
+
+                    @foreach($status as $s)
+                        <option value="{{$s->id}}">{{$s->nome}}<div class="status-indicator" style="background-color: {{$s->cor}}"></div></option>
+                    @endforeach
+                </select>
+                <input type="date" class="form-control" id="dataFilter" style="width: 180px;">
+                <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm" style="background-color: var(--primary-color); border: none;">
+                    <i class="bi bi-search"></i>
+                </button>
             </div>
-            <select class="form-select" id="statusFilter" style="width: 180px;">
-                <option value="">Todos os status</option>
-                <option value="pendente">Pendente</option>
-                <option value="em_andamento">Em Andamento</option>
-                <option value="concluido">Concluído</option>
-            </select>
-            <input type="date" class="form-control" id="dataFilter" style="width: 180px;">
-        </div>
+        </form>
     </div>
     
     <div class="row">
@@ -195,20 +205,6 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const statusSelects = document.querySelectorAll('.status-select');
-        
-        statusSelects.forEach(select => {
-            select.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const color = selectedOption.dataset.color;
-                const statusText = this.parentElement.querySelector('.status-text');
-                const statusIndicator = this.parentElement.querySelector('.status-indicator');
-                
-                statusText.textContent = selectedOption.textContent;
-                statusIndicator.style.backgroundColor = color;
-            });
-        });
-    });
+
 </script>
 @endsection 
