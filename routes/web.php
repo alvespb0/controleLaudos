@@ -6,6 +6,7 @@ use App\Http\Controllers\Op_ComercialController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LaudoController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,5 +97,12 @@ Route::controller(LaudoController::class)->group(function (){
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
+});
 
+/** --------------------------------------------- */
+/**              Rotas Classe Auth                */
+Route::controller(AuthController::class)->group(function (){
+    Route::get('/login','login')->name('login.show');
+
+    Route::post('/login/auth','tryLogin')->name('login.try');
 });

@@ -145,7 +145,7 @@ class LaudoController extends Controller
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
 
-        return view("index", ["laudos"=> $laudos->get(), "status" => $status, "tecnicos"=> $tecnicos]);
+        return view("Index", ["laudos"=> $laudos->get(), "status" => $status, "tecnicos"=> $tecnicos]);
     }
 
     /**
@@ -156,7 +156,7 @@ class LaudoController extends Controller
         $laudos = Laudo::all();
         $status = Status::all();
         $tecnicos = Op_Tecnico::all();
-        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
+        return view("Index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
     }
 
     /**
