@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Controle de Laudos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -70,13 +71,26 @@
             color: var(--secondary-color);
             text-decoration: underline;
         }
+        .toast-error {
+            background-color: #f44336 !important; /* vermelho forte */
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .toast-error .toast-message {
+            font-weight: bold;
+        }
+        .toast-error .toast-close-button {
+            color: white;
+        }
+
     </style>
 </head>
 <body>
     <div class="login-card">
         <h2 class="form-title">Login</h2>
-        <form method="POST" action="">
-            <!-- @csrf -->
+        <form method="POST" action="{{route('login.try')}}">
+            @csrf
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="email" class="form-control" id="email" name="email" required autofocus>
@@ -91,5 +105,19 @@
             <a href="/esqueci-senha" class="small-link">Esqueci minha senha</a>
         </form>
     </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    @if(session('mensagem'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "4000"
+        };
+        toastr.error("{{ session('mensagem') }}");
+    @endif
+</script>
+
 </body>
 </html>
