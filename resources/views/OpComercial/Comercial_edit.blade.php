@@ -13,7 +13,7 @@
                     </ul>
                 </div>
             @endif
-            <h3 class="card-title mb-4 text-center text-dark">Edição de Operador</h3>
+            <h3 class="card-title mb-4 text-center text-dark">Editar Operador</h3>
             <form action="{{ route('update.comercial', ['id' => $comercial->id]) }}" method="POST">
                 @csrf
                 <div class="mb-3">
@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary px-4">Editar</button>
                 </div>
             </form>
         </div>

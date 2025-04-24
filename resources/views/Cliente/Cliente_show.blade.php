@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-center">
     <div class="card shadow-lg w-100" style="max-width: 1000px; border: none; background-color: var(--mid-color);">
         <div class="card-body p-4">
-            <h3 class="card-title mb-4 text-center text-dark">Operadores Comercial Cadastrados</h3>
+            <h3 class="card-title mb-4 text-center text-dark">Clientes Cadastrados</h3>
             
             <!-- Verifica se há operadores cadastrados -->
             @if($clientes->isEmpty())

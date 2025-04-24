@@ -86,6 +86,8 @@ class StatusController extends Controller
 
         $Status->delete();
 
+        session()->flash('mensagem', 'Status Excluido com sucesso');
+
         return redirect()->route('readStatus');
     }
 

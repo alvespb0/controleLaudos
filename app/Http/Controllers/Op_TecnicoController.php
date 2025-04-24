@@ -105,6 +105,8 @@ class Op_TecnicoController extends Controller
 
         $user->delete();
 
+        session()->flash('mensagem', 'Operador Tecnico Excluido com sucesso');
+
         return redirect()->route('readTecnico');
     }
 
