@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class CheckUserType
 {
@@ -19,7 +20,7 @@ class CheckUserType
     public function handle($request, Closure $next, ...$types)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('mensagem', 'Você precisa estar logado.');
+            return redirect()->route('login.show')->with('mensagem', 'Você precisa estar logado.');
         }
 
         $user = Auth::user();

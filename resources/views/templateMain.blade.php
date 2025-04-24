@@ -140,7 +140,7 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sair</a>
+                        <a class="nav-link" href="/logout">Sair</a>
                     </li>
                 </ul>
             </div>
