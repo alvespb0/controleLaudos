@@ -12,7 +12,7 @@ class AuthController extends Controller
      * Retorna a view da página de login
      */
     public function login(){
-        return view('/auth/login');
+        return view('/Auth/Login');
     }
 
     /**
@@ -31,7 +31,7 @@ class AuthController extends Controller
         }
 
         session->flash('mensagem', 'Credenciais Inválidas');
-        return redirect(route('login'));
+        return redirect(route('login.show'));
     }
 
     /**
