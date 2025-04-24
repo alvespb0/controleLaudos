@@ -86,13 +86,20 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Controle de Laudos</a>
+            <a class="navbar-brand" href="/dashboard">Controle de Laudos</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
                     <li class="nav-item dropdown">
+                        <a class="nav-link" href="/dashboard" role="button">Dashboard</a>
+
+                    </li>
+                    @endif
+                    <li class="nav-item dropdown">
+                        @if(Auth::user()->tipo === 'admin')
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Segurança
                         </a>
@@ -110,6 +117,8 @@
                             <li><a class="dropdown-item" href="/comercial">Operadores Comercial Cadastrados</a></li>
                         </ul>
                     </li>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Laudos
@@ -121,15 +130,6 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Status
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/status/cadastro">Novo Status</a></li>
-                            <li><a class="dropdown-item" href="/status">Status Cadastrados</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Clientes
                         </a>
                         <ul class="dropdown-menu">
@@ -137,6 +137,19 @@
                             <li><a class="dropdown-item" href="/cliente">Clientes Cadastrados</a></li>
                         </ul>
                     </li>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Status
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/status/cadastro">Novo Status</a></li>
+                            <li><a class="dropdown-item" href="/status">Status Cadastrados</a></li>
+                        </ul>
+                    </li>
+                    @endif
+
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
