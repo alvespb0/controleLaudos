@@ -30,7 +30,7 @@ class AuthController extends Controller
             return redirect(route('dashboard.show'))->with('success','');
         }
 
-        session->flash('mensagem', 'Credenciais Inválidas');
+        session()->flash('mensagem', 'Credenciais Inválidas');
         return redirect(route('login.show'));
     }
 
