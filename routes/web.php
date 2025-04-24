@@ -21,7 +21,7 @@ use App\Http\Controllers\AuthController;
 
 /** --------------------------------------------- */
 /**              Rotas Classe Segurança           */
-Route::controller(Op_TecnicoController::class)->group(function () {
+Route::middleware(['checkUserType:admin'])->controller(Op_TecnicoController::class)->group(function () {
     Route::get('/tecnico','readTecnico')->name('readTecnico'); # retorna a view contendo todos os técnicos cadastrados
 
     Route::get('/tecnico/cadastro','cadastroTecnico')->name('cadastro.tecnico'); # retorna a view de formulario de cadastro do tecnico
@@ -35,7 +35,7 @@ Route::controller(Op_TecnicoController::class)->group(function () {
 
 /** --------------------------------------------- */
 /**              Rotas Classe Comercial           */
-Route::controller(Op_ComercialController::class)->group(function () {
+Route::middleware(['checkUserType:admin'])->controller(Op_ComercialController::class)->group(function () {
     Route::get('/comercial','readComercial')->name('readComercial'); # retorna a view contendo todos os opcomercial cadastrados
 
     Route::get('/comercial/cadastro','cadastroComercial')->name('cadastro.comercial'); # retorna a view de formulario de cadastro do opcomercial
@@ -49,7 +49,7 @@ Route::controller(Op_ComercialController::class)->group(function () {
 
 /** --------------------------------------------- */
 /**              Rotas Classe Status              */
-Route::controller(StatusController::class)->group(function () { 
+Route::middleware(['checkUserType:seguranca,admin'])->controller(StatusController::class)->group(function () { 
     Route::get('/status','readStatus')->name('readStatus'); # retorna a view contendo os status cadastrados
 
     Route::get('/status/cadastro','cadastroStatus')->name('cadastro.status'); # retorna o formulario de cadastro de status
@@ -63,7 +63,7 @@ Route::controller(StatusController::class)->group(function () {
 
 /** --------------------------------------------- */
 /**              Rotas Classe Cliente             */
-Route::controller(ClienteController::class)->group(function () {
+Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteController::class)->group(function () {
     Route::get('/cliente','readCliente')->name('readCliente'); # retorna a view contendo os clientes cadastrados
 
     Route::get('/cliente/cadastro','cadastroCliente')->name('cadastro.cliente'); # retorna o formulario de cadastro de cliente
@@ -77,7 +77,7 @@ Route::controller(ClienteController::class)->group(function () {
 
 /** --------------------------------------------- */
 /**              Rotas Classe Laudo               */
-Route::controller(LaudoController::class)->group(function () {
+Route::middleware(['checkUserType:comercial,admin'])->controller(LaudoController::class)->group(function () {
     Route::get('/laudo','readLaudo')->name('readLaudo'); # retorna a view contendo os laudos
 
     Route::get('/laudo/cadastro','cadastroLaudo')->name('cadastro.laudo'); # retorna o formulario de cadastro do laudo
@@ -91,7 +91,7 @@ Route::controller(LaudoController::class)->group(function () {
 
 /** --------------------------------------------- */
 /**    Rotas Classe Laudo para main dashboard     */
-Route::controller(LaudoController::class)->group(function (){
+Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
 
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
@@ -105,4 +105,6 @@ Route::controller(AuthController::class)->group(function (){
     Route::get('/login','login')->name('login.show');
 
     Route::post('/login/auth','tryLogin')->name('login.try');
+
+    Route::get('/logout', 'logout')->name('logout');
 });
