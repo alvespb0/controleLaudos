@@ -105,7 +105,7 @@ class Op_ComercialController extends Controller
 
         $user->delete();
 
-        #$Op_Comercial->delete();
+        session()->flash('mensagem', 'Operador Comercial Excluido com sucesso');
         
         return redirect()->route('readComercial');
     }

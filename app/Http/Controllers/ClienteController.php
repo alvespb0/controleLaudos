@@ -86,6 +86,8 @@ class ClienteController extends Controller
 
        $cliente->delete();
 
+       session()->flash('mensagem', 'Cliente Excluido com sucesso');
+
        return redirect()->route('readCliente');
    }
 

@@ -6,6 +6,7 @@
     <title>Controle de Laudos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         :root {
@@ -158,6 +159,8 @@
     </style>
 </head>
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="/dashboard">
@@ -184,8 +187,8 @@
                             Segurança
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/tecnico/cadastro"><i class="bi bi-person-plus"></i> Novo Operador Segurança</a></li>
-                            <li><a class="dropdown-item" href="/tecnico"><i class="bi bi-people"></i> Operadores Segurança Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/tecnico/cadastro"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
+                            <li><a class="dropdown-item" href="/tecnico"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -194,8 +197,8 @@
                             Comercial
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/comercial/cadastro"><i class="bi bi-person-plus"></i> Novo Operador Comercial</a></li>
-                            <li><a class="dropdown-item" href="/comercial"><i class="bi bi-people"></i> Operadores Comercial Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/comercial/cadastro"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
+                            <li><a class="dropdown-item" href="/comercial"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
                         </ul>
                     </li>
                     @endif
@@ -265,7 +268,22 @@
             </div>
         </div>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    @if(session('mensagem'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "4000"
+        };
+        toastr.success("{{ session('mensagem') }}");
+    @endif
+</script>
+
+
 </body>
 </html> 

@@ -13,7 +13,7 @@
                     </ul>
                 </div>
             @endif
-            <h3 class="card-title mb-4 text-center text-dark">Cadastro de Operador</h3>
+            <h3 class="card-title mb-4 text-center text-dark">Editar Operador</h3>
             <form action="{{ route('update.tecnico', ['id' => $tecnico->id]) }}" method="POST">
                 @csrf
                 <div class="mb-3">

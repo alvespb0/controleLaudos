@@ -108,6 +108,8 @@ class LaudoController extends Controller
 
     $laudo->delete();
 
+    session()->flash('mensagem', 'Laudo excluido com sucesso');
+
     return redirect()->route('readLaudo');
     }
 
@@ -127,7 +129,7 @@ class LaudoController extends Controller
             if($clientes->isNotEmpty()){
                 $laudos = $laudos->whereIn('cliente_id', $clientes);
             }else{
-                session()->flash('mensagem', 'Nenhum cliente localizado');
+                session()->flash('Error', 'Nenhum cliente localizado');
        
                 return view("index", [
                     "laudos" => collect(), // array vazio em vez de query vazia

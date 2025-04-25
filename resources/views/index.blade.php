@@ -41,9 +41,9 @@
             </div>
         </form>
     </div>
-    @if (session('mensagem'))
+    @if (session('Error'))
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ session('mensagem') }}
+            {{ session('Error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     @endif
@@ -95,6 +95,7 @@
                                 @endforeach
                             </select>
                         </p>
+                        <hr>
                         <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
                         </div>
