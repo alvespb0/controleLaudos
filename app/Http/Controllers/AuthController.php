@@ -53,6 +53,7 @@ class AuthController extends Controller
     public function register(){
         return view('Auth/User_New');
     }
+
     /**
      * recebe uma request do tipo RegisterRequest valida qual o tipo de operador que está sendo cadastrado e salva no banco
      * @param RegisterRequest $request
@@ -104,10 +105,15 @@ class AuthController extends Controller
                 'password' => $request->password,
                 'tipo' => 'admin'
             ]);    
+
+            session()->flash('mensagem', 'Admin registrado com sucesso');
+    
+            return redirect()->route('readUsers');
+
         }else{
             session()->flash('error', 'tipo selecionado inválido');
     
-            return redirect()->route('register');
+            return redirect()->route('cadastro.user');
         }
     }
 
