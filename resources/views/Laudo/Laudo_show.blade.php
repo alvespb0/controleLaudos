@@ -9,7 +9,7 @@
             <!-- Verifica se há operadores cadastrados -->
             @if($laudos->isEmpty())
                 <div class="alert alert-warning text-center">
-                    Nenhum Cliente cadastrado.
+                    Nenhum Laudo cadastrado.
                 </div>
             @else
                 <table class="table table-bordered table-striped table-hover">
