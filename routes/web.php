@@ -20,6 +20,20 @@ use App\Http\Controllers\AuthController;
 */
 
 /** --------------------------------------------- */
+/**         Rotas Classe Auth (para admins)       */
+Route::middleware(['checkUserType:admin'])->controller(AuthController::class)->group(function (){
+    Route::get('/user','readUsers')->name('readUsers');
+
+    Route::get('/register','register')->name('cadastro.user');
+    Route::post('/register','createUser')->name('create.user');
+
+    Route::get('/user/alteracao/{id}','alteracaoUser')->name('alteracao.user'); # retorna a view de formulario de cadastro do tecnico
+    Route::post('/user/alteracao/{id}','updateUser')->name('update.user'); # faz o update do tecnico no banco
+
+    Route::get('/user/excluir/{id}','deleteUser')->name('delete.user'); # faz a exclusão do tecnico no banco
+});
+
+/** --------------------------------------------- */
 /**              Rotas Classe Segurança           */
 Route::middleware(['checkUserType:admin'])->controller(Op_TecnicoController::class)->group(function () {
     Route::get('/tecnico','readTecnico')->name('readTecnico'); # retorna a view contendo todos os técnicos cadastrados
