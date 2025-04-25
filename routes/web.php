@@ -24,8 +24,8 @@ use App\Http\Controllers\AuthController;
 Route::middleware(['checkUserType:admin'])->controller(AuthController::class)->group(function (){
     Route::get('/user','readUsers')->name('readUsers');
 
-    Route::get('/register','register')->name('cadastro.user');
-    Route::post('/register','createUser')->name('create.user');
+    Route::get('/user/register','register')->name('cadastro.user');
+    Route::post('/user/register','createUser')->name('create.user');
 
     Route::get('/user/alteracao/{id}','alteracaoUser')->name('alteracao.user'); # retorna a view de formulario de cadastro do tecnico
     Route::post('/user/alteracao/{id}','updateUser')->name('update.user'); # faz o update do tecnico no banco
