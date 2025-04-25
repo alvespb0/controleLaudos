@@ -183,22 +183,12 @@
                     @if(Auth::user()->tipo === 'admin')
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-shield-check"></i>
-                            Segurança
+                        <i class="bi bi-person-circle"></i>
+                            Operadores
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/tecnico/cadastro"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
-                            <li><a class="dropdown-item" href="/tecnico"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-briefcase"></i>
-                            Comercial
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/comercial/cadastro"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
-                            <li><a class="dropdown-item" href="/comercial"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/user/register"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
+                            <li><a class="dropdown-item" href="/user"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
                         </ul>
                     </li>
                     @endif

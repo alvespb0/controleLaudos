@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Op_TecnicoController;
-use App\Http\Controllers\Op_ComercialController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LaudoController;
@@ -31,34 +29,6 @@ Route::middleware(['checkUserType:admin'])->controller(AuthController::class)->g
     Route::post('/user/alteracao/{id}','updateUser')->name('update.user'); # faz o update do tecnico no banco
 
     Route::get('/user/excluir/{id}','deleteUser')->name('delete.user'); # faz a exclusão do tecnico no banco
-});
-
-/** --------------------------------------------- */
-/**              Rotas Classe Segurança           */
-Route::middleware(['checkUserType:admin'])->controller(Op_TecnicoController::class)->group(function () {
-    Route::get('/tecnico','readTecnico')->name('readTecnico'); # retorna a view contendo todos os técnicos cadastrados
-
-    Route::get('/tecnico/cadastro','cadastroTecnico')->name('cadastro.tecnico'); # retorna a view de formulario de cadastro do tecnico
-    Route::post('/tecnico/cadastro', 'createTecnico')->name('create.tecnico'); # faz o cadastro do tecnico no bd
-
-    Route::get('/tecnico/alteracao/{id}','alteracaoTecnico')->name('alteracao.tecnico'); # retorna a view de formulario de cadastro do tecnico
-    Route::post('/tecnico/alteracao/{id}','updateTecnico')->name('update.tecnico'); # faz o update do tecnico no banco
-
-    Route::get('/tecnico/excluir/{id}','deleteTecnico')->name('delete.tecnico'); # faz a exclusão do tecnico no banco
-});
-
-/** --------------------------------------------- */
-/**              Rotas Classe Comercial           */
-Route::middleware(['checkUserType:admin'])->controller(Op_ComercialController::class)->group(function () {
-    Route::get('/comercial','readComercial')->name('readComercial'); # retorna a view contendo todos os opcomercial cadastrados
-
-    Route::get('/comercial/cadastro','cadastroComercial')->name('cadastro.comercial'); # retorna a view de formulario de cadastro do opcomercial
-    Route::post('/comercial/cadastro', 'createComercial')->name('create.comercial'); # faz o cadastro do opcomercial no bd
-
-    Route::get('/comercial/alteracao/{id}','alteracaoComercial')->name('alteracao.comercial'); # retorna a view de formulario de cadastro do opcomercial
-    Route::post('/comercial/alteracao/{id}','updateComercial')->name('update.comercial'); # faz o update do opcomercial no banco
-
-    Route::get('/comercial/excluir/{id}','deleteComercial')->name('delete.comercial'); # faz a exclusão do opcomercial no banco
 });
 
 /** --------------------------------------------- */
