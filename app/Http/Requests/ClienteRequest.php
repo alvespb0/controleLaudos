@@ -23,7 +23,9 @@ class ClienteRequest extends FormRequest
     {
         return [
             'nome' => 'required|string|min:5|max:255',
-            'cnpj' => 'required|string|size:14|unique:cliente,cnpj'
+            'cnpj' => 'required|string|size:14|unique:cliente,cnpj',
+            'telefone' => 'required|array|min:1',
+            'telefone.*' => 'required|string|min:8|max:14',
         ];
     }
 
@@ -38,7 +40,17 @@ class ClienteRequest extends FormRequest
             'cnpj.required' => 'O campo CNPJ é obrigatório.',
             'cnpj.string'   => 'O campo CNPJ deve conter apenas números.',
             'cnpj.size'     => 'O CNPJ deve conter exatamente :size caracteres (sem pontuação).',
-            'cnpj.unique'   => 'Este CNPJ já está cadastrado.',    
+            'cnpj.unique'   => 'Este CNPJ já está cadastrado.',   
+            
+            'telefone.required' => 'O campo telefone é um campo obrigatório.',
+            'telefone.array' => 'O campo telefone está com formato inválido.',
+            'telefone.min' => 'O campo telefone deve ter no mínimo :min caracteres.',
+            'telefone.max' => 'O campo telefone deve ter no máximo :max caracteres.',
+
+            'telefone.*.required' => 'Todos os telefones precisam ser preenchidos.',
+            'telefone.*.string' => 'Cada telefone deve ser um texto válido.',
+            'telefone.*.min' => 'Cada telefone deve ter no mínimo :min caracteres.',
+            'telefone.*.max' => 'Cada telefone deve ter no máximo :max caracteres.',
         ];
     }
 }

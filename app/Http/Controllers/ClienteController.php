@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cliente;
+use App\Models\Telefone;
 use App\Http\Requests\ClienteRequest;
 
 class ClienteController extends Controller
@@ -19,17 +20,23 @@ class ClienteController extends Controller
    /**
     * Recebe uma request via POST valida os dados, se validado cadastra no banco
     * Se não retorna o erro
-    * @param Request $request
+    * @param ClienteRequest $request
     * @return Redirect
     */
    public function createCliente(ClienteRequest $request){
        $request->validated();
 
-       Cliente::create([
+       $cliente = Cliente::create([
             'nome'=> $request->nome,
             'cnpj' => $request->cnpj,
        ]);
 
+        foreach($request->telefone as $telefone){
+            Telefone::create([
+                'telefone' =>  $telefone,
+                'cliente_id' => $cliente->id
+            ]);
+        }
        session()->flash('mensagem', 'Cliente registrado com sucesso');
 
        return redirect()->route('readCliente');
