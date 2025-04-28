@@ -62,27 +62,36 @@ class ClienteController extends Controller
        return view('Cliente/Cliente_edit', ['cliente' => $cliente]);
    }
 
-   /**
+  /**
     * Recebe uma request faz a validação dos dados e faz o update dado o id
     * @param Request
     * @param int $id
     * @return Redirect
     */
-   public function updateCliente(ClienteRequest $request, $id){
-       $request->validated();
-
-       $cliente = Cliente::findOrFail($id);
-
-       $cliente->update([
-        'nome'=> $request->nome,
-        'cnpj' => $request->cnpj,
-       ]);
-
-       session()->flash('mensagem', 'Cliente Alterado com sucesso');
-
-       return redirect()->route('readCliente');
-   }
-
+    public function updateCliente(ClienteRequest $request, $id){
+        $request->validated();
+ 
+        $cliente = Cliente::findOrFail($id);
+ 
+        $cliente->update([
+             'nome'=> $request->nome,
+             'cnpj' => $request->cnpj,
+        ]);
+ 
+        $cliente->telefone()->delete();
+ 
+        foreach($request->telefone as $telefone){
+             Telefone::create([
+                 'telefone' => $telefone,
+                 'cliente_id' => $cliente->id
+             ]);
+         }
+        session()->flash('mensagem', 'Cliente Alterado com sucesso');
+ 
+        return redirect()->route('readCliente');
+    }
+ 
+ 
    /**
     * recebe o id e deleta o cliente vinculado nesse ID
     * @param int $id

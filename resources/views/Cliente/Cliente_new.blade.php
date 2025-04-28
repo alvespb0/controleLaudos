@@ -25,6 +25,18 @@
                     <label for="cnpj">CNPJ</label>
                     <input type="text" name="cnpj" id="cnpj" class="form-control" placeholder="CNPJ do cliente" required>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Telefone(s)</label>
+                    <div id="telefones">
+                        <div class="input-group mb-2">
+                            <input type="text" name="telefone[]" class="form-control" placeholder="Telefone" required>
+                        </div>
+                    </div>
+                    <button type="button" id="addPhone" class="btn" style="background-color: var(--primary-color); color: white;">+ Adicionar Telefone</button>
+                </div>
+
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
                 </div>
@@ -32,4 +44,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addPhoneBtn = document.getElementById('addPhone');
+        const telefonesDiv = document.getElementById('telefones');
+
+        addPhoneBtn.addEventListener('click', function() {
+            const phoneGroup = document.createElement('div');
+            phoneGroup.classList.add('input-group', 'mb-2');
+
+            phoneGroup.innerHTML = `
+                <input type="text" name="telefone[]" class="form-control" placeholder="Telefone" required>
+                <button type="button" class="btn btn-danger remove-phone" style="background-color: var(--accent-color); border:none;">×</button>
+            `;
+
+            telefonesDiv.appendChild(phoneGroup);
+        });
+
+        telefonesDiv.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-phone')) {
+                event.target.parentElement.remove();
+            }
+        });
+    });
+</script>
 @endsection

@@ -21,9 +21,11 @@ class ClienteRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('id');  // Pega o ID do cliente da rota
+
         return [
             'nome' => 'required|string|min:5|max:255',
-            'cnpj' => 'required|string|size:14|unique:cliente,cnpj',
+            'cnpj' => "required|string|size:14|unique:cliente,cnpj,{$id}",
             'telefone' => 'required|array|min:1',
             'telefone.*' => 'required|string|min:8|max:14',
         ];
