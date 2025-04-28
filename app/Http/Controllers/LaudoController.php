@@ -147,7 +147,9 @@ class LaudoController extends Controller
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
 
-        return view("index", ["laudos"=> $laudos->get(), "status" => $status, "tecnicos"=> $tecnicos]);
+        $laudos = $laudos->orderBy('created_at', 'desc')->paginate(6); // Mudança para paginate
+
+        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
     }
 
     /**
@@ -155,7 +157,7 @@ class LaudoController extends Controller
      * @return View
      */
     public function showDashboard(){
-        $laudos = Laudo::orderBy('created_at', 'desc')->get();
+        $laudos = Laudo::orderBy('created_at', 'desc')->paginate(6);
         $status = Status::all();
         $tecnicos = Op_Tecnico::all();
         return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
