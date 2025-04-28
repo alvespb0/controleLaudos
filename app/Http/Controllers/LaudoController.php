@@ -120,38 +120,41 @@ class LaudoController extends Controller
      */
     public function filterDashboard(Request $request){
         $laudos = Laudo::query();
-
+    
         $status = Status::all();
         $tecnicos = Op_Tecnico::all(); 
-
+    
         if($request->filled('search')){
             $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id');
             if($clientes->isNotEmpty()){
                 $laudos = $laudos->whereIn('cliente_id', $clientes);
             }else{
                 session()->flash('Error', 'Nenhum cliente localizado');
-       
                 return view("index", [
-                    "laudos" => collect(), // array vazio em vez de query vazia
+                    "laudos" => collect(),
                     "status" => $status,
                     "tecnicos" => $tecnicos
                 ]);
             }
         }
-
+    
         if($request->filled('status')){
-            $laudos = $laudos->where('status_id', $request->status); # esse where deve funcionar, devido a value do select ser o id do status
+            $laudos = $laudos->where('status_id', $request->status);
         }
-
+    
         if($request->filled('dataConclusao')){
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
-
-        $laudos = $laudos->orderBy('created_at', 'desc')->paginate(6); // Mudança para paginate
-
-        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
+    
+        $laudos = $laudos->orderBy('created_at', 'desc')->paginate(6); 
+    
+        return view("index", [
+            "laudos" => $laudos, 
+            "status" => $status,
+            "tecnicos" => $tecnicos
+        ]);
     }
-
+    
     /**
      * retorna a pagina index levando todos os laudos, status e tecnicos de segurança
      * @return View
