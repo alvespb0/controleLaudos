@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cliente;
+use App\Models\Telefone;
 use App\Http\Requests\ClienteRequest;
 
 class ClienteController extends Controller
@@ -19,17 +20,24 @@ class ClienteController extends Controller
    /**
     * Recebe uma request via POST valida os dados, se validado cadastra no banco
     * Se não retorna o erro
-    * @param Request $request
+    * @param ClienteRequest $request
     * @return Redirect
     */
    public function createCliente(ClienteRequest $request){
        $request->validated();
 
-       Cliente::create([
+       $cliente = Cliente::create([
             'nome'=> $request->nome,
             'cnpj' => $request->cnpj,
+            'email' => $request->email
        ]);
 
+        foreach($request->telefone as $telefone){
+            Telefone::create([
+                'telefone' =>  $telefone,
+                'cliente_id' => $cliente->id
+            ]);
+        }
        session()->flash('mensagem', 'Cliente registrado com sucesso');
 
        return redirect()->route('readCliente');
@@ -55,27 +63,37 @@ class ClienteController extends Controller
        return view('Cliente/Cliente_edit', ['cliente' => $cliente]);
    }
 
-   /**
+  /**
     * Recebe uma request faz a validação dos dados e faz o update dado o id
     * @param Request
     * @param int $id
     * @return Redirect
     */
-   public function updateCliente(ClienteRequest $request, $id){
-       $request->validated();
-
-       $cliente = Cliente::findOrFail($id);
-
-       $cliente->update([
-        'nome'=> $request->nome,
-        'cnpj' => $request->cnpj,
-       ]);
-
-       session()->flash('mensagem', 'Cliente Alterado com sucesso');
-
-       return redirect()->route('readCliente');
-   }
-
+    public function updateCliente(ClienteRequest $request, $id){
+        $request->validated();
+ 
+        $cliente = Cliente::findOrFail($id);
+ 
+        $cliente->update([
+             'nome'=> $request->nome,
+             'cnpj' => $request->cnpj,
+             'email' => $request->email
+        ]);
+ 
+        $cliente->telefone()->delete();
+ 
+        foreach($request->telefone as $telefone){
+             Telefone::create([
+                 'telefone' => $telefone,
+                 'cliente_id' => $cliente->id
+             ]);
+         }
+        session()->flash('mensagem', 'Cliente Alterado com sucesso');
+ 
+        return redirect()->route('readCliente');
+    }
+ 
+ 
    /**
     * recebe o id e deleta o cliente vinculado nesse ID
     * @param int $id
