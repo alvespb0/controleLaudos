@@ -21,11 +21,12 @@ class ClienteRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('id');  // Pega o ID do cliente da rota
+        $id = $this->route('id'); 
 
         return [
             'nome' => 'required|string|min:5|max:255',
             'cnpj' => "required|string|size:14|unique:cliente,cnpj,{$id}",
+            'email' => 'nullable|string|min:5|max:255',
             'telefone' => 'required|array|min:1',
             'telefone.*' => 'required|string|min:8|max:14',
         ];
@@ -44,6 +45,10 @@ class ClienteRequest extends FormRequest
             'cnpj.size'     => 'O CNPJ deve conter exatamente :size caracteres (sem pontuação).',
             'cnpj.unique'   => 'Este CNPJ já está cadastrado.',   
             
+            'email.string' => 'O campo email deve ser um texto',
+            'email.min' => 'O campo email deve ter no mínimo :min caracteres',
+            'email.max' => 'O campo email deve ter no máximo :max caracteres',
+
             'telefone.required' => 'O campo telefone é um campo obrigatório.',
             'telefone.array' => 'O campo telefone está com formato inválido.',
             'telefone.min' => 'O campo telefone deve ter no mínimo :min caracteres.',

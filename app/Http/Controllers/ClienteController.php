@@ -29,6 +29,7 @@ class ClienteController extends Controller
        $cliente = Cliente::create([
             'nome'=> $request->nome,
             'cnpj' => $request->cnpj,
+            'email' => $request->email
        ]);
 
         foreach($request->telefone as $telefone){
@@ -76,6 +77,7 @@ class ClienteController extends Controller
         $cliente->update([
              'nome'=> $request->nome,
              'cnpj' => $request->cnpj,
+             'email' => $request->email
         ]);
  
         $cliente->telefone()->delete();

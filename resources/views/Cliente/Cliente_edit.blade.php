@@ -27,6 +27,11 @@
                 </div>
             
                 <div class="mb-3">
+                    <label for="email">E-mail</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Email do Cliente" value ="{{$cliente->email}}">
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Telefone(s)</label>
                     <div id="telefones">
                         @foreach($cliente->telefone as $index => $telefone)
