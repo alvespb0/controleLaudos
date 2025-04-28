@@ -83,9 +83,20 @@
                             <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
                             <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
                             <strong>Data Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$laudo->data_conclusao !== null ? $laudo->data_conclusao : ''}}"> <br> 
-                            <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br>
-                            <Strong>Técnico Responsável: </Strong>
+                            <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br><br>
+                            <button type="button" class="btn btn-info" id="toggleContatosBtn{{$laudo->id}}">
+                                <i class="bi bi-phone"></i> Ver Contatos do cliente
+                            </button>
+                            <div id="contatos{{$laudo->id}}" class="mt-2" style="display: none;">
+                                <strong>Email: </strong>{{ $laudo->cliente->email }} <br>
+                                <strong>Telefone(s): </strong>
+                                @foreach($laudo->cliente->telefone as $telefone)
+                                    {{ $telefone->telefone }} <br>
+                                @endforeach
+                                <br>
 
+                            </div>
+                            <Strong>Técnico Responsável: </Strong>
                             <select name="tecnicoResponsavel" class="form-select mt-2">
                                 <option value="" selected>Selecione um Técnico Responsável</option>
                                 @foreach($tecnicos as $tecnico)
@@ -94,7 +105,8 @@
                                 </option>
                                 @endforeach
                             </select>
-                        </p>
+
+                            </p>
                         <hr>
                         <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
@@ -210,9 +222,45 @@
         border-color: var(--primary-color) !important;
         box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.25);
     }
+
+    .btn-info {
+        background-color: var(--primary-color);
+        transition: background-color 0.3s ease;
+        border: none;
+    }
+
+    .btn-info:hover {
+        background-color: var(--hover-color)
+    }
+
 </style>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Função para alternar a visibilidade dos contatos
+    function toggleContatos(laudoId) {
+        const contatosDiv = document.getElementById('contatos' + laudoId);
+        const button = document.getElementById('toggleContatosBtn' + laudoId);
+
+        if (contatosDiv.style.display === "none") {
+            contatosDiv.style.display = "block";
+            button.innerHTML = '<i class="bi bi-phone"></i> Ocultar Contatos';
+        } else {
+            contatosDiv.style.display = "none";
+            button.innerHTML = '<i class="bi bi-phone"></i> Ver Contatos do Cliente';
+        }
+    }
+
+    // Adiciona o evento de clique ao botão de cada laudo
+    const buttons = document.querySelectorAll('.btn-info');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const laudoId = this.id.replace('toggleContatosBtn', '');
+            toggleContatos(laudoId);
+        });
+    });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     // Inicializa a modal
     const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
