@@ -158,7 +158,7 @@ class LaudoController extends Controller
         $laudos = Laudo::all();
         $status = Status::all();
         $tecnicos = Op_Tecnico::all();
-        return view("Index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
+        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
     }
 
     /**
