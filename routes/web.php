@@ -77,6 +77,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(LaudoController
 /**    Rotas Classe Laudo para main dashboard     */
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
+    Route::get('/','showDashboard')->name('dashboard.show');
 
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
