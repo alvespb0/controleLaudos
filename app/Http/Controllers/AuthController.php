@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\TokenRecuperacao;
 use App\Models\Op_Comercial;
 use App\Models\Op_Tecnico;
 
@@ -172,6 +173,9 @@ class AuthController extends Controller
         return redirect()->route('readUsers');
     }
 
+    /**
+     * deleta o user dado o ID
+     */
     public function deleteUser($id){
         $user = User::findOrFail($id);
 
@@ -180,6 +184,32 @@ class AuthController extends Controller
         session()->flash('mensagem', 'Operador Excluido com sucesso');
 
         return redirect()->route('readUsers');
+    }
+
+    /**
+     * retorna apenas a view de forgot pass
+     */
+    public function emailUserForgotPass(){
+        return view('Auth/Forgot_Pass');
+    }
+
+    /**
+     * Recebe um email via POST, verifica se alguma usuário existe com esse email se existir envia um token de recuperação
+     * @param Request $request
+     * @return redirect
+     */
+    public function tokenUserForgotPass(Request $request){
+        $user = User::where('email', $request->email)->first();
+
+        if($user->count > 0){
+            $token = substr(bin2hex(random_bytes(3)), 0, 6);
+
+            TokenRecuperacao::create([
+                'email' => $user->email,
+                'token' => $token,
+                'expiracao' => time() + 15 * 60
+            ]);
+        }
     }
 }
 

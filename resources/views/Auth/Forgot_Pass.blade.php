@@ -88,21 +88,16 @@
 </head>
 <body>
     <div class="login-card">
-        <h2 class="form-title">Login</h2>
+        <h2 class="form-title">Email do Usuário</h2>
         <form method="POST" action="{{route('login.try')}}">
             @csrf
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="email" class="form-control" id="email" name="email" required autofocus>
             </div>
-            <div class="mb-4">
-                <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Entrar</button>
+                <button type="submit" class="btn btn-primary">Enviar</button>
             </div>
-            <a href="/recuperar-senha" class="small-link">Esqueci minha senha</a>
         </form>
     </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
