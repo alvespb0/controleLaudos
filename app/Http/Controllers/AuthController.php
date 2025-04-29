@@ -215,7 +215,7 @@ class AuthController extends Controller
 
             $this->enviarEmailRecuperacao($user->email, $user->name, $token);
 
-            return view('/Auth/Token_Pass');
+            return view('Auth/Token_Pass');
         }else{
             session()->flash('mensagem', 'teste');
 
@@ -228,6 +228,58 @@ class AuthController extends Controller
      */
     private function enviarEmailRecuperacao($email, $nome, $token){
         Mail::to($email)->send(new TokenRecuperacaoMail($token, $nome));
+    }
+
+    /**
+     * recebe o roken valida se existe na tabla e se não está expirado
+     * @param string
+     */
+    public function validateTokenPass(Request $request){
+        $token = implode('', [
+            $request->digit1, $request->digit2, $request->digit3,
+            $request->digit4, $request->digit5, $request->digit6,
+        ]);
+        
+        $token = TokenRecuperacao::where('token', $token)->first();
+
+        if (!$token) {
+            session()->flash('mensagem', 'Token inválido.');
+            return view('Auth/Token_Pass');
+        }
+    
+        if (strtotime($token->expiracao) < now()->timestamp) {
+            session()->flash('mensagem', 'Token expirado. Solicite um novo.');
+            return view('Auth/Token_Pass');
+        }
+
+        $user = User::where('email', $token->email)->first();
+
+        if (!$user) {
+            session()->flash('mensagem', 'Usuário não encontrado.');
+            return view('Auth/Token_Pass');
+        }
+        
+        return view('Auth/Alter_Pass', ['userId' => $user->id, 'tokenId' => $token->id]);
+    }
+
+    /**
+     * recebe um id de usuário via input hidden e altera a senha desse usuário
+     * @param int $id
+     * @param string $password
+     * @return redirect
+     */
+    public function alterPassUser(Request $request){
+        $user = User::findOrFail($request->id);
+
+        $user->update([
+            'password'=> $request->password,
+        ]);
+
+        $token = TokenRecuperacao::findOrFail($request->tokenId);
+        $token->delete();
+
+        session()->flash('success','Senha alterado com sucesso!');
+        return redirect('login');
     }
 
 }

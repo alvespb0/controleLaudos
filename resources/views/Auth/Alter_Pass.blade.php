@@ -83,32 +83,33 @@
         .toast-error .toast-close-button {
             color: white;
         }
-        .toast-success {
-            background-color: #28a745 !important;
-            color: white !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
 
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
     <div class="login-card">
-        <h2 class="form-title">Login</h2>
-        <form method="POST" action="{{route('login.try')}}">
+        <h2 class="form-title">Redefinição de senha</h2>
+        <form method="POST" action="{{route('alter.password')}}">
             @csrf
+            <input type="hidden" name="id" value="{{$userId}}">
+            <input type="hidden" name="tokenId" value="{{$tokenId}}">
             <div class="mb-3">
-                <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" name="email" required autofocus>
-            </div>
-            <div class="mb-4">
-                <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <label for="password" class="form-label">Nova Senha</label>
+                <input type="password" class="form-control" id="password" name="password" required autofocus>
             </div>
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Entrar</button>
+                <button type="submit" class="btn btn-primary">Enviar</button>
             </div>
-            <a href="/recuperar-senha" class="small-link">Esqueci minha senha</a>
         </form>
     </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -122,15 +123,6 @@
             "timeOut": "4000"
         };
         toastr.error("{{ session('mensagem') }}");
-    @endif
-    @if(session('success'))
-    toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "timeOut": "4000"
-        };
-        toastr.success("{{ session('success') }}");
     @endif
 </script>
 

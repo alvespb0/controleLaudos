@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Controle de Laudos</title>
+    <title>Validar Token - Controle de Laudos</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -34,14 +34,34 @@
             transition: 0.3s ease;
         }
 
-        .login-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        .form-title {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.25);
+        .token-inputs {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .token-inputs input {
+            width: 48px;
+            height: 56px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .token-inputs input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(121, 197, 182, 0.2);
         }
 
         .btn-primary {
@@ -53,26 +73,8 @@
             background-color: var(--accent-color);
         }
 
-        .form-title {
-            color: var(--secondary-color);
-            font-weight: 600;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .small-link {
-            display: block;
-            margin-top: 1rem;
-            text-align: center;
-            color: var(--gray-color);
-        }
-
-        .small-link:hover {
-            color: var(--secondary-color);
-            text-decoration: underline;
-        }
         .toast-error {
-            background-color: #f44336 !important; /* vermelho forte */
+            background-color: #f44336 !important;
             color: white !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
@@ -83,34 +85,24 @@
         .toast-error .toast-close-button {
             color: white;
         }
-        .toast-success {
-            background-color: #28a745 !important;
-            color: white !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-
     </style>
 </head>
 <body>
     <div class="login-card">
-        <h2 class="form-title">Login</h2>
-        <form method="POST" action="{{route('login.try')}}">
+        <h2 class="form-title">Validar Token</h2>
+        <form method="POST" action="{{route('token.validate')}}">
             @csrf
-            <div class="mb-3">
-                <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" name="email" required autofocus>
-            </div>
-            <div class="mb-4">
-                <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+            <div class="token-inputs">
+                @for ($i = 1; $i <= 6; $i++)
+                    <input type="text" name="digit{{ $i }}" maxlength="1" class="form-control digit-input" required>
+                @endfor
             </div>
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Entrar</button>
+                <button type="submit" class="btn btn-primary">Validar</button>
             </div>
-            <a href="/recuperar-senha" class="small-link">Esqueci minha senha</a>
         </form>
     </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
@@ -123,16 +115,21 @@
         };
         toastr.error("{{ session('mensagem') }}");
     @endif
-    @if(session('success'))
-    toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "timeOut": "4000"
-        };
-        toastr.success("{{ session('success') }}");
-    @endif
-</script>
 
+    // Avança automaticamente para o próximo input
+    document.querySelectorAll('.digit-input').forEach((input, index, inputs) => {
+        input.addEventListener('input', () => {
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+    });
+</script>
 </body>
 </html>
