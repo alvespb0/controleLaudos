@@ -89,7 +89,7 @@
 <body>
     <div class="login-card">
         <h2 class="form-title">Email do Usuário</h2>
-        <form method="POST" action="{{route('login.try')}}">
+        <form method="POST" action="{{route('token.pass')}}">
             @csrf
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TokenRecuperacaoMail;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\TokenRecuperacao;
@@ -200,16 +203,32 @@ class AuthController extends Controller
      */
     public function tokenUserForgotPass(Request $request){
         $user = User::where('email', $request->email)->first();
-
-        if($user->count > 0){
+        /* dd($user); */
+        if($user){
             $token = substr(bin2hex(random_bytes(3)), 0, 6);
 
             TokenRecuperacao::create([
                 'email' => $user->email,
                 'token' => $token,
-                'expiracao' => time() + 15 * 60
+                'expiracao' => now()->addMinutes(15)
             ]);
+
+            $this->enviarEmailRecuperacao($user->email, $user->name, $token);
+
+            return view('/Auth/Token_Pass');
+        }else{
+            session()->flash('mensagem', 'teste');
+
+            return view('/Auth/Login');    
         }
     }
+
+    /**
+     * faz o envio do email de recuperação de senha
+     */
+    private function enviarEmailRecuperacao($email, $nome, $token){
+        Mail::to($email)->send(new TokenRecuperacaoMail($token, $nome));
+    }
+
 }
 
