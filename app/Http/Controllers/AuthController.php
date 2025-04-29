@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TokenRecuperacaoMail;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\TokenRecuperacao;
 use App\Models\Op_Comercial;
 use App\Models\Op_Tecnico;
 
@@ -172,6 +176,9 @@ class AuthController extends Controller
         return redirect()->route('readUsers');
     }
 
+    /**
+     * deleta o user dado o ID
+     */
     public function deleteUser($id){
         $user = User::findOrFail($id);
 
@@ -181,5 +188,99 @@ class AuthController extends Controller
 
         return redirect()->route('readUsers');
     }
+
+    /**
+     * retorna apenas a view de forgot pass
+     */
+    public function emailUserForgotPass(){
+        return view('Auth/Forgot_Pass');
+    }
+
+    /**
+     * Recebe um email via POST, verifica se alguma usuário existe com esse email se existir envia um token de recuperação
+     * @param Request $request
+     * @return redirect
+     */
+    public function tokenUserForgotPass(Request $request){
+        $user = User::where('email', $request->email)->first();
+        /* dd($user); */
+        if($user){
+            $token = substr(bin2hex(random_bytes(3)), 0, 6);
+
+            TokenRecuperacao::create([
+                'email' => $user->email,
+                'token' => $token,
+                'expiracao' => now()->addMinutes(15)
+            ]);
+
+            $this->enviarEmailRecuperacao($user->email, $user->name, $token);
+
+            return view('Auth/Token_Pass');
+        }else{
+            session()->flash('mensagem', 'teste');
+
+            return view('/Auth/Login');    
+        }
+    }
+
+    /**
+     * faz o envio do email de recuperação de senha
+     */
+    private function enviarEmailRecuperacao($email, $nome, $token){
+        Mail::to($email)->send(new TokenRecuperacaoMail($token, $nome));
+    }
+
+    /**
+     * recebe o roken valida se existe na tabla e se não está expirado
+     * @param string
+     */
+    public function validateTokenPass(Request $request){
+        $token = implode('', [
+            $request->digit1, $request->digit2, $request->digit3,
+            $request->digit4, $request->digit5, $request->digit6,
+        ]);
+        
+        $token = TokenRecuperacao::where('token', $token)->first();
+
+        if (!$token) {
+            session()->flash('mensagem', 'Token inválido.');
+            return view('Auth/Token_Pass');
+        }
+    
+        if (strtotime($token->expiracao) < now()->timestamp) {
+            session()->flash('mensagem', 'Token expirado. Solicite um novo.');
+            return view('Auth/Token_Pass');
+        }
+
+        $user = User::where('email', $token->email)->first();
+
+        if (!$user) {
+            session()->flash('mensagem', 'Usuário não encontrado.');
+            return view('Auth/Token_Pass');
+        }
+        
+        return view('Auth/Alter_Pass', ['userId' => $user->id, 'tokenId' => $token->id]);
+    }
+
+    /**
+     * recebe um id de usuário via input hidden e altera a senha desse usuário
+     * @param int $id
+     * @param string $password
+     * @return redirect
+     */
+    public function alterPassUser(Request $request){
+        $user = User::findOrFail($request->id);
+
+        $user->update([
+            'password'=> $request->password,
+        ]);
+
+        $token = TokenRecuperacao::findOrFail($request->tokenId);
+        $token->delete();
+
+        session()->flash('success','Senha alterado com sucesso!');
+        return redirect('login');
+    }
+
 }
 

@@ -89,6 +89,12 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
 Route::controller(AuthController::class)->group(function (){
     Route::get('/login','login')->name('login.show');
 
+    Route::get('/recuperar-senha','emailUserForgotPass')->name('email.solicitaPass');
+    Route::post('/recuperar-senha', 'tokenUserForgotPass')->name('token.pass');
+
+    Route::post('/recuperar-senha/token', 'validateTokenPass')->name('token.validate');
+    Route::post('/recuperar-senha/alterar-senha', 'alterPassUser')->name('alter.password');
+
     Route::post('/login/auth','tryLogin')->name('login.try');
 
     Route::get('/logout', 'logout')->name('logout');
