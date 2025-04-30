@@ -21,6 +21,8 @@ class Laudo extends Model
         'data_previsao',
         'data_conclusao',
         'data_fim_contrato',
+        'data_aceite',
+        'esocial',
         'numero_clientes',
         'tecnico_id',
         'status_id',

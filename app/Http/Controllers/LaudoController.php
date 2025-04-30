@@ -39,6 +39,8 @@ class LaudoController extends Controller
             'data_previsao' => $request->dataPrevisao,
             'data_conclusao' => null,
             'data_fim_contrato' => $request->dataFimContrato,
+            'data_aceite' => $request->dataAceiteContrato,
+            'esocial' => $request->esocial,
             'numero_clientes' => $request->numFuncionarios,
             'tecnico_id' => null,
             'status_id' => null,
@@ -88,6 +90,8 @@ class LaudoController extends Controller
             'nome' => $request->nome,
             'data_previsao' => $request->dataPrevisao,
             'data_fim_contrato' => $request->dataFimContrato,
+            'data_aceite' => $request->dataAceiteContrato,
+            'esocial' => $request->esocial,
             'numero_clientes' => $request->numFuncionarios,
             'cliente_id' => $request->cliente,
             'comercial_id' => $request->comercial
