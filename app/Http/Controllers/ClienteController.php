@@ -48,8 +48,8 @@ class ClienteController extends Controller
     * @return Array
     */
    public function readCliente(){
-       $clientes = Cliente::all();
-       return view('Cliente/Cliente_show', ['clientes'=> $clientes]);
+        $clientes = Cliente::orderBy('nome', 'asc')->paginate(10);
+        return view('Cliente/Cliente_show', ['clientes'=> $clientes]);
    }
 
    /**

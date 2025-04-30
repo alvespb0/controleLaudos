@@ -58,7 +58,7 @@ class LaudoController extends Controller
     * @return Array
     */
     public function readLaudo(){
-        $laudos = Laudo::all();
+        $laudos = Laudo::orderBy('nome', 'asc')->paginate(10);
         return view('Laudo/Laudo_show', ['laudos'=> $laudos]);
     }
 

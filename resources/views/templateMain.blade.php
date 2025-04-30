@@ -156,6 +156,48 @@
         .navbar-toggler-icon::after {
             bottom: 0;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding-left: 0;
+            list-style: none;
+            margin-top: 20px;
+            }
+
+        .page-item {
+            margin: 0 5px;
+        }
+
+        .page-link {
+            color: var(--secondary-color);
+            background-color: var(--light-color);
+            border: 1px solid var(--accent-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .page-link:hover {
+            background-color: var(--hover-color);
+            color: #ffffff;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+
+        .page-item.disabled .page-link {
+            color: var(--gray-color);
+            pointer-events: none;
+            background-color: #f5f5f5;
+            border-color: #ddd;
+        }
+
+
     </style>
 </head>
 <body>
