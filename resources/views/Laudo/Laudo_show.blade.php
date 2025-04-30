@@ -38,6 +38,29 @@
                         @endforeach
                     </tbody>
                 </table>
+                <!-- PAGINAÇÃO -->
+                <div class="col-auto mx-auto">
+                    <nav aria-label="Navegação de páginas">
+                        <ul class="pagination">
+                            {{-- Botão "Anterior" --}}
+                            <li class="page-item {{ $laudos->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $laudos->previousPageUrl() }}" tabindex="-1">&laquo;</a>
+                            </li>
+
+                            {{-- Links de páginas com intervalo dinâmico --}}
+                            @for ($i = 1; $i <= $laudos->lastPage(); $i++)
+                                <li class="page-item {{ $i == $laudos->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $laudos->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+
+                            {{-- Botão "Próxima" --}}
+                            <li class="page-item {{ !$laudos->hasMorePages() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $laudos->nextPageUrl() }}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             @endif
         </div>
     </div>
