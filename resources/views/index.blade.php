@@ -79,9 +79,10 @@
                             </div>
                         </div>
                         <p class="card-text">
-                            <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}} <br>
+                            <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}} {{$laudo->esocial ? '(Esocial)' : ''}}<br>
                             <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
                             <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
+                            <strong>Data de Aceite: </strong>{{$laudo->data_aceite !== null ? $laudo->data_aceite : 'Data de aceite não definido'}} <br>
                             <strong>Data Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$laudo->data_conclusao !== null ? $laudo->data_conclusao : ''}}"> <br> 
                             <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br><br>
                             <button type="button" class="btn btn-info" id="toggleContatosBtn{{$laudo->id}}">

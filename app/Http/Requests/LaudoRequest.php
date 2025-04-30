@@ -25,6 +25,8 @@ class LaudoRequest extends FormRequest
             'nome' => 'required|string|min:5|max:255',
             'dataPrevisao' => 'nullable|date',
             'dataFimContrato' => 'required|date',
+            'dataAceiteContrato' => 'required|date',
+            'esocial' => 'required|boolean',
             'numFuncionarios' => 'required|integer|min:1',
             'cliente' => 'required|exists:cliente,id',
             'comercial' => 'required|exists:op_comercial,id'
@@ -42,6 +44,12 @@ class LaudoRequest extends FormRequest
 
             'dataFimContrato.required' => 'A data de fim do contrato é obrigatória.',
             'dataFimContrato.date' => 'A data de fim do contrato deve ser uma data válida.',
+
+            'dataAceiteContrato.required' => 'A data de aceite do contrato é obrigatória.',
+            'dataAceiteContrato.date' => 'A data de aceite do contrato deve ser uma data válida.',
+
+            'esocial.required' => 'Você precisa selecionar se o cliente é esocial ou não.',
+            'esocial.boolean' => 'Valor inválido para o campo esocial.',
 
             'cliente.required' => 'O cliente é obrigatório.',
             'cliente.exists' => 'O cliente selecionado é inválido.',

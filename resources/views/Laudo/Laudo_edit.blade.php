@@ -27,6 +27,11 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="dataAceiteContrato">Data de Aceite do Contrato</label>
+                    <input type="date" name="dataAceiteContrato" id="dataAceiteContrato" class="form-control" value="{{$laudo->data_aceite}}" required>
+                </div>
+
+                <div class="mb-3">
                     <label for="dataFimContrato">Data de fim de contrato</label>
                     <input type="date" name="dataFimContrato" id="dataFimContrato" class="form-control" value="{{$laudo->data_fim_contrato}}" required>
                 </div>
@@ -38,6 +43,18 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label d-block">Esocial?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="esocial" id="esocial_sim" value="1" {{$laudo->esocial ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="esocial_sim">Sim</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="esocial" id="esocial_nao" value="0" {{!$laudo->esocial ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="esocial_nao">Não</label>
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <label for="numFunc">Número de funcionários</label>
                     <input type="number" name="numFuncionarios" class="form-control" id="" placeholder="insira o numero de funcionários" min=1 required value="{{$laudo->numero_clientes}}">
