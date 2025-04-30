@@ -27,6 +27,11 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="dataAceiteContrato">Data de Aceite do Contrato</label>
+                    <input type="date" name="dataAceiteContrato" id="dataAceiteContrato" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
                     <label for="dataFimContrato">Data de fim de contrato</label>
                     <input type="date" name="dataFimContrato" id="dataFimContrato" class="form-control" required>
                 </div>
@@ -38,6 +43,17 @@
                             <option value="{{$cliente->id}}">{{$cliente->nome}}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label d-block">Esocial?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="esocial" id="esocial_sim" value="1" required>
+                        <label class="form-check-label" for="esocial_sim">Sim</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="esocial" id="esocial_nao" value="0" required>
+                        <label class="form-check-label" for="esocial_nao">Não</label>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="numFunc">Número de funcionários</label>
