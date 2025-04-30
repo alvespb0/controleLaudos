@@ -41,7 +41,7 @@ class TokenRecuperacaoMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'Auth/Mail/email_token_recuperacao',
+            view: 'Auth/Mail/Email_token_recuperacao',
             with: [
                 'token' => $this->token,
                 'nome' => $this->nome,
