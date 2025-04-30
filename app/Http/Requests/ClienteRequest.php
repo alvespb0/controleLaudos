@@ -25,7 +25,7 @@ class ClienteRequest extends FormRequest
 
         return [
             'nome' => 'required|string|min:5|max:255',
-            'cnpj' => "required|string|size:14|unique:cliente,cnpj,{$id}",
+            'cnpj' => "required|string|min:11|max:14|unique:cliente,cnpj,{$id}",
             'email' => 'nullable|string|min:5|max:255',
             'telefone' => 'required|array|min:1',
             'telefone.*' => 'required|string|min:8|max:14',
@@ -42,7 +42,8 @@ class ClienteRequest extends FormRequest
 
             'cnpj.required' => 'O campo CNPJ é obrigatório.',
             'cnpj.string'   => 'O campo CNPJ deve conter apenas números.',
-            'cnpj.size'     => 'O CNPJ deve conter exatamente :size caracteres (sem pontuação).',
+            'cnpj.min'     => 'O CNPJ/CPF deve conter no mínimo :min caracteres (CPF sem pontuação).',
+            'cnpj.max'     => 'O CNPJ/CPF deve conter no máximo :max caracteres (CNPJ sem pontuação).',
             'cnpj.unique'   => 'Este CNPJ já está cadastrado.',   
             
             'email.string' => 'O campo email deve ser um texto',
