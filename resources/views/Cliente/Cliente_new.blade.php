@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="cnpj">CNPJ</label>
+                    <label for="cnpj">CNPJ/CPF</label>
                     <input type="text" name="cnpj" id="cnpj" class="form-control" placeholder="CNPJ do cliente" required>
                 </div>
 
