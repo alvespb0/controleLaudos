@@ -17,7 +17,7 @@
                         <tr>
                             <th>id</th>
                             <th>Cliente</th>
-                            <th>CNPJ</th>
+                            <th>CNPJ/CPF</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
