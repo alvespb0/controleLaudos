@@ -5,6 +5,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LaudoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RelatorioLaudoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,3 +100,7 @@ Route::controller(AuthController::class)->group(function (){
 
     Route::get('/logout', 'logout')->name('logout');
 });
+
+/** --------------------------------------------- */
+/**              Rotas Classe Relatorio           */
+Route::get('/relatorios/laudos', [RelatorioLaudoController::class, 'exportar'])->name('relatorios.laudos');
