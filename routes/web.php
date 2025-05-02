@@ -103,4 +103,10 @@ Route::controller(AuthController::class)->group(function (){
 
 /** --------------------------------------------- */
 /**              Rotas Classe Relatorio           */
-Route::get('/relatorios/laudos', [RelatorioLaudoController::class, 'exportar'])->name('relatorios.laudos');
+Route::controller(RelatorioLaudoController::class)->group(function (){
+    Route::get('/relatorios', 'tipoRelatorio')->name('tipo.relatorio');
+    Route::post('/relatorios', 'requestTipoRelatorio')->name('request.tipoRelatorio');
+
+    Route::get('/relatorios/laudos', [RelatorioLaudoController::class, 'exportar'])->name('relatorios.laudos');
+
+});
