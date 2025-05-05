@@ -268,6 +268,14 @@
                         </ul>
                     </li>
                     @endif
+                    @if(Auth::user()->tipo === 'admin')
+                    <li class="nav-item">
+                        <a class="nav-link" href="/relatorios">
+                        <i class="bi bi-file-earmark"></i>
+                        Relatórios
+                        </a>
+                    </li>
+                    @endif
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">

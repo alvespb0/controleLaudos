@@ -5,6 +5,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LaudoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RelatorioLaudoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,16 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
 });
 
 /** --------------------------------------------- */
+/**              Rotas Classe Relatorio           */
+Route::middleware(['checkUserType:admin'])->controller(RelatorioLaudoController::class)->group(function (){
+    Route::get('/relatorios', 'tipoRelatorio')->name('tipo.relatorio');
+    Route::post('/relatorios', 'requestTipoRelatorio')->name('request.tipoRelatorio');
+
+    Route::post('/relatorios/download', 'gerarRelatorio')->name('gerar.relatorio');
+
+});
+
+/** --------------------------------------------- */
 /**              Rotas Classe Auth                */
 Route::controller(AuthController::class)->group(function (){
     Route::get('/login','login')->name('login.show');
@@ -99,3 +110,4 @@ Route::controller(AuthController::class)->group(function (){
 
     Route::get('/logout', 'logout')->name('logout');
 });
+
