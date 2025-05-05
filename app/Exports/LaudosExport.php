@@ -23,9 +23,42 @@ class LaudosExport implements
     WithTitle,
     WithEvents
 {
+    protected $filtros;
+
+    public function __construct(array $filtros)
+    {
+        $this->filtros = $filtros;
+    }
+
     public function collection()
     {
-        return Laudo::with(['cliente', 'comercial', 'tecnico', 'status'])->get();
+        $query = Laudo::query();
+
+        if (!empty($this->filtros['dataInicio'])) {
+            $query->whereDate('data_conclusao', '>=', $this->filtros['dataInicio']);
+        }
+
+        if (!empty($this->filtros['dataFim'])) {
+            $query->whereDate('data_conclusao', '<=', $this->filtros['dataFim']);
+        }
+
+        if(!empty($this->filtros['dataAceiteInicio'])){
+            $query->whereDate('data_aceite', '>=', $this->filtros['dataAceiteInicio']);
+        }
+
+        if(!empty($this->filtros['dataAceiteFim'])){
+            $query->whereDate('data_aceite', '<=', $this->filtros['dataAceiteFim']);
+        }
+
+        if (!empty($this->filtros['cliente'])) {
+            $query->where('cliente_id', $this->filtros['cliente']);
+        }
+
+        if (!empty($this->filtros['status'])) {
+            $query->where('status_id', $this->filtros['status']);
+        }
+
+        return $query->get();
     }
 
     public function map($laudo): array
