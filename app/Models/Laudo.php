@@ -51,6 +51,6 @@ class Laudo extends Model
     }
 
     public function deletedBy(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 }

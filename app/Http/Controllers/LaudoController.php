@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\LaudoRequest; 
 use App\Http\Requests\LaudoUpdateRequest; 
@@ -127,11 +128,26 @@ class LaudoController extends Controller
      * @return View
      */
     public function laudosExcluidos(){
-        $laudosExcluidos = Laudo::onlyTrashed()->with('deletedBy')->get();
+        $laudosExcluidos = Laudo::onlyTrashed()->with('deletedBy')->orderByDesc('deleted_at')->paginate(10);
 
-        return view('laudos_deleted', ['laudosExcluidos' => $laudosExcluidos]);
+        return view('/Laudo/Laudo_deleted', ['laudosExcluidos' => $laudosExcluidos]);
     }
     
+    /**
+     * recebe um ID via get e restaura esse laudo excluído
+     * @param int
+     * @return view
+     */
+    public function restoreLaudo($id){
+        $laudo = Laudo::withTrashed()->findOrFail($id);
+
+        $laudo->restore();
+
+        session()->flash('mensagem', 'Laudo restaurado com sucesso');
+
+        return redirect()->route('readLaudo');
+    }
+
     /**
      * Recebe uma solicitação GET com uma request de filtro
      * @param Request
