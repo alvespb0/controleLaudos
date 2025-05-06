@@ -74,6 +74,12 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(LaudoController
     Route::get('/laudo/excluir/{id}','deleteLaudo')->name('delete.laudo');
 });
 
+Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
+    Route::get('/laudo/excluidos-anteriormente','laudosExcluidos')->name('read.deletedLaudo'); # Abre a view dos excluídos anteriormente
+
+    Route::get('/laudo/excluidos-anteriormente/restaurar/{id}', 'restoreLaudo')->name('restore.deletedLaudo'); # restaura o dado excluído
+});
+
 /** --------------------------------------------- */
 /**    Rotas Classe Laudo para main dashboard     */
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){

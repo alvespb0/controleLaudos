@@ -243,6 +243,9 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/laudo/cadastro"><i class="bi bi-plus-circle"></i> Novo Laudo</a></li>
                             <li><a class="dropdown-item" href="/laudo"><i class="bi bi-files"></i> Laudos Cadastrados</a></li>
+                            @if(Auth::user()->tipo === 'admin')
+                            <li><a class="dropdown-item" href="/laudo/excluidos-anteriormente"><i class="bi bi-trash"></i>Laudos Excluídos</a></li>
+                            @endif
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
