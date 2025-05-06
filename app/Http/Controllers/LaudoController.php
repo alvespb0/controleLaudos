@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\LaudoRequest; 
 use App\Http\Requests\LaudoUpdateRequest; 
@@ -107,14 +108,44 @@ class LaudoController extends Controller
     * @param int $id
     * @return view
     */
-   public function deleteLaudo($id){
-    $laudo = Laudo::findOrFail($id);
+    public function deleteLaudo($id){
+        $laudo = Laudo::findOrFail($id);
 
-    $laudo->delete();
+        $laudo->update([
+            'deleted_by' => Auth::user()->id
+        ]);
 
-    session()->flash('mensagem', 'Laudo excluido com sucesso');
+        $laudo->delete();
 
-    return redirect()->route('readLaudo');
+        session()->flash('mensagem', 'Laudo excluido com sucesso');
+
+        return redirect()->route('readLaudo');
+    }
+
+
+    /**
+     * Retorna a view da 'lixeira' contendo os laudos deletados com softdelete
+     * @return View
+     */
+    public function laudosExcluidos(){
+        $laudosExcluidos = Laudo::onlyTrashed()->with('deletedBy')->orderByDesc('deleted_at')->paginate(10);
+
+        return view('/Laudo/Laudo_deleted', ['laudosExcluidos' => $laudosExcluidos]);
+    }
+    
+    /**
+     * recebe um ID via get e restaura esse laudo excluído
+     * @param int
+     * @return view
+     */
+    public function restoreLaudo($id){
+        $laudo = Laudo::withTrashed()->findOrFail($id);
+
+        $laudo->restore();
+
+        session()->flash('mensagem', 'Laudo restaurado com sucesso');
+
+        return redirect()->route('readLaudo');
     }
 
     /**
