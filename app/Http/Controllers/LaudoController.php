@@ -107,16 +107,31 @@ class LaudoController extends Controller
     * @param int $id
     * @return view
     */
-   public function deleteLaudo($id){
-    $laudo = Laudo::findOrFail($id);
+    public function deleteLaudo($id){
+        $laudo = Laudo::findOrFail($id);
 
-    $laudo->delete();
+        $laudo->update([
+            'deleted_by' => Auth::user()->id
+        ]);
 
-    session()->flash('mensagem', 'Laudo excluido com sucesso');
+        $laudo->delete();
 
-    return redirect()->route('readLaudo');
+        session()->flash('mensagem', 'Laudo excluido com sucesso');
+
+        return redirect()->route('readLaudo');
     }
 
+
+    /**
+     * Retorna a view da 'lixeira' contendo os laudos deletados com softdelete
+     * @return View
+     */
+    public function laudosExcluidos(){
+        $laudosExcluidos = Laudo::onlyTrashed()->with('deletedBy')->get();
+
+        return view('laudos_deleted', ['laudosExcluidos' => $laudosExcluidos]);
+    }
+    
     /**
      * Recebe uma solicitação GET com uma request de filtro
      * @param Request
