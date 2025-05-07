@@ -173,6 +173,13 @@ class LaudoController extends Controller
             }
         }
     
+        if($request->filled('mesCompetencia')){
+            [$ano, $mes] = explode('-', $request->mesCompetencia);
+
+            $laudos = $laudos->whereYear('data_aceite', $ano)
+                             ->whereMonth('data_aceite', $mes);
+        }
+
         if($request->filled('status')){
             $laudos = $laudos->where('status_id', $request->status);
         }
