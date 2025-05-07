@@ -23,24 +23,39 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Laudos Cadastrados</h2>
-        <form action="{{route('dashboard.filter')}}" method="GET">
-            <div class="d-flex gap-3">
-                <div class="input-group" style="width: 200px;">
+        <form action="{{ route('dashboard.filter') }}" method="GET">
+            <div class="d-flex gap-3 align-items-end">
+                <div style="width: 200px;">
+                    <label for="clienteFilter" class="form-label text-muted small mb-1">Buscar Cliente</label>
                     <input type="text" class="form-control" name="search" id="clienteFilter" placeholder="Buscar cliente...">
                 </div>
-                <select name="status" class="form-select" id="statusFilter" style="width: 180px;">
-                    <option value="" selected>Todos os status</option>
-                    @foreach($status as $s)
-                        <option value="{{$s->id}}">{{$s->nome}}</option>
-                    @endforeach
-                </select>
-                <input type="date" class="form-control" id="dataFilter" name ="dataConclusao" style="width: 180px;">
-                <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm" style="background-color: var(--primary-color); border: none;">
-                    <i class="bi bi-search"></i>
-                </button>
+                <div style="width: 180px;">
+                    <label for="dataFilterMes" class="form-label text-muted small mb-1">Mês</label>
+                    <input type="month" class="form-control" id="dataFilterMes" name="mesCompetencia">
+                </div>
+                <div style="width: 180px;">
+                    <label for="statusFilter" class="form-label text-muted small mb-1">Status</label>
+                    <select name="status" class="form-select" id="statusFilter">
+                        <option value="" selected>Todos os status</option>
+                        @foreach($status as $s)
+                            <option value="{{ $s->id }}">{{ $s->nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div style="width: 180px;">
+                    <label for="dataFilterConclusao" class="form-label text-muted small mb-1">Data de Conclusão</label>
+                    <input type="date" class="form-control" id="dataFilterConclusao" name="dataConclusao">
+                </div>
+                <div>
+                    <label class="form-label d-block invisible">Buscar</label>
+                    <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm" style="background-color: var(--primary-color); border: none;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
+
     @if (session('Error'))
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             {{ session('Error') }}
