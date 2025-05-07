@@ -188,7 +188,7 @@ class LaudoController extends Controller
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
     
-        $laudos = $laudos->orderBy('created_at', 'desc')->paginate(6); 
+        $laudos = $laudos->orderBy('created_at', 'desc')->paginate(6)->appends($request->query()); 
     
         return view("index", [
             "laudos" => $laudos, 
