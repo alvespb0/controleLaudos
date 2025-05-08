@@ -20,6 +20,27 @@
             </div>
         </div>
     </div>
+    <div class="mb-3">
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#indicadores" aria-expanded="false" aria-controls="indicadores">
+            Mostrar indicadores
+        </button>
+    </div>
+
+    <div class="collapse mb-4" id="indicadores">
+        <div class="row g-3">
+            @foreach ($status as $s)
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card text-white shadow-sm border-0 rounded-3" style="background-color: {{ $s->cor }};">
+                        <div class="card-body p-3 text-center">
+                            <h6 class="card-title mb-1 text-white">{{ $s->nome }}</h6>
+                            <h4 class="fw-bold mb-0">{{ $contagemPorStatus[$s->id] ?? 0 }}</h4>
+                            <small>laudos</small>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Laudos Cadastrados</h2>
@@ -55,6 +76,7 @@
             </div>
         </form>
     </div>
+
 
     @if (session('Error'))
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
