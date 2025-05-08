@@ -158,6 +158,18 @@ class LaudoController extends Controller
     
         $status = Status::all();
         $tecnicos = Op_Tecnico::all(); 
+
+        $contagemPorStatus = [];
+        foreach ($status as $s) {
+            $contagemPorStatus[$s->id] = Laudo::where('status_id', $s->id)->count();
+        }
+        $semStatusCount = Laudo::whereNull('status_id')->count();
+        $status->push((object)[
+            'id' => 'sem_status',
+            'nome' => 'Sem status',
+            'cor' => '#6c757d' // cinza Bootstrap
+        ]);
+        $contagemPorStatus['sem_status'] = $semStatusCount;
     
         if($request->filled('search')){
             $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id');
@@ -193,7 +205,8 @@ class LaudoController extends Controller
         return view("index", [
             "laudos" => $laudos, 
             "status" => $status,
-            "tecnicos" => $tecnicos
+            "tecnicos" => $tecnicos,
+            "contagemPorStatus" => $contagemPorStatus
         ]);
     }
     
@@ -205,7 +218,20 @@ class LaudoController extends Controller
         $laudos = Laudo::orderBy('created_at', 'desc')->paginate(6);
         $status = Status::all();
         $tecnicos = Op_Tecnico::all();
-        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
+
+        $contagemPorStatus = [];
+        foreach ($status as $s) {
+            $contagemPorStatus[$s->id] = Laudo::where('status_id', $s->id)->count();
+        }
+        $semStatusCount = Laudo::whereNull('status_id')->count();
+        $status->push((object)[
+            'id' => 'sem_status',
+            'nome' => 'Sem status',
+            'cor' => '#6c757d'
+        ]);
+        $contagemPorStatus['sem_status'] = $semStatusCount;
+
+        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos, "contagemPorStatus" => $contagemPorStatus]);
     }
 
     /**
