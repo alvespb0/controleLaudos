@@ -154,11 +154,12 @@ class LaudoController extends Controller
      * @return View
      */
     public function filterDashboard(Request $request){
+
         $laudos = Laudo::query();
-    
         $status = Status::all();
         $tecnicos = Op_Tecnico::all(); 
 
+        /* Parte dos Indicadores */
         $contagemPorStatus = [];
         foreach ($status as $s) {
             $contagemPorStatus[$s->id] = Laudo::where('status_id', $s->id)->count();
@@ -167,10 +168,11 @@ class LaudoController extends Controller
         $status->push((object)[
             'id' => 'sem_status',
             'nome' => 'Sem status',
-            'cor' => '#6c757d' // cinza Bootstrap
+            'cor' => '#6c757d'
         ]);
         $contagemPorStatus['sem_status'] = $semStatusCount;
     
+        /* Filtro de Search Cliente */
         if($request->filled('search')){
             $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id');
             if($clientes->isNotEmpty()){
@@ -185,6 +187,7 @@ class LaudoController extends Controller
             }
         }
     
+        /* Filtro de Search Mes de competencia (pela data de aceite) */
         if($request->filled('mesCompetencia')){
             [$ano, $mes] = explode('-', $request->mesCompetencia);
 
@@ -192,16 +195,27 @@ class LaudoController extends Controller
                              ->whereMonth('data_aceite', $mes);
         }
 
+        /* Filtro de Search pelo status do laudo */
         if($request->filled('status')){
             $laudos = $laudos->where('status_id', $request->status);
         }
     
+        /* Filtro de Search pela data de conclusão (específica) */
         if($request->filled('dataConclusao')){
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
     
-        $laudos = $laudos->orderBy('created_at', 'desc')->paginate(6)->appends($request->query()); 
+        /* Filtro pela ordenação */
+        $ordem = $request->input('ordenarPor', 'mais_novos'); 
+
+        if ($ordem === 'mais_antigos') {
+            $laudos = $laudos->orderBy('created_at', 'asc');
+        } else {
+            $laudos = $laudos->orderBy('created_at', 'desc');
+        }
     
+        $laudos = $laudos->paginate(6)->appends($request->query());
+
         return view("index", [
             "laudos" => $laudos, 
             "status" => $status,
