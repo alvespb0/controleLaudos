@@ -27,6 +27,7 @@ class ClienteRequest extends FormRequest
             'nome' => 'required|string|min:5|max:255',
             'cnpj' => "required|string|min:11|max:14|unique:cliente,cnpj,{$id}",
             'email' => 'nullable|string|min:5|max:255',
+            'cliente_novo' => 'required|boolean',
             'telefone' => 'required|array|min:1',
             'telefone.*' => 'required|string|min:8|max:14',
         ];
@@ -49,6 +50,9 @@ class ClienteRequest extends FormRequest
             'email.string' => 'O campo email deve ser um texto',
             'email.min' => 'O campo email deve ter no mínimo :min caracteres',
             'email.max' => 'O campo email deve ter no máximo :max caracteres',
+
+            'cliente_novo.required' => 'O campo cliente novo é obrigatório',
+            'cliente.boolean' => 'O campo cliente novo tem que ser um bool',
 
             'telefone.required' => 'O campo telefone é um campo obrigatório.',
             'telefone.array' => 'O campo telefone está com formato inválido.',
