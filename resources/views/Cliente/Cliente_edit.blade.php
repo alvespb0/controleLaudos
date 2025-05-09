@@ -25,7 +25,19 @@
                     <label for="cnpj">CNPJ</label>
                     <input type="text" name="cnpj" id="cnpj" class="form-control" value = "{{$cliente->cnpj}}" placeholder="CNPJ do cliente" required>
                 </div>
-            
+
+                <div class="mb-3">
+                    <label class="form-label d-block">Cliente novo ou Renovação?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_novo" value="1" {{$cliente->cliente_novo ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="cliente_novo">Cliente Novo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_renovacao" value="0" {{!$cliente->cliente_novo ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="cliente_renovacao">Cliente Renovado</label>
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <label for="email">E-mail</label>
                     <input type="email" name="email" id="email" class="form-control" placeholder="Email do Cliente" value ="{{$cliente->email}}">
