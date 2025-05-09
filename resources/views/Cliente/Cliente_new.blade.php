@@ -27,9 +27,22 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label d-block">Cliente novo ou Renovação?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_novo" value="1" required>
+                        <label class="form-check-label" for="cliente_novo">Cliente Novo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_renovacao" value="0" required>
+                        <label class="form-check-label" for="cliente_renovacao">Cliente Renovado</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label for="email">E-mail</label>
                     <input type="email" name="email" id="email" class="form-control" placeholder="Email do Cliente">
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label">Telefone(s)</label>
                     <div id="telefones">
@@ -39,8 +52,7 @@
                     </div>
                     <button type="button" id="addPhone" class="btn" style="background-color: var(--primary-color); color: white;">+ Adicionar Telefone</button>
                 </div>
-
-
+                
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
                 </div>

@@ -116,7 +116,16 @@
                             </div>
                         </div>
                         <p class="card-text">
-                            <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}} {{$laudo->esocial ? '(Esocial)' : ''}}<br>
+                            <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}}
+                            @if($laudo->esocial)
+                                <span class="badge bg-primary rounded-pill">Esocial</span>
+                            @endif 
+                            @if($laudo->cliente->cliente_novo)
+                                <span class="badge bg-success rounded-pill">Cliente Novo</span>
+                            @else
+                                <span class="badge bg-warning rounded-pill">Cliente Renovação</span>
+                            @endif
+                            <br>
                             <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
                             <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
                             <strong>Data de Aceite: </strong>{{$laudo->data_aceite !== null ? $laudo->data_aceite : 'Data de aceite não definido'}} <br>

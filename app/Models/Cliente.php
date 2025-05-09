@@ -15,7 +15,8 @@ class Cliente extends Model
     protected $fillable = [
         'nome',
         'cnpj',
-        'email'
+        'email',
+        'cliente_novo'
     ];
 
     public function telefone(){
