@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Exports\LaudosExport;
+use App\Exports\ClientesExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Status;
@@ -47,6 +48,13 @@ class RelatorioLaudoController extends Controller
                 'status' => $request->status
             ];
             return Excel::download(new LaudosExport($filtros), 'relatorio_laudos.xlsx');
+        }elseif($tipo === 'clientes'){
+            $filtros = [
+                'nomeCliente' => $request->nomeCliente,
+                'cnpjCliente' => $request->cnpj,
+                'cliente_novo' => $request->cliente_novo 
+            ];
+            return Excel::download(new ClientesExport($filtros),'relatorio_clientes.xlsx');
         }
     }
 
