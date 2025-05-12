@@ -65,6 +65,33 @@
             </div>
         </div>
         @endif
+
+        @if($tipoRelatorio == 'clientes')
+
+        <div class="mb-3">
+            <div class="mb-3">
+                <label for="nomeCliente" class="form-label">Nome do Cliente</label>
+                <input type="text" name="nomeCliente" id="nomeCliente" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="cnpj" class="form-label">CNPJ</label>
+                <input type="text" name="cnpj" id="cnpj" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label d-block">Cliente é novo ou renovado?</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_novo" value="1">
+                    <label class="form-check-label" for="cliente_novo">Cliente Novo</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_renovacao" value="0">
+                    <label class="form-check-label" for="cliente_renovacao">Cliente Renovado</label>
+                </div>
+            </div>
+        </div>
+        @endif
         <div class="text-end">
             <button type="submit" class="btn btn-primary">
                 <i class="bi bi-printer"></i> Gerar Relatório
