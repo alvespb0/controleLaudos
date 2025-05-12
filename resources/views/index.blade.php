@@ -149,7 +149,7 @@
                             <strong>Data Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$laudo->data_conclusao !== null ? $laudo->data_conclusao : ''}}"> <br> 
                             <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br><br>
                             <button type="button" class="btn btn-info" id="toggleContatosBtn{{$laudo->id}}">
-                                <i class="bi bi-phone"></i> Ver Contatos do cliente
+                                <i class="bi bi-phone"></i> Ver Dados do cliente
                             </button>
                             <div id="contatos{{$laudo->id}}" class="mt-2" style="display: none;">
                                 <strong>Email: </strong>{{ $laudo->cliente->email }} <br>
@@ -157,6 +157,7 @@
                                 @foreach($laudo->cliente->telefone as $telefone)
                                     {{ $telefone->telefone }} <br>
                                 @endforeach
+                                <strong>CNPJ:</strong> {{$laudo->cliente->cnpj}} <br>
                                 <br>
 
                             </div>
@@ -333,10 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (contatosDiv.style.display === "none") {
             contatosDiv.style.display = "block";
-            button.innerHTML = '<i class="bi bi-phone"></i> Ocultar Contatos';
+            button.innerHTML = '<i class="bi bi-phone"></i> Ocultar Dados';
         } else {
             contatosDiv.style.display = "none";
-            button.innerHTML = '<i class="bi bi-phone"></i> Ver Contatos do Cliente';
+            button.innerHTML = '<i class="bi bi-phone"></i> Ver Dados do Cliente';
         }
     }
 
