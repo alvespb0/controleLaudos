@@ -196,7 +196,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="" method="POST" enctype="multipart/form-data">
+                        <form action="{{route('envia-email.cliente')}}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="email" value = "{{$laudo->cliente->email}}">
                             <div class="mb-3">
@@ -205,7 +205,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">assunto</label>
-                                <input type="text" class="form-control" required>
+                                <input type="text" name="assunto" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Mensagem</label>

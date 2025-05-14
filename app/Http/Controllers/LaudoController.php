@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ClienteMail;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\LaudoRequest; 
 use App\Http\Requests\LaudoUpdateRequest; 
@@ -267,4 +270,32 @@ class LaudoController extends Controller
         return response()->json(['message' => 'Laudo Atualizado com sucesso']);
     }
 
+    /**
+     * recebe uma request da index, contendo destinatario, subject, body e (non-required) files[] e envia o emailCli
+     * @param Request $request
+     * @return view
+     */
+    public function enviaEmailCli(Request $request){
+        $files = [];
+        $destinatario = $request->email;
+        $subject = $request->assunto;
+        $body = $request->body;
+        
+        if ($request->hasFile('anexos')) {
+            foreach($request->file('anexos') as $file){
+                $files[] = [
+                    'content' => file_get_contents($file->getRealPath()),
+                    'name' => $file->getClientOriginalName(),
+                    'mime' => $file->getMimeType(),
+                ];
+            }
+        }
+        $user = Auth::user(); 
+        Mail::mailer('laudos')
+            ->to($destinatario)
+            ->send(new ClienteMail($body, $subject, $files, $user->email, $user->name));
+
+        session()->flash('mensagem','Email Enviado com sucesso!');
+        return redirect(route('dashboard.show'));
+    }
 }

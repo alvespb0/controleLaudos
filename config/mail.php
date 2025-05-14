@@ -56,7 +56,10 @@ return [
             'password' => env('MAIL_PASSWORD_2'),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
-
+                'from' => [
+                'address' => env('MAIL_FROM_ADDRESS_2', 'laudos@segmetre.com.br'),
+                'name' => env('MAIL_FROM_NAME_2', 'Laudos Resolve Segmetre'),
+            ],
         ],
 
         'ses' => [
