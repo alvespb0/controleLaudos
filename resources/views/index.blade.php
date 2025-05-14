@@ -173,16 +173,59 @@
 
                             </p>
                         <hr>
-                        <div class="d-flex justify-content-end mt-3">
-                            <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
-                        </div>
+                    <div class="d-flex justify-content-between mt-3 gap-2">
+                        <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
                     </form>
+                            
+                        <button type="button" class="btn btn-secondary enviar-btn" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#emailModal{{ $laudo->id }}"
+                            data-email="{{ $laudo->cliente->email }}">
+                            Enviar Email
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- MODAL PARA ENVIO DE EMAIL -->
+        <div class="modal fade" id="emailModal{{ $laudo->id }}" tabindex="-1" aria-labelledby="emailModalLabel{{ $laudo->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Enviar Email</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{route('envia-email.cliente')}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="email" value = "{{$laudo->cliente->email}}">
+                            <div class="mb-3">
+                                <label class="form-label">Destinatário</label>
+                                <input type="email" class="form-control recipient-email" value = "{{$laudo->cliente->email}}" disabled required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">assunto</label>
+                                <input type="text" name="assunto" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mensagem</label>
+                                <textarea class="form-control" name="body" rows="4"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" multiple>Anexos</label>
+                                <input type="file" class="form-control" name="anexos[]" multiple>
+                            </div>
+                            <button type="submit" class="btn btn-primary enviar-btn">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FIM DA MODAL DE ENVIO DE EMAIL -->
         @endforeach
     </div>
 </div>
+
 @if(!$laudos->isEmpty())
 <div class="col-auto ms-auto">
     <nav aria-label="Page navigation example">
@@ -210,6 +253,10 @@
 @endif
 
 <style>
+    .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5); /* Opacidade do fundo */
+}
+
     .card {
         border: none;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -302,6 +349,13 @@
         border-color: #1e7e34;
     }
 
+    .enviar-btn{
+        padding: 0.375rem 1.5rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;  
+        border: none;
+        background-color: var(--primary-color);      
+    }
     /* Estilo para o input de data */
     .border-light {
         border-color: #ced4da !important;
@@ -326,8 +380,18 @@
 </style>
 
 <script>
+    // Ao abrir a modal
+    var myModal = document.getElementById('emailModal{{ $laudo->id }}');
+    myModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // O botão que acionou a modal
+        var email = button.getAttribute('data-email'); // Pega o email do cliente
+
+        var emailInput = myModal.querySelector('#recipientEmail{{ $laudo->id }}');
+        emailInput.value = email; // Preenche o campo de email
+    });
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Função para alternar a visibilidade dos contatos
+    // --- Alternância de dados de contato ---
     function toggleContatos(laudoId) {
         const contatosDiv = document.getElementById('contatos' + laudoId);
         const button = document.getElementById('toggleContatosBtn' + laudoId);
@@ -341,67 +405,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Adiciona o evento de clique ao botão de cada laudo
-    const buttons = document.querySelectorAll('.btn-info');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            const laudoId = this.id.replace('toggleContatosBtn', '');
+    document.querySelectorAll('.btn-info').forEach(button => {
+        button.addEventListener('click', () => {
+            const laudoId = button.id.replace('toggleContatosBtn', '');
             toggleContatos(laudoId);
         });
     });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicializa a modal
+    // --- Modal de mensagens ---
     const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
     const messageModalBody = document.getElementById('messageModalBody');
 
-    // Função para mostrar mensagem na modal
     function showMessage(message, isError = false) {
         messageModalBody.innerHTML = message;
         messageModal.show();
     }
 
-    // Função para inicializar um card específico
+    // --- Inicializa cada formulário de laudo ---
     function initializeCard(form) {
         const saveBtn = form.querySelector('.save-btn');
         const statusSelect = form.querySelector('.status-select');
         const statusIndicator = form.querySelector('.status-indicator');
         const dataConclusaoInput = form.querySelector('input[name="dataConclusao"]');
 
-        // Atualiza a cor do indicador baseado na opção selecionada
+        // Define cor inicial do status
         function updateStatusColor() {
             const selectedOption = statusSelect.options[statusSelect.selectedIndex];
             const color = selectedOption.dataset.color;
             statusIndicator.style.backgroundColor = color;
         }
 
-        // Inicializa a cor do status
         updateStatusColor();
 
-        // Atualiza a cor quando o status muda
+        // Habilita botão salvar se status mudar
         statusSelect.addEventListener('change', () => {
             updateStatusColor();
             saveBtn.disabled = false;
         });
 
-        // Adiciona evento para o input de data de conclusão
-        dataConclusaoInput.addEventListener('change', () => {
-            saveBtn.disabled = false;
-        });
+        // Habilita botão salvar se data de conclusão mudar
+        if (dataConclusaoInput) {
+            dataConclusaoInput.addEventListener('change', () => {
+                saveBtn.disabled = false;
+            });
+        }
 
-        const inputs = form.querySelectorAll('select');
-        inputs.forEach(input => {
-            if (input !== statusSelect) {
-                input.addEventListener('change', () => {
+        // Habilita botão salvar se algum select mudar (exceto status)
+        const selects = form.querySelectorAll('select');
+        selects.forEach(select => {
+            if (select !== statusSelect) {
+                select.addEventListener('change', () => {
                     saveBtn.disabled = false;
                 });
             }
         });
 
-        form.addEventListener('submit', function(event) {
+        // --- Listener do submit do formulário ---
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
-            
+
             const formData = new FormData(this);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const laudoId = this.querySelector('input[name="laudo_id"]').value;
@@ -415,15 +477,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro na requisição');
-                }
+                if (!response.ok) throw new Error('Erro na requisição');
                 return response.json();
             })
             .then(data => {
                 if (data.message) {
                     showMessage(data.message);
-                    saveBtn.disabled = true;
+                    if (saveBtn) saveBtn.disabled = true;
                 } else if (data.error) {
                     showMessage(data.error, true);
                 }
@@ -435,9 +495,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inicializa todos os cards
-    const forms = document.querySelectorAll('form[id^="form-laudo-"]');
-    forms.forEach(form => {
+    // --- Inicializa todos os forms de laudos ---
+    document.querySelectorAll('form[id^="form-laudo-"]').forEach(form => {
         initializeCard(form);
     });
 });

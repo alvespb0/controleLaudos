@@ -227,7 +227,7 @@ class AuthController extends Controller
      * faz o envio do email de recuperação de senha
      */
     private function enviarEmailRecuperacao($email, $nome, $token){
-        Mail::to($email)->send(new TokenRecuperacaoMail($token, $nome));
+        Mail::mailer('default')->to($email)->send(new TokenRecuperacaoMail($token, $nome));
     }
 
     /**
