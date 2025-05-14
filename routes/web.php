@@ -89,6 +89,7 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
+    Route::post('/dashboard/envia-email', 'enviaEmailCli')->name('envia-email.cliente');
 });
 
 /** --------------------------------------------- */
