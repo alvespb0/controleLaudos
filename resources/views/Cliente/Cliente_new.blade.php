@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="d-flex justify-content-center">
-    <div class="card shadow-lg w-100" style="max-width: 600px; border: none; background-color: var(--mid-color);">
+    <div class="card shadow-lg w-100" style="max-width: 600px; border: none;">
         <div class="card-body p-4">
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -17,17 +17,17 @@
             <form action="{{ route('create.cliente') }}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="cliente" class="form-label">Cliente</label>
+                    <i class="bi bi-person"></i><label for="cliente" class="form-label">&nbspCliente</label>
                     <input type="text" class="form-control" id="cliente" name="nome" placeholder="nome do cliente" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="cnpj">CNPJ/CPF</label>
+                    <i class="bi bi-card-text"></i><label for="cnpj">&nbspCNPJ/CPF</label>
                     <input type="text" name="cnpj" id="cnpj" class="form-control" placeholder="CNPJ do cliente" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label d-block">Cliente novo ou Renovação?</label>
+                    <label class="form-label d-block"><i class="bi bi-arrow-repeat"></i>&nbspCliente novo ou Renovação?</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_novo" value="1" required>
                         <label class="form-check-label" for="cliente_novo">Cliente Novo</label>
@@ -39,12 +39,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="email">E-mail</label>
+                    <i class="bi bi-envelope"></i><label for="email">&nbspE-mail</label>
                     <input type="email" name="email" id="email" class="form-control" placeholder="Email do Cliente">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Telefone(s)</label>
+                    <i class="bi bi-telephone"></i><label class="form-label">&nbspTelefone(s)</label>
                     <div id="telefones">
                         <div class="input-group mb-2">
                             <input type="text" name="telefone[]" class="form-control" placeholder="Telefone" required>
@@ -53,8 +53,9 @@
                     <button type="button" id="addPhone" class="btn" style="background-color: var(--primary-color); color: white;">+ Adicionar Telefone</button>
                 </div>
                 
-                <div class="text-center">
+                <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
+                    <button type="reset" class="btn btn-secondary px-4">Limpar</button>
                 </div>
             </form>
         </div>
