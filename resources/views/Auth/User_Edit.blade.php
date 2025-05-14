@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="d-flex justify-content-center">
-    <div class="card shadow-lg w-100" style="max-width: 600px; border: none; background-color: var(--mid-color);">
+    <div class="card shadow-lg w-100" style="max-width: 600px; border: none;">
         <div class="card-body p-4">
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -17,22 +17,22 @@
             <form action="{{ route('update.user', $user->id) }}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="usuario" class="form-label">Usuario</label>
+                    <i class="bi bi-person"></i><label for="usuario" class="form-label">&nbspUsuário</label>
                     <input type="text" class="form-control" id="usuario" name="usuario" required value = "{{ $user->name }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">E-mail</label>
+                    <i class="bi bi-envelope"></i><label for="email" class="form-label">&nbspE-mail</label>
                     <input type="email" class="form-control" id="email" name="email" required value="{{ $user->email }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="senha" class="form-label">Senha</label>
+                    <i class="bi bi-key"></i><label for="senha" class="form-label">&nbspSenha</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="tipo">Tipo de Usuario</label>
+                    <i class="bi bi-lightbulb"></i><label for="tipo">&nbspTipo de Usuario</label>
                     <select name="tipo" id="tipo" class="form-control">
                         <option value="" selected>Selecione um tipo de usuário</option>
                         <option value="admin" {{$user->tipo == 'admin' ? 'selected' : ''}}>admin</option>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary px-4">Editar</button>
+                    <button type="submit" class="btn btn-primary col-sm-12">Editar</button>
                 </div>
             </form>
         </div>
