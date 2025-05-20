@@ -318,7 +318,15 @@ class LaudoController extends Controller
                     ->backgroundColor($colors);
 
         $tecnicosList = Op_Tecnico::withCount('laudos')->get();
-        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus]);
+
+        $labelsTecnico = $tecnicosList->pluck('usuario');
+        $dataTecnico = $tecnicosList->pluck('laudos_count');
+
+        $chatTecnico = new Chart;
+        $chatTecnico->labels($labelsTecnico);
+        $chatTecnico->dataset('Laudos por técnico', 'bar', $dataTecnico);
+
+        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chatTecnico]);
     }
 
 }
