@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use ConsoleTVs\Charts\Classes\Chartjs\Chart;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ClienteMail;
@@ -298,4 +300,25 @@ class LaudoController extends Controller
         session()->flash('mensagem','Email Enviado com sucesso!');
         return redirect(route('dashboard.show'));
     }
+
+    /**
+     * recebe uma url via método get, que retorna os gráficos de indicadores com chart JS
+     * @return view
+     */
+    public function dashboardGerencial(){
+        $statusList = Status::withCount('laudos')->get();
+
+        $labels = $statusList->pluck('nome')->toArray();
+        $data   = $statusList->pluck('laudos_count')->toArray(); # usa a relação para fazer uma coluna temporária e retornar a count
+        $colors = $statusList->pluck('cor')->toArray();          
+
+        $chartStatus = new Chart;
+        $chartStatus->labels($labels);
+        $chartStatus->dataset('Laudos por status', 'pie', $data)
+                    ->backgroundColor($colors);
+
+        $tecnicosList = Op_Tecnico::withCount('laudos')->get();
+        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus]);
+    }
+
 }

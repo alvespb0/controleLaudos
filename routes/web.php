@@ -86,6 +86,8 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
     Route::get('/','showDashboard')->name('dashboard.show');
 
+    Route::get('/graphs', 'dashboardGerencial');
+    
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
