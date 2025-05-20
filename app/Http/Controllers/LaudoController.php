@@ -202,7 +202,11 @@ class LaudoController extends Controller
 
         /* Filtro de Search pelo status do laudo */
         if($request->filled('status')){
-            $laudos = $laudos->where('status_id', $request->status);
+            if($request->status == "sem_status"){
+                $laudos = $laudos->where('status_id', null);
+            }else{
+                $laudos = $laudos->where('status_id', $request->status);
+            }
         }
     
         /* Filtro de Search pela data de conclusão (específica) */
