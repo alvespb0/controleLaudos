@@ -62,9 +62,9 @@
         <div style="width: 160px;">
             <label for="statusFilter" class="form-label text-muted small mb-1">Status</label>
             <select name="status" class="form-select" id="statusFilter">
-                <option value="" selected>Todos</option>
+                <option value="" {{ request('status') === '' ? 'selected' : '' }}>Todos</option>
                 @foreach($status as $s)
-                    <option value="{{ $s->id }}">{{ $s->nome }}</option>
+                    <option value="{{ $s->id }}" {{ request('status') == $s->id ? 'selected' : '' }}>{{ $s->nome }}</option>
                 @endforeach
             </select>
         </div>
@@ -222,6 +222,17 @@
             </div>
         </div>
         <!-- FIM DA MODAL DE ENVIO DE EMAIL -->
+         <script>
+            // Ao abrir a modal
+            var myModal = document.getElementById('emailModal{{ $laudo->id }}');
+            myModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget; // O botão que acionou a modal
+                var email = button.getAttribute('data-email'); // Pega o email do cliente
+
+                var emailInput = myModal.querySelector('#recipientEmail{{ $laudo->id }}');
+                emailInput.value = email; // Preenche o campo de email
+            });
+         </script>
         @endforeach
     </div>
 </div>
@@ -380,15 +391,6 @@
 </style>
 
 <script>
-    // Ao abrir a modal
-    var myModal = document.getElementById('emailModal{{ $laudo->id }}');
-    myModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // O botão que acionou a modal
-        var email = button.getAttribute('data-email'); // Pega o email do cliente
-
-        var emailInput = myModal.querySelector('#recipientEmail{{ $laudo->id }}');
-        emailInput.value = email; // Preenche o campo de email
-    });
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Alternância de dados de contato ---
