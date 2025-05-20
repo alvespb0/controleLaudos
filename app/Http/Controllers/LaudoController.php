@@ -306,6 +306,7 @@ class LaudoController extends Controller
      * @return view
      */
     public function dashboardGerencial(){
+        /* LAUDOS POR STATUS */
         $statusList = Status::withCount('laudos')->get();
 
         $labels = $statusList->pluck('nome')->toArray();
@@ -317,16 +318,26 @@ class LaudoController extends Controller
         $chartStatus->dataset('Laudos por status', 'pie', $data)
                     ->backgroundColor($colors);
 
+        /* lAUDOS POR TÉCNICO RESPONSÁVEL */
         $tecnicosList = Op_Tecnico::withCount('laudos')->get();
 
         $labelsTecnico = $tecnicosList->pluck('usuario');
         $dataTecnico = $tecnicosList->pluck('laudos_count');
 
-        $chatTecnico = new Chart;
-        $chatTecnico->labels($labelsTecnico);
-        $chatTecnico->dataset('Laudos por técnico', 'bar', $dataTecnico);
+        $chartTecnico = new Chart;
+        $chartTecnico->labels($labelsTecnico);
+        $chartTecnico->dataset('Laudos por técnico', 'bar', $dataTecnico);
 
-        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chatTecnico]);
+        /* LAUDOS POR VENDEDOR */
+        $vendedorList = Op_Comercial::withCount('laudos')->get();
+
+        $labelsVendedor = $vendedorList->pluck('usuario');
+        $dataVendedor = $vendedorList->pluck('laudos_count');
+
+        $chartVendedor = new Chart;
+        $chartVendedor->labels($labelsVendedor);
+        $chartVendedor->dataset('Laudos por vendedor', 'line', $dataVendedor);
+        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor]);
     }
 
 }
