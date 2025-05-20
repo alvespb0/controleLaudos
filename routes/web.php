@@ -85,14 +85,14 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
     Route::get('/','showDashboard')->name('dashboard.show');
-
-    Route::get('/graphs', 'dashboardGerencial');
     
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
     Route::post('/dashboard/envia-email', 'enviaEmailCli')->name('envia-email.cliente');
 });
+
+Route::middleware(['checkUserType:admin'])->get('/graphs', [LaudoController::class, 'dashboardGerencial'])->name('dashboard.indicadores'); # tela somente para admins, por isso não vai fazer parte da group class anterior
 
 /** --------------------------------------------- */
 /**              Rotas Classe Relatorio           */
@@ -101,7 +101,6 @@ Route::middleware(['checkUserType:admin'])->controller(RelatorioLaudoController:
     Route::post('/relatorios', 'requestTipoRelatorio')->name('request.tipoRelatorio');
 
     Route::post('/relatorios/download', 'gerarRelatorio')->name('gerar.relatorio');
-
 });
 
 /** --------------------------------------------- */
