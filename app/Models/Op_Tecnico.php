@@ -20,4 +20,8 @@ class Op_Tecnico extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function laudos(){
+        return $this->hasMany(Laudo::class, 'tecnico_id');
+    }
 }

@@ -15,4 +15,9 @@ class Status extends Model
         'nome',
         'cor'
     ];
+
+    public function laudos(){
+        return $this->hasMany(Laudo::class);
+    }
+
 }
