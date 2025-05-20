@@ -336,7 +336,7 @@ class LaudoController extends Controller
 
         $chartVendedor = new Chart;
         $chartVendedor->labels($labelsVendedor);
-        $chartVendedor->dataset('Laudos por vendedor', 'line', $dataVendedor);
+        $chartVendedor->dataset('Laudos por vendedor', 'doughnut', $dataVendedor);
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor]);
     }
 

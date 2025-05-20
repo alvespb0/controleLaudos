@@ -214,7 +214,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                    @if(Auth::user()->tipo === 'admin')
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-person-plus"></i> Main Dashboard </a></li>
+                            <li><a class="dropdown-item" href="/graphs"><i class="bi bi-people"></i> Dashboard Gerencial </a></li>
+                        </ul>
+                    </li>
+                    @endif
+                    @if(Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
                     <li class="nav-item">
                         <a class="nav-link" href="/dashboard">
                             <i class="bi bi-speedometer2"></i>
