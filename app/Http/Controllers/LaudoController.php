@@ -341,7 +341,20 @@ class LaudoController extends Controller
         $chartVendedor = new Chart;
         $chartVendedor->labels($labelsVendedor);
         $chartVendedor->dataset('Laudos por vendedor', 'doughnut', $dataVendedor);
-        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor]);
+
+        /* CLIENTES NOVOS X RENOVAÇOES */
+        $clientesNovos = Cliente::where('cliente_novo', 1)->count();
+        $clientesRenovacoes = Cliente::where('cliente_novo', 0)->count();
+
+        $numClientes = [$clientesNovos, $clientesRenovacoes];
+
+        $chartClientes = new Chart;
+        $chartClientes->labels(['Clientes Novos', 'Renovações']);
+        $chartClientes->dataset('Clientes', 'bar', [$clientesNovos, $clientesRenovacoes])
+              ->backgroundColor(['#79c5b6', '#5c9c90']);
+
+        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
+                    'chartClientes' => $chartClientes]);
     }
 
 }

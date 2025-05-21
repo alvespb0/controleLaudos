@@ -22,6 +22,12 @@
                 {!! $chartVendedor->container() !!}
             </div>
         </div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div style="max-width: 400px; width: 100%;">
+                {!! $chartClientes->container() !!}
+            </div>
+        </div>
     </div>
 
     {{-- Carrega Chart.js --}}
@@ -29,6 +35,7 @@
     {!! $chartStatus->script() !!}
     {!! $chartTecnico->script() !!}
     {!! $chartVendedor->script() !!}
+    {!! $chartClientes->script() !!}
 </div>
 
 @endsection
