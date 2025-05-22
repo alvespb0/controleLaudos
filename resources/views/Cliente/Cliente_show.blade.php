@@ -5,7 +5,14 @@
     <div class="card shadow-lg w-100" style="max-width: 1000px; border: none; background-color: var(--mid-color);">
         <div class="card-body p-4">
             <h3 class="card-title mb-4 text-center text-dark">Clientes Cadastrados</h3>
-            
+
+            <form action="{{route('filter.cliente')}}" class="d-flex" method="GET">
+                <input type="text" class="form-control" name="cliente" placeholder="Nome ou CNPJ">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+           
             <!-- Verifica se há operadores cadastrados -->
             @if($clientes->isEmpty())
                 <div class="alert alert-warning text-center">

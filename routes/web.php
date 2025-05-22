@@ -50,6 +50,7 @@ Route::middleware(['checkUserType:seguranca,admin'])->controller(StatusControlle
 /**              Rotas Classe Cliente             */
 Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteController::class)->group(function () {
     Route::get('/cliente','readCliente')->name('readCliente'); # retorna a view contendo os clientes cadastrados
+    Route::get('/cliente/filtered', 'filterCliente')->name('filter.cliente');
 
     Route::get('/cliente/cadastro','cadastroCliente')->name('cadastro.cliente'); # retorna o formulario de cadastro de cliente
     Route::post('/cliente/cadastro','createCliente')->name('create.cliente'); # salva o cliente no bd
