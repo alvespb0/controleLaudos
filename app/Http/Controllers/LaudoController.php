@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
+use Illuminate\Support\Facades\Http;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -224,6 +225,12 @@ class LaudoController extends Controller
         }
     
         $laudos = $laudos->paginate(6)->appends($request->query());
+        
+        foreach ($laudos as $laudo) {
+            if ($laudo->cliente) {
+                $laudo->cliente->endereco = $this->getEnderecoCli($laudo->cliente->cnpj);
+            }
+        }
 
         return view("index", [
             "laudos" => $laudos, 
@@ -252,9 +259,37 @@ class LaudoController extends Controller
             'nome' => 'Sem status',
             'cor' => '#6c757d'
         ]);
+
+        foreach ($laudos as $laudo) {
+            if ($laudo->cliente) {
+                $laudo->cliente->endereco = $this->getEnderecoCli($laudo->cliente->cnpj);
+            }
+        }
+        
         $contagemPorStatus['sem_status'] = $semStatusCount;
 
         return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos, "contagemPorStatus" => $contagemPorStatus]);
+    }
+
+    /**
+     * Recebe um CNPJ na show dashboard e na filter dash e retorna o endereço, chamando a api publica.cnpj.ws 
+     * @return string
+     */
+    public function getEnderecoCli($cnpj){
+        try {
+            $response = Http::get("https://publica.cnpj.ws/cnpj/{$cnpj}");
+            $data = $response->json();
+            
+            if (isset($data['estabelecimento'])) {
+                $e = $data['estabelecimento'];
+
+                return $e['logradouro'] . ', ' . $e['numero'] . ' - ' . $e['bairro'] . ', ' . $e['cidade']['nome'] . '/' . $e['estado']['sigla'] . ' - CEP ' . $e['cep'];
+            }
+
+            return 'Endereço não encontrado';
+        } catch (\Exception $e) {
+            return 'Erro ao consultar CNPJ: '. $e->getMessage();
+        }
     }
 
     /**

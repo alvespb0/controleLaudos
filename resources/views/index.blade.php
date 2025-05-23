@@ -158,6 +158,7 @@
                                     {{ $telefone->telefone }} <br>
                                 @endforeach
                                 <strong>CNPJ:</strong> {{$laudo->cliente->cnpj}} <br>
+                                <strong>Endereco: </strong>{{($laudo->cliente->endereco ? $laudo->cliente->endereco : 'Falha ao buscar na receita')}}
                                 <br>
 
                             </div>
