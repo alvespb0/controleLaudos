@@ -9,12 +9,10 @@
                 @csrf
                 <div class="mb-3">
                 <label for="tipoRelatorio" class="form-label">Selecione o tipo de relatório desejado</label>
-                    <select name="tipoRelatorio" class="form-select" id="">
-                        <option selected disabled>Tipo de Relatório</option>
+                    <select name="tipoRelatorio" class="form-select" id="" required>
+                        <option value="" selected disabled>Tipo de Relatório</option>
                         <option value="laudos">Laudos</option>
                         <option value="clientes">Clientes</option>
-                        <option value="operadores">Operadores</option>
-                        <option value="status">Status</option>
                     </select>
                 </div>
                 <div class="text-center">
