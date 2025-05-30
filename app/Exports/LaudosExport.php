@@ -67,6 +67,7 @@ class LaudosExport implements
             $laudo->id,
             $laudo->nome ?? 'N/A',
             optional($laudo->cliente)->nome ?? 'N/A',
+            optional($laudo->cliente)->cliente_novo ? 'cliente novo' : 'cliente renovação',
             optional($laudo->comercial)->usuario ?? 'N/A',
             optional($laudo->tecnico)->usuario ?? 'N/A',
             optional($laudo->status)->nome ?? 'N/A',
@@ -74,7 +75,7 @@ class LaudosExport implements
             $laudo->data_conclusao ?? 'N/A',
             $laudo->data_fim_contrato ?? 'N/A',
             $laudo->data_aceite ?? 'N/A',
-            $laudo->esocial ?? 'N/A',
+            $laudo->esocial ? 'Esocial' : 'N/A',
             $laudo->numero_clientes ?? 'N/A',
             $laudo->created_at ?? 'N/A',
         ];
@@ -86,6 +87,7 @@ class LaudosExport implements
             'ID',
             'Nome do Laudo',
             'Cliente',
+            'Cliente Novo',
             'Comercial',
             'Técnico',
             'Status',
@@ -94,7 +96,7 @@ class LaudosExport implements
             'Data Fim Contrato',
             'Data Aceite',
             'eSocial',
-            'Nº de Clientes',
+            'Nº de Funcionários',
             'Data de Cadastro',
         ];
     }

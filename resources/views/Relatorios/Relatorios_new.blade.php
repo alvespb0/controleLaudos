@@ -15,8 +15,6 @@
                     <option selected disabled>Selecione...</option>
                     <option value="laudos" {{$tipoRelatorio == 'laudos' ? 'selected' : ''}}>Laudos</option>
                     <option value="clientes" {{$tipoRelatorio == 'clientes' ? 'selected' : ''}}>Clientes</option>
-                    <option value="operadores" {{$tipoRelatorio == 'operadores' ? 'selected' : ''}}>Operadores</option>
-                    <option value="status" {{$tipoRelatorio == 'status' ? 'selected' : ''}}>Status</option>
                 </select>
             </div>
 
