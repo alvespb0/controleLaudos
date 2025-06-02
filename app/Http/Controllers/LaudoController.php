@@ -265,12 +265,24 @@ class LaudoController extends Controller
     public function updateLaudoIndex(LaudoUpdateRequest $request){
         $request->validated();
 
+        \Log::info('Dados recebidos no updateLaudoIndex:', [
+            'laudo_id' => $request->laudo_id,
+            'status' => $request->status,
+            'dataConclusao' => $request->dataConclusao,
+            'tecnicoResponsavel' => $request->tecnicoResponsavel
+        ]);
+
         $laudo = Laudo::findOrFail($request->laudo_id);
 
         $laudo->update([
             'data_conclusao' => $request->dataConclusao,
             'status_id' => $request->status,
             'tecnico_id' => $request->tecnicoResponsavel
+        ]);
+
+        \Log::info('Laudo atualizado com sucesso:', [
+            'laudo_id' => $laudo->id,
+            'novo_status' => $laudo->status_id
         ]);
 
         return response()->json(['message' => 'Laudo Atualizado com sucesso']);
@@ -356,5 +368,19 @@ class LaudoController extends Controller
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
                     'chartClientes' => $chartClientes]);
     }
+
+        
+    /**
+     * retorna a pagina index levando todos os laudos, status e tecnicos de segurança
+     * @return View
+     */
+    public function showKanban(){
+        $laudos = Laudo::orderBy('created_at', 'desc')->get();
+        $status = Status::all();
+        $tecnicos = Op_Tecnico::all();
+
+        return view("kanban", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
+    }
+
 
 }

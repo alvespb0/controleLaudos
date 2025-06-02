@@ -86,7 +86,7 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
     Route::get('/','showDashboard')->name('dashboard.show');
-    
+    Route::get('/teste', 'showKanban')->name('kanban.show');
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
