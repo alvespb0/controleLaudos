@@ -11,12 +11,14 @@ use App\Mail\ClienteMail;
 use Illuminate\Http\Request;
 use App\Http\Requests\LaudoRequest; 
 use App\Http\Requests\LaudoUpdateRequest; 
+use App\Http\Requests\UpdateKanbanRequest; 
 
 use App\Models\Laudo;
 use App\Models\Cliente;
 use App\Models\Op_Comercial;
 use App\Models\Op_Tecnico;
 use App\Models\Status;
+use Illuminate\Support\Facades\DB;
 
 
 class LaudoController extends Controller
@@ -355,6 +357,140 @@ class LaudoController extends Controller
 
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
                     'chartClientes' => $chartClientes]);
+    }
+
+    /* PARTE DE KANBAN */
+        
+    /**
+     * retorna a pagina index levando todos os laudos, status e tecnicos de segurança
+     * @return View
+     */
+    public function showKanban(){
+        $laudos = Laudo::orderBy('position', 'asc')->orderBy('created_at', 'desc')->get();
+        $status = Status::all();
+        $tecnicos = Op_Tecnico::all();
+
+        return view("kanban", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
+    }
+
+    /**
+     * Atualiza um laudo no Kanban
+     * Esta função é responsável por:
+     * 1. Validar os dados recebidos
+     * 2. Atualizar a posição do card movido
+     * 3. Ajustar as posições dos outros cards afetados
+     * 4. Atualizar o status e outros dados do laudo
+     * 
+     * @param UpdateKanbanRequest $request - Request contendo os dados do laudo
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateLaudoKanban(UpdateKanbanRequest $request){
+        $request->validated();
+
+        try {
+            # Inicia uma transação no banco de dados
+            # Isso garante que todas as operações sejam feitas ou nenhuma seja
+            DB::beginTransaction();
+
+            $laudo = Laudo::findOrFail($request->laudo_id);
+            
+            # Pega as informações antigas com o select acima, e as informações novas do request, para comparar
+            $oldPosition = $laudo->position;
+            $oldStatus = $laudo->status_id;
+            $newPosition = $request->position;
+            $newStatus = $request->status;
+
+            # Verifica se houve mudança de status (troca de colunas), ou mudança de posições (dentro da mesma coluna)
+            if ($oldStatus !== $newStatus || $oldPosition !== $newPosition) {
+                # A condição verifica se houve troca de posição ENTRE colunas, necessário para alterar as positions da coluna antiga
+                if ($oldStatus !== $newStatus) {
+                    # faz o incremento de + 1 de os cards abaixo da coluna antiga. básicamente, se card X de posição 4 é transferido para outra coluna
+                    # o card 5, 6 e assim sucessivamente (da coluna antiga) vão passar a ser os cards 4, 5 etc.
+                    Laudo::where('status_id', $oldStatus)
+                        ->where('position', '>', $oldPosition)
+                        ->increment('position');
+                }
+
+                # Ajusta as posições na nova coluna
+                if ($newPosition) {
+                    # faz o incremento de + 1 em todos os cards abaixo do card mexido (na coluna nova). Imagine que se o card x é colocado numa posição 6 que era 
+                    # ocupado por card Y, o card Y precisa mudar para 7, o que era 7 vai para 8 e assim sucessivamente.
+                    Laudo::where('status_id', $newStatus)
+                        ->where('position', '>=', $newPosition)
+                        ->where('id', '!=', $laudo->id)
+                        ->increment('position');
+                }
+            }
+
+            # da update no banco dado os novos parâmetros
+            $laudo->update([
+                'data_conclusao' => $request->dataConclusao,
+                'status_id' => $newStatus,
+                'tecnico_id' => $request->tecnicoResponsavel,
+                'position' => $newPosition
+            ]);
+
+            DB::commit(); # se Tudo tiver dado certo, vai salvar no banco, se não, vai cair na exception e vai dar roll back
+
+            return response()->json(['message' => 'Laudo Atualizado com sucesso']);
+        } catch (\Exception $e) {
+            # Se algo der errado, desfaz todas as operações
+            DB::rollBack();
+            
+            # Registra o erro no log
+            \Log::error('Erro ao atualizar laudo:', [
+                'error' => $e->getMessage(),
+                'laudo_id' => $request->laudo_id
+            ]);
+            
+            return response()->json(['message' => 'Erro ao atualizar laudo'], 500);
+        }
+    }
+
+    /**
+     * Atualiza todas as posições dos laudos no Kanban
+     * Esta função é chamada pelo botão "Atualizar Posições" e:
+     * 1. Verifica se o usuário é admin
+     * 2. Atualiza todas as posições em uma única transação
+     * 3. Atualiza também o status de cada laudo
+     * 
+     * @param Request $request - Request contendo um array de posições
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateAllPositions(Request $request){
+        try {
+            // Pega o array de posições do request
+            $positions = $request->input('positions');
+            
+            // Inicia uma transação no banco de dados
+            DB::beginTransaction();
+            
+            // Atualiza cada laudo com sua nova posição e status
+            foreach ($positions as $position) {
+                Laudo::where('id', $position['laudo_id'])
+                    ->update([
+                        'position' => $position['position'],
+                        'status_id' => $position['status'] ?: null
+                    ]);
+            }
+            
+            // Confirma todas as operações
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Posições atualizadas com sucesso'
+            ]);
+            
+        } catch (\Exception $e) {
+            // Se algo der errado, desfaz todas as operações
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar posições: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 }

@@ -31,8 +31,12 @@
                                     <div style="width: 40px; height: 25px; background-color: {{ $s->cor }}; border-radius: 4px; border: 1px solid #ccc;"></div>
                                 </td>
                                 <td>
+                                    @if(Auth::user()->tipo === 'admin' || $s->id != 1 && $s->id != 2 && $s->id != 3)
                                     <a href="{{ route('alteracao.status', $s->id) }}" class="btn btn-warning btn-sm">Editar</a>
                                     <a href="{{ route('delete.status', $s->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este status?')">Excluir</a>
+                                    @else
+                                    <span class="badge bg-secondary">Padrão do sistema</span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
