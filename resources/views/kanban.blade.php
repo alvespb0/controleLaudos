@@ -18,6 +18,13 @@
             <span class="stat-label">Concluídos</span>
         </div>
         </div>
+        @if(Auth::user()->tipo === 'admin')
+        <div class="admin-actions">
+            <button type="button" class="btn btn-primary" onclick="updateAllPositions()">
+                <i class="bi bi-arrow-repeat"></i> Atualizar Posições
+            </button>
+        </div>
+        @endif
     </div>
 
     <div class="kanban-wrapper">
@@ -30,7 +37,7 @@
                 <div class="kanban-column-body" ondrop="drop(event)" ondragover="allowDrop(event)">
                     @foreach($laudos as $laudo)
                     @if($laudo->status && $laudo->status->nome == $s->nome)
-                        <form action="{{ route('update.laudoIndex') }}" method="POST" class="laudo-form" data-laudo-id="{{$laudo->id}}">
+                        <form action="{{ route('update.laudoKanban') }}" method="POST" class="laudo-form" data-laudo-id="{{$laudo->id}}">
                             @csrf
                             <input type="hidden" name="laudo_id" value="{{$laudo->id}}">
                             <input type="hidden" name="status" value="{{$s->id}}" class="status-input">
@@ -572,140 +579,242 @@
     .kanban-column-body::-webkit-scrollbar-thumb:hover {
         background: #94a3b8;
     }
+
+    .admin-actions {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .admin-actions .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .admin-actions .btn i {
+        font-size: 1.1rem;
+    }
 </style>
 
 <script>
-  function allowDrop(ev) {
+/**
+ * Função que permite que um elemento seja solto na área
+ * @param {Event} ev - O evento de drag and drop
+ */
+function allowDrop(ev) {
+    // Previne o comportamento padrão do navegador
     ev.preventDefault();
+    // Adiciona uma classe visual para indicar que a área pode receber o card
     ev.currentTarget.classList.add('drag-over');
-  }
+}
 
-  function dragLeave(ev) {
+/**
+ * Função chamada quando o elemento sai da área de drop
+ * @param {Event} ev - O evento de drag and drop
+ */
+function dragLeave(ev) {
+    // Remove a classe visual quando o elemento sai da área
     ev.currentTarget.classList.remove('drag-over');
-  }
+}
 
-  function drag(ev) {
+/**
+ * Função chamada quando o elemento começa a ser arrastado
+ * @param {Event} ev - O evento de drag and drop
+ */
+function drag(ev) {
+    // Encontra o card mais próximo do elemento que está sendo arrastado
     const card = ev.target.closest('.kanban-card');
     if (card) {
-      ev.dataTransfer.setData("text", card.id);
-      card.classList.add('dragging');
+        // Armazena o ID do card para uso posterior
+        ev.dataTransfer.setData("text", card.id);
+        // Adiciona uma classe visual para indicar que o card está sendo arrastado
+        card.classList.add('dragging');
     }
-  }
+}
 
-  function drop(ev) {
+/**
+ * Função chamada quando o elemento é solto na área
+ * @param {Event} ev - O evento de drag and drop
+ */
+function drop(ev) {
+    // Previne o comportamento padrão do navegador
     ev.preventDefault();
+    // Remove a classe visual da área
     ev.currentTarget.classList.remove('drag-over');
     
+    // Recupera o ID do card que está sendo arrastado
     const data = ev.dataTransfer.getData("text");
+    // Encontra o elemento do card no DOM
     const card = document.getElementById(data);
+    // Encontra a área onde o card foi solto
     const dropzone = ev.target.closest('.kanban-column-body');
     
     if (card && dropzone) {
-      card.classList.remove('dragging');
-      
-      // Pegar o ID do status da coluna de destino
-      const targetColumn = dropzone.closest('.kanban-column');
-      const newStatusId = targetColumn.getAttribute('data-status-id');
-      
-      // Atualizar o input hidden do status no formulário do card
-      const cardForm = card.closest('form');
-      const statusInput = cardForm.querySelector('.status-input');
-      if (statusInput) {
-        statusInput.value = newStatusId;
-        console.log('Status atualizado para:', newStatusId);
-      }
-      
-      // Mover o card para a nova coluna
-      dropzone.appendChild(cardForm);
-      
-      // Habilitar o botão de salvar
-      const saveBtn = card.querySelector('.save-btn');
-      if (saveBtn) {
-        saveBtn.disabled = false;
-      }
+        // Remove a classe visual de arrastando
+        card.classList.remove('dragging');
+        
+        // Encontra a coluna de destino e seu ID de status
+        const targetColumn = dropzone.closest('.kanban-column');
+        const newStatusId = targetColumn.getAttribute('data-status-id');
+        
+        // Converte a lista de cards em array para manipulação
+        const cards = Array.from(dropzone.querySelectorAll('.kanban-card'));
+        // Pega a posição Y do mouse
+        const mouseY = ev.clientY;
+        // Inicializa a nova posição
+        let newPosition = 1;
+        
+        // Encontra onde o card deve ser inserido
+        let insertBeforeElement = null;
+        for (let existingCard of cards) {
+            // Pula o card que está sendo arrastado
+            if (existingCard === card) continue;
+            // Pega as dimensões e posição do card
+            const rect = existingCard.getBoundingClientRect();
+            // Calcula o ponto médio do card
+            const cardMiddle = rect.top + (rect.height / 2);
+            
+            // Se o mouse estiver acima do ponto médio, insere antes deste card
+            if (mouseY < cardMiddle) {
+                insertBeforeElement = existingCard;
+                break;
+            }
+            newPosition++;
+        }
+        
+        // Atualiza o status do card no formulário
+        const cardForm = card.closest('form');
+        const statusInput = cardForm.querySelector('.status-input');
+        if (statusInput) {
+            statusInput.value = newStatusId;
+        }
+        
+        // Move o card para a nova posição
+        if (insertBeforeElement) {
+            // Se encontrou um card para inserir antes, pega seu formulário
+            const insertBeforeForm = insertBeforeElement.closest('form');
+            // Insere o card antes do formulário de referência
+            dropzone.insertBefore(cardForm, insertBeforeForm);
+        } else {
+            // Se não encontrou, adiciona no final
+            dropzone.appendChild(cardForm);
+        }
+        
+        // Habilita o botão de salvar apenas do card movido
+        const saveBtn = card.querySelector('.save-btn');
+        if (saveBtn) {
+            saveBtn.disabled = false;
+        }
     }
-  }
+}
 
-  // Adicionar eventos para monitorar mudanças nos inputs
-  document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.kanban-card');
-    cards.forEach(card => {
-      // Monitorar mudanças no select de técnico
-      const tecnicoSelect = card.querySelector('select[name="tecnicoResponsavel"]');
-      if (tecnicoSelect) {
-        tecnicoSelect.addEventListener('change', function() {
-          const saveBtn = card.querySelector('.save-btn');
-          if (saveBtn) {
-            saveBtn.disabled = false;
-          }
-        });
-      }
-
-      // Monitorar mudanças no input de data
-      const dataInput = card.querySelector('input[name="dataConclusao"]');
-      if (dataInput) {
-        dataInput.addEventListener('change', function() {
-          const saveBtn = card.querySelector('.save-btn');
-          if (saveBtn) {
-            saveBtn.disabled = false;
-          }
-        });
-      }
-    });
-  });
-
-  function saveChanges(laudoId) {
+/**
+ * Função para salvar as alterações de um card
+ * @param {number} laudoId - ID do laudo a ser atualizado
+ */
+function saveChanges(laudoId) {
+    // Encontra o card e seu formulário
     const card = document.getElementById(`laudo${laudoId}`);
     const form = card.closest('form');
+    // Cria um objeto FormData com os dados do formulário
     const formData = new FormData(form);
+    // Pega o token CSRF para segurança
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Garantir que o laudo_id está correto
+    // Calcula a posição atual do card
+    const dropzone = card.closest('.kanban-column-body');
+    const cards = Array.from(dropzone.querySelectorAll('.kanban-card'));
+    const position = cards.indexOf(card) + 1;
+    formData.append('position', position);
+
+    // Garante que o ID do laudo está correto
     formData.set('laudo_id', laudoId);
 
-    // Log para debug
-    console.log('Dados sendo enviados:');
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
-
-    // Desabilitar o botão durante o salvamento
+    // Desabilita o botão durante o salvamento
     const saveBtn = card.querySelector('.save-btn');
     saveBtn.disabled = true;
     saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Salvando...';
 
+    // Envia a requisição para o servidor
     fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-CSRF-TOKEN': csrfToken,
-        'Accept': 'application/json'
-      }
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+        }
     })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição');
-      }
-      return response.json();
+        if (!response.ok) {
+            throw new Error('Erro na requisição');
+        }
+        return response.json();
     })
     .then(data => {
-      if (data.message) {
-        saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Salvo!';
-        setTimeout(() => {
-          saveBtn.innerHTML = '<i class="bi bi-save"></i> Salvar';
-          saveBtn.disabled = true;
-        }, 2000);
-      } else {
-        throw new Error('Erro ao salvar');
-      }
+        if (data.message) {
+            // Mostra feedback de sucesso
+            saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Salvo!';
+            setTimeout(() => {
+                saveBtn.innerHTML = '<i class="bi bi-save"></i> Salvar';
+                saveBtn.disabled = true;
+            }, 2000);
+        } else {
+            throw new Error('Erro ao salvar');
+        }
     })
     .catch(error => {
-      console.error('Erro:', error);
-      saveBtn.disabled = false;
-      saveBtn.innerHTML = '<i class="bi bi-save"></i> Salvar';
-      alert('Erro ao salvar as alterações. Por favor, tente novamente.');
+        // Mostra feedback de erro
+        console.error('Erro:', error);
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="bi bi-save"></i> Salvar';
+        alert('Erro ao salvar as alterações. Por favor, tente novamente.');
     });
-  }
+}
+
+function updateAllPositions() {
+    const columns = document.querySelectorAll('.kanban-column-body');
+    let allPositions = [];
+
+    columns.forEach(column => {
+        const cards = column.querySelectorAll('.kanban-card');
+        cards.forEach((card, index) => {
+            const form = card.closest('form');
+            if (form) {
+                const laudoId = form.querySelector('input[name="laudo_id"]').value;
+                const statusId = form.querySelector('.status-input').value;
+                allPositions.push({
+                    laudo_id: laudoId,
+                    status: statusId,
+                    position: index + 1
+                });
+            }
+        });
+    });
+
+    // Envia todas as posições para o backend
+    fetch('{{ route("update.all.positions") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ positions: allPositions })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Posições atualizadas com sucesso!');
+            location.reload(); // Recarrega a página para refletir as mudanças
+        } else {
+            throw new Error(data.message || 'Erro ao atualizar posições');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao atualizar posições. Por favor, tente novamente.');
+    });
+}
 </script>
 
 @endsection 

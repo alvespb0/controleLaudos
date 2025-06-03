@@ -86,10 +86,13 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
     Route::get('/','showDashboard')->name('dashboard.show');
+
     Route::get('/teste', 'showKanban')->name('kanban.show');
+
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
+    Route::post('/teste', 'updateLaudoKanban')->name('update.laudoKanban');
     Route::post('/dashboard/envia-email', 'enviaEmailCli')->name('envia-email.cliente');
 });
 
@@ -119,4 +122,6 @@ Route::controller(AuthController::class)->group(function (){
 
     Route::get('/logout', 'logout')->name('logout');
 });
+
+Route::post('/laudos/update-all-positions', [LaudoController::class, 'updateAllPositions'])->name('update.all.positions');
 
