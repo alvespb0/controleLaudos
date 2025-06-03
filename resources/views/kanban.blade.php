@@ -1,9 +1,19 @@
 @extends('templateMain')
 
 @section('content')
-<div class="kanban-container">
+
+<strong><h3>Página ainda em desenvolvimento! Utilizem e qualquer erro avisem.</h3></strong>
+
+
+<div class="kanban-container shadow-lg w-100">
+    
     <div class="kanban-header">
-        <h1>Controle de Laudos</h1>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Controle de Laudos</h1>
+            <a href="/dashboard" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-grid-3x3"></i> Visualização Cards
+            </a>
+        </div>
         <div class="kanban-stats">
         <div class="stat-item">
             <span class="stat-value">{{ count($laudos) }}</span>
@@ -214,7 +224,7 @@
     .kanban-container {
         padding: 2rem;
         min-height: 100vh;
-        background: #f8fafc;
+        background: var(--light-color);
         position: relative;
     }
 
@@ -326,7 +336,10 @@
     }
 
     .kanban-column-body.drag-over {
-        background-color: rgba(0, 0, 0, 0.05);
+        background-color: rgba(0, 0, 0, 0.03);
+        border: 2px dashed var(--status-color);
+        border-radius: 12px;
+        transition: all 0.2s ease;
     }
 
     .kanban-card {
@@ -336,19 +349,65 @@
         margin-bottom: 1rem;
         box-shadow: var(--card-shadow);
         cursor: grab;
-        transition: var(--transition);
+        transition: all 0.2s ease;
         border: 1px solid #e2e8f0;
         user-select: none;
-    }
-
-    .kanban-card.dragging {
-        opacity: 0.5;
-        transform: scale(0.95);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transform-origin: center;
     }
 
     .kanban-card:active {
         cursor: grabbing;
+    }
+
+    .kanban-card.dragging {
+        opacity: 0.9;
+        transform: scale(1.02) rotate(1deg);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        background: white;
+        border: 2px solid var(--status-color);
+    }
+
+    .kanban-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .kanban-card.dragging::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--status-color);
+        border-radius: 12px 12px 0 0;
+        opacity: 0.5;
+    }
+
+    .kanban-card.dragging::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--status-color);
+        border-radius: 0 0 12px 12px;
+        opacity: 0.5;
+    }
+
+    .kanban-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .kanban-column-body.drag-over .kanban-card {
+        transition: margin 0.2s ease;
+    }
+
+    .kanban-column-body.drag-over .kanban-card:not(.dragging) {
+        margin-top: 0.5rem;
     }
 
     .modal {
@@ -654,13 +713,15 @@
      * @param {Event} ev - O evento de drag and drop
      */
     function drag(ev) {
-        // Encontra o card mais próximo do elemento que está sendo arrastado
         const card = ev.target.closest('.kanban-card');
         if (card) {
-            // Armazena o ID do card para uso posterior
             ev.dataTransfer.setData("text", card.id);
-            // Adiciona uma classe visual para indicar que o card está sendo arrastado
             card.classList.add('dragging');
+            
+            // Adiciona um pequeno delay para melhorar o efeito visual
+            setTimeout(() => {
+                card.style.opacity = '0.9';
+            }, 0);
         }
     }
 
@@ -669,20 +730,16 @@
      * @param {Event} ev - O evento de drag and drop
      */
     function drop(ev) {
-        // Previne o comportamento padrão do navegador
         ev.preventDefault();
-        // Remove a classe visual da área
         ev.currentTarget.classList.remove('drag-over');
         
-        // Recupera o ID do card que está sendo arrastado
         const data = ev.dataTransfer.getData("text");
-        // Encontra o elemento do card no DOM
         const card = document.getElementById(data);
-        // Encontra a área onde o card foi solto
         const dropzone = ev.target.closest('.kanban-column-body');
         
         if (card && dropzone) {
-            // Remove a classe visual de arrastando
+            // Remove a classe de arrastando com uma transição suave
+            card.style.opacity = '1';
             card.classList.remove('dragging');
             
             // Encontra a coluna de destino e seu ID de status
