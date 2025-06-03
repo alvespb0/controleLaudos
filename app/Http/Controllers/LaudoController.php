@@ -359,6 +359,7 @@ class LaudoController extends Controller
                     'chartClientes' => $chartClientes]);
     }
 
+    /* PARTE DE KANBAN */
         
     /**
      * retorna a pagina index levando todos os laudos, status e tecnicos de segurança
@@ -383,38 +384,37 @@ class LaudoController extends Controller
      * @param UpdateKanbanRequest $request - Request contendo os dados do laudo
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateLaudoKanban(UpdateKanbanRequest $request)
-    {
-        // Valida os dados recebidos
+    public function updateLaudoKanban(UpdateKanbanRequest $request){
         $request->validated();
 
         try {
-            // Inicia uma transação no banco de dados
-            // Isso garante que todas as operações sejam feitas ou nenhuma seja
+            # Inicia uma transação no banco de dados
+            # Isso garante que todas as operações sejam feitas ou nenhuma seja
             DB::beginTransaction();
 
-            // Encontra o laudo que está sendo atualizado
             $laudo = Laudo::findOrFail($request->laudo_id);
             
-            // Guarda os valores antigos para comparação
+            # Pega as informações antigas com o select acima, e as informações novas do request, para comparar
             $oldPosition = $laudo->position;
             $oldStatus = $laudo->status_id;
             $newPosition = $request->position;
             $newStatus = $request->status;
 
-            // Se o laudo mudou de coluna ou posição
+            # Verifica se houve mudança de status (troca de colunas), ou mudança de posições (dentro da mesma coluna)
             if ($oldStatus !== $newStatus || $oldPosition !== $newPosition) {
-                // Se mudou de coluna, ajusta as posições na coluna antiga
+                # A condição verifica se houve troca de posição ENTRE colunas, necessário para alterar as positions da coluna antiga
                 if ($oldStatus !== $newStatus) {
-                    // Incrementa em 1 as posições dos cards abaixo na coluna antiga
+                    # faz o incremento de + 1 de os cards abaixo da coluna antiga. básicamente, se card X de posição 4 é transferido para outra coluna
+                    # o card 5, 6 e assim sucessivamente (da coluna antiga) vão passar a ser os cards 4, 5 etc.
                     Laudo::where('status_id', $oldStatus)
                         ->where('position', '>', $oldPosition)
                         ->increment('position');
                 }
 
-                // Ajusta as posições na nova coluna
+                # Ajusta as posições na nova coluna
                 if ($newPosition) {
-                    // Incrementa em 1 as posições dos cards abaixo na nova coluna
+                    # faz o incremento de + 1 em todos os cards abaixo do card mexido (na coluna nova). Imagine que se o card x é colocado numa posição 6 que era 
+                    # ocupado por card Y, o card Y precisa mudar para 7, o que era 7 vai para 8 e assim sucessivamente.
                     Laudo::where('status_id', $newStatus)
                         ->where('position', '>=', $newPosition)
                         ->where('id', '!=', $laudo->id)
@@ -422,7 +422,7 @@ class LaudoController extends Controller
                 }
             }
 
-            // Atualiza o laudo com os novos dados
+            # da update no banco dado os novos parâmetros
             $laudo->update([
                 'data_conclusao' => $request->dataConclusao,
                 'status_id' => $newStatus,
@@ -430,15 +430,14 @@ class LaudoController extends Controller
                 'position' => $newPosition
             ]);
 
-            // Confirma todas as operações no banco de dados
-            DB::commit();
+            DB::commit(); # se Tudo tiver dado certo, vai salvar no banco, se não, vai cair na exception e vai dar roll back
 
             return response()->json(['message' => 'Laudo Atualizado com sucesso']);
         } catch (\Exception $e) {
-            // Se algo der errado, desfaz todas as operações
+            # Se algo der errado, desfaz todas as operações
             DB::rollBack();
             
-            // Registra o erro no log
+            # Registra o erro no log
             \Log::error('Erro ao atualizar laudo:', [
                 'error' => $e->getMessage(),
                 'laudo_id' => $request->laudo_id
@@ -458,16 +457,7 @@ class LaudoController extends Controller
      * @param Request $request - Request contendo um array de posições
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateAllPositions(Request $request)
-    {
-        // Verifica se o usuário é admin
-        if (Auth::user()->tipo !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Acesso não autorizado'
-            ], 403);
-        }
-
+    public function updateAllPositions(Request $request){
         try {
             // Pega o array de posições do request
             $positions = $request->input('positions');

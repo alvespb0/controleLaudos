@@ -79,6 +79,7 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
     Route::get('/laudo/excluidos-anteriormente','laudosExcluidos')->name('read.deletedLaudo'); # Abre a view dos excluídos anteriormente
 
     Route::get('/laudo/excluidos-anteriormente/restaurar/{id}', 'restoreLaudo')->name('restore.deletedLaudo'); # restaura o dado excluído
+    Route::post('/teste/update-all-positions', 'updateAllPositions')->name('update.all.positions');
 });
 
 /** --------------------------------------------- */
@@ -92,8 +93,9 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
     Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
 
     Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
-    Route::post('/teste', 'updateLaudoKanban')->name('update.laudoKanban');
     Route::post('/dashboard/envia-email', 'enviaEmailCli')->name('envia-email.cliente');
+
+    Route::post('/teste', 'updateLaudoKanban')->name('update.laudoKanban');
 });
 
 Route::middleware(['checkUserType:admin'])->get('/graphs', [LaudoController::class, 'dashboardGerencial'])->name('dashboard.indicadores'); # tela somente para admins, por isso não vai fazer parte da group class anterior
@@ -123,5 +125,4 @@ Route::controller(AuthController::class)->group(function (){
     Route::get('/logout', 'logout')->name('logout');
 });
 
-Route::post('/laudos/update-all-positions', [LaudoController::class, 'updateAllPositions'])->name('update.all.positions');
 
