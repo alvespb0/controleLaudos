@@ -20,10 +20,15 @@
             </div>
         </div>
     </div>
-    <div class="mb-3">
-        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#indicadores" aria-expanded="false" aria-controls="indicadores">
-            Mostrar indicadores
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#indicadores" aria-expanded="false" aria-controls="indicadores">
+                <i class="bi bi-graph-up"></i> Mostrar indicadores
+            </button>
+            <a href="/dashboard/kanban" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-kanban"></i> Visualização Kanban
+            </a>
+        </div>
     </div>
 
     <div class="collapse mb-4" id="indicadores">
@@ -386,6 +391,16 @@
 
     .btn-info:hover {
         background-color: var(--hover-color)
+    }
+
+    .kanban-btn {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .kanban-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
     }
 
 </style>
