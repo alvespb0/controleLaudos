@@ -23,7 +23,8 @@ class FileController extends Controller
      * @return \Illuminate\View\View
      */
     public function entradaOrcamento(){
-        return view('Orcamento/Orcamento_new0');
+        $clientes = Cliente::all();
+        return view('Orcamento/Orcamento_new0', ['clientes' => $clientes]);
     }
 
     /**
@@ -38,7 +39,7 @@ class FileController extends Controller
     public function formularioOrcamento(Request $request){
         $request->validate([
             'tipo_orcamento' => 'required|in:1,2', // 1 = avulso, 2 = cliente cadastrado (exemplo)
-            'cliente' => 'nullable|required_if:tipo_orcamento,2|exists:clientes,id',
+            'cliente' => 'nullable|required_if:tipo_orcamento,2|exists:cliente,id',
         ], [
             'tipo_orcamento.required' => 'o campo tipo de orçamento é obrigatório',
             'tipo_orcamento.in' => 'o campo tipo de orçamento deve ser ou avulso ou de cliente cadastrado',
