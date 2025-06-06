@@ -2,11 +2,11 @@
 
 @section('content')
 <div class="d-flex justify-content-center">
-    <div class="card shadow-lg w-100" style="max-width: 600px; border: none; background-color: var(--mid-color);">
+    <div class="card shadow-lg w-100" style="max-width: 600px; border: none;">
         <div class="card-body p-4">
             <h3 class="card-title mb-4 text-center text-dark">Escolha o Tipo de Orçamento</h3>
 
-            <form action="{{route('gerar.orcamento')}}" method="POST">
+            <form action="{{route('gerar.orcamento')}}" method="GET">
                 @csrf
 
                 <!-- Tipo de orçamento -->
