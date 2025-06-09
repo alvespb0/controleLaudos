@@ -67,7 +67,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteControll
 Route::middleware(['checkUserType:comercial,admin'])->controller(FileController::class)->group(function () {
     Route::get('/orcamento', 'entradaOrcamento')->name('entrada.orcamento'); # Retorna a view de orcamento_new0
     Route::get('/orcamento/formulario', 'formularioOrcamento')->name('gerar.orcamento'); # Retorna a view de orcament_new dado os parâmetros da new0
-    Route::post('/orcamento/gerar', 'gerarOrcamento')->name('baixar.orcamento');
+    Route::post('/orcamento/gerar', 'gerarOrcamento')->name('baixar.orcamento'); # Faz o download do orçamento
 });
 
 /** --------------------------------------------- */

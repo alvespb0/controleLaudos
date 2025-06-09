@@ -19,23 +19,23 @@
                 @csrf
                 <div class="mb-3">
                     <label for="numProposta" class="form-label">Número da Proposta</label>
-                    <input type="number" min=1 class="form-control" name="numProposta" id="numProposta">
+                    <input type="number" min=1 class="form-control" name="numProposta" id="numProposta" placeholder = "Insira o número da proposta">
                 </div>
                 <div class="mb-3">
                     <label for="razaoSocialCliente" class="form-label">Razão Social</label>
-                    <input type="text" class="form-control" name="razaoSocialCliente" id="razaoSocialCliente" value="{{$cliente != null ? $cliente->nome : ''}}" {{$cliente != null ? 'readonly' : ''}}>
+                    <input type="text" class="form-control" name="razaoSocialCliente" id="razaoSocialCliente" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$cliente != null ? $cliente->nome : ''}}" {{$cliente != null ? 'readonly' : ''}} placeholder="Insira a razão social do cliente">
                 </div>
                 <div class="mb-3">
                     <label for="cnpjCliente" class="form-label">CNPJ</label>
-                    <input type="text" class="form-control" name="cnpjCliente" id="cnpjCliente" value="{{$cliente != null ? $cliente->cnpj : ''}}" {{$cliente != null ? 'readonly' : ''}}>
+                    <input type="text" class="form-control" name="cnpjCliente" id="cnpjCliente" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$cliente != null ? $cliente->cnpj : ''}}" {{$cliente != null ? 'readonly' : ''}} placeholder="Insira o CNPJ do prospect (sem pontos e traços)">
                 </div>
                 <div class="mb-3">
                     <label for="telefoneCliente" class="form-label">Telefone Cliente</label>
-                    <input type="text" class="form-control" name="telefoneCliente" id="telefoneCliente" value="{{$cliente && $cliente->telefone->first() ? $cliente->telefone->first()->telefone : '' }}" {{$cliente != null ? 'readonly' : ''}}>
+                    <input type="text" class="form-control" name="telefoneCliente" id="telefoneCliente" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$cliente && $cliente->telefone->first() ? $cliente->telefone->first()->telefone : '' }}" {{$cliente != null ? 'readonly' : ''}} placeholder="Insira o telefone de contato do cliente">
                 </div>
                 <div class="mb-3">
                     <label for="emailCliente" class="form-label">Email Cliente</label>
-                    <input type="text" class="form-control" name="emailCliente" id="emailCliente" value="{{$cliente != null ? $cliente->email : ''}}" {{$cliente != null ? 'readonly' : ''}}>
+                    <input type="text" class="form-control" name="emailCliente" id="emailCliente" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$cliente != null ? $cliente->email : ''}}" {{$cliente != null ? 'readonly' : ''}} placeholder="Insira o email de contato do cliente">
                 </div>
                 <div class="mb-3">
                     <label for="nomeContato" class="form-label">Nome do Contato</label>
@@ -43,15 +43,15 @@
                 </div>
                 <div class="mb-3">
                     <label for="numFuncionarios" class="form-label">Numero de Funcionários</label>
-                    <input type="number" min=1 class="form-control" name="numFuncionarios" id="numFuncionarios">
+                    <input type="number" min=1 class="form-control" name="numFuncionarios" id="numFuncionarios" placeholder="Insira o número de funcionários do cliente">
                 </div>
                 <div class="mb-3">
                     <label for="investimento" class="form-label">Investimento</label>
-                    <input type="number" min=1 step="0.01" class="form-control" name="investimento" id="investimento" placeholder="500.50">
+                    <input type="number" min=1 step="0.01" class="form-control" name="investimento" id="investimento" placeholder="Insira o investimento total para o cliente (formato: 500.50)">
                 </div>
                 <div class="mb-3">
                     <label for="parcelasTexto" class="form-label">Número de Parcelas</label>
-                    <input type="number" min=1 class="form-control" name="parcelasTexto" id="parcelasTexto">
+                    <input type="number" min=1 class="form-control" name="parcelasTexto" id="parcelasTexto" placeholder = "Insira o número de parcelas do investimento">
                 </div>
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary px-4">Gerar</button>
