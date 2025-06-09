@@ -369,8 +369,8 @@ class LaudoController extends Controller
                 ->groupBy('mes')
                 ->orderBy('mes')
                 ->get();
-        $labels = [];
-        $valores = [];
+        $labelsOrcamento = [];
+        $valoresOrcamento = [];
 
         foreach ($orcamentosPorMes as $registro) {
             $labelsOrcamento[] = Carbon::createFromFormat('Y-m', $registro->mes)->translatedFormat('F Y');
