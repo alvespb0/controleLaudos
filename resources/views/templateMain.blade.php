@@ -268,6 +268,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/cliente/cadastro"><i class="bi bi-person-plus"></i> Novo Cliente</a></li>
                             <li><a class="dropdown-item" href="/cliente"><i class="bi bi-people"></i> Clientes Cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/orcamento"><i class="bi bi-file-earmark-text"></i> Gerar Orçamento</a></li>
                         </ul>
                     </li>
                     @endif

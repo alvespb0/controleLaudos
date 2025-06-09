@@ -6,6 +6,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LaudoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RelatorioLaudoController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,14 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteControll
     Route::post('/cliente/alteracao/{id}','updateCliente')->name('update.cliente'); # faz o update do cliente no banco
 
     Route::get('/cliente/excluir/{id}','deleteCliente')->name('delete.cliente'); # faz a exclusão do cliente no banco
+});
+
+/** --------------------------------------------- */
+/**              Rotas Classe File                */
+Route::middleware(['checkUserType:comercial,admin'])->controller(FileController::class)->group(function () {
+    Route::get('/orcamento', 'entradaOrcamento')->name('entrada.orcamento'); # Retorna a view de orcamento_new0
+    Route::get('/orcamento/formulario', 'formularioOrcamento')->name('gerar.orcamento'); # Retorna a view de orcament_new dado os parâmetros da new0
+    Route::post('/orcamento/gerar', 'gerarOrcamento')->name('baixar.orcamento'); # Faz o download do orçamento
 });
 
 /** --------------------------------------------- */
