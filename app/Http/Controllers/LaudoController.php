@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
+use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -18,6 +19,7 @@ use App\Models\Cliente;
 use App\Models\Op_Comercial;
 use App\Models\Op_Tecnico;
 use App\Models\Status;
+use App\Models\File;
 use Illuminate\Support\Facades\DB;
 
 
@@ -355,8 +357,26 @@ class LaudoController extends Controller
         $chartClientes->dataset('Clientes', 'bar', [$clientesNovos, $clientesRenovacoes])
               ->backgroundColor(['#79c5b6', '#5c9c90']);
 
+        /*  Orcamentos Enviados */
+        $orcamentosPorMes = File::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as mes, COUNT(*) as total")
+                ->where('tipo', 'orcamento')
+                ->groupBy('mes')
+                ->orderBy('mes')
+                ->get();
+        $labels = [];
+        $valores = [];
+
+        foreach ($orcamentosPorMes as $registro) {
+            $labelsOrcamento[] = Carbon::createFromFormat('Y-m', $registro->mes)->translatedFormat('F Y');
+            $valoresOrcamento[] = $registro->total;
+        }
+
+        $chartOrcamentos = new Chart;
+        $chartOrcamentos->labels($labelsOrcamento);
+        $chartOrcamentos->dataset('Orçamentos por Mês', 'bar', $valoresOrcamento)
+                ->backgroundColor('rgba(54, 162, 235, 0.7)');
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
-                    'chartClientes' => $chartClientes]);
+                    'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos]);
     }
 
     /* PARTE DE KANBAN */

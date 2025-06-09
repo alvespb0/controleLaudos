@@ -26,6 +26,11 @@
                     <input type="text" class="form-control" name="razaoSocialCliente" id="razaoSocialCliente" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$cliente != null ? $cliente->nome : ''}}" {{$cliente != null ? 'readonly' : ''}} placeholder="Insira a razão social do cliente">
                 </div>
                 <div class="mb-3">
+                    <label for="nomeUnidade" class="form-label">Nome da Unidade</label>
+                    <input type="text" class="form-control" name="nomeUnidade" id="nomeUnidade" placeholder="Insira o nome da unidade do cliente">
+                </div>
+
+                <div class="mb-3">
                     <label for="cnpjCliente" class="form-label">CNPJ</label>
                     <input type="text" class="form-control" name="cnpjCliente" id="cnpjCliente" style="{{ $cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$cliente != null ? $cliente->cnpj : ''}}" {{$cliente != null ? 'readonly' : ''}} placeholder="Insira o CNPJ do prospect (sem pontos e traços)">
                 </div>

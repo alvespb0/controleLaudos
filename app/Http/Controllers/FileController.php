@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\GerarOrcamentoRequest;
@@ -92,6 +93,7 @@ class FileController extends Controller
 
         $template->setValue('numProposta', $request->numProposta);
         $template->setValue('razaoSocialCliente', $request->razaoSocialCliente);
+        $template->setValue('nomeUnidade', $request->nomeUnidade);
         $template->setValue('cnpjCliente', $cnpjOuCpfFormatado);
         $template->setValue('telefoneCliente', $request->telefoneCliente);
         $template->setValue('emailCliente', $request->emailCliente);
@@ -111,13 +113,15 @@ class FileController extends Controller
 
         $template->saveAs($tempPath);
 
+        $this->saveOrcamento($fileName);
+
         return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
     }
 
     /**
      * Recebe um valor, identifica se é CNPJ ou CPF e formata
      */
-    function formatarCpfCnpj($valor) {
+    private function formatarCpfCnpj($valor) {
         // Remove tudo que não for número
         $num = preg_replace('/\D/', '', $valor);
 
@@ -133,4 +137,27 @@ class FileController extends Controller
         }
     }
 
+    /**
+     * Salva no banco o registro de geração de um orçamento.
+     * O arquivo não é armazenado fisicamente, apenas é registrado seu metadado
+     * para fins de relatórios e indicadores.
+     * 
+     * @param string $nome_arquivo Nome fictício do arquivo gerado
+     * @return void
+     */
+    public function saveOrcamento($nome_arquivo){
+        $caminho = 'orcamento'.$nome_arquivo;
+        $data_referencia = date("Y-m-d");
+        $criado_por = Auth::user()->id;
+
+        File::create([
+            'nome_arquivo' => $nome_arquivo,
+            'tipo' => 'orcamento',
+            'caminho' => $caminho,
+            'data_referencia' => $data_referencia,
+            'cliente_id' => null,
+            'laudo_id' => null,
+            'criado_por' => $criado_por
+        ]);
+    }
 }

@@ -24,6 +24,7 @@ class GerarOrcamentoRequest extends FormRequest
         return [
             'numProposta' => 'required|integer|min:1',
             'razaoSocialCliente' => 'required|string|min:5',
+            'nomeUnidade' => 'required|string|min:5',
             'cnpjCliente' => 'required|string|min:11|max:14',
             'telefoneCliente' => 'required|string|min:6',
             'emailCliente' => 'required|string|min:5',
@@ -43,6 +44,9 @@ class GerarOrcamentoRequest extends FormRequest
         
         'razaoSocialCliente.required' => 'A razão social é obrigatória.',
         'razaoSocialCliente.min' => 'A razão social deve ter no mínimo 5 caracteres.',
+        
+        'nomeUnidade.required' => 'O nome da unidade é obrigatória.',
+        'nomeUnidade.min' => 'O nome da unidade deve ter no mínimo 5 caracteres.',
 
         'cnpjCliente.required' => 'O CNPJ é obrigatório.',
         'cnpjCliente.min' => 'O CNPJ deve ter no mínimo 11 caracteres.',
