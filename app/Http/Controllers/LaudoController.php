@@ -168,19 +168,6 @@ class LaudoController extends Controller
         $status = Status::all();
         $tecnicos = Op_Tecnico::all(); 
 
-        /* Parte dos Indicadores */
-        $contagemPorStatus = [];
-        foreach ($status as $s) {
-            $contagemPorStatus[$s->id] = Laudo::where('status_id', $s->id)->count();
-        }
-        $semStatusCount = Laudo::whereNull('status_id')->count();
-        $status->push((object)[
-            'id' => 'sem_status',
-            'nome' => 'Sem status',
-            'cor' => '#6c757d'
-        ]);
-        $contagemPorStatus['sem_status'] = $semStatusCount;
-    
         /* Filtro de Search Cliente */
         if($request->filled('search')){
             $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id');
@@ -218,6 +205,25 @@ class LaudoController extends Controller
             $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
         }
     
+        $laudosFiltrados = clone $laudos;
+
+        // Calcula indicadores com base na query filtrada
+        $contagemPorStatus = [];
+
+        foreach ($status as $s) {
+            $contagemPorStatus[$s->id] = (clone $laudosFiltrados)->where('status_id', $s->id)->count();
+        }
+
+        $semStatusCount = (clone $laudosFiltrados)->whereNull('status_id')->count();
+
+        $status->push((object)[
+            'id' => 'sem_status',
+            'nome' => 'Sem status',
+            'cor' => '#6c757d'
+        ]);
+
+        $contagemPorStatus['sem_status'] = $semStatusCount;
+        
         /* Filtro pela ordenação */
         $ordem = $request->input('ordenarPor', 'mais_novos'); 
 
