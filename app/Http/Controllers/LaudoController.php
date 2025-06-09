@@ -73,6 +73,25 @@ class LaudoController extends Controller
     }
 
     /**
+     * recebe um Nome ou CNPJ para filtrar na tabela de laudos
+     * @param Request $request 
+     * @return Array
+     */
+    public function filterCliente(Request $request){
+        $termo = $request->input('cliente');
+
+        $laudos = Laudo::with('cliente')
+            ->when($termo, function ($query, $termo) {
+                $query->whereHas('cliente', function ($q) use ($termo) {
+                    $q->where('nome', 'like', "%$termo%")
+                    ->orWhere('cnpj', 'like', "%$termo%");
+                });
+            })
+            ->paginate(10);
+
+        return view('Laudo/Laudo_show', ['laudos'=> $laudos]);
+    }
+    /**
      * recebe um ID valida se o ID é válido via find or fail
      * se for válido retorna o formulario de edição do Laudo 
      * @param int $id

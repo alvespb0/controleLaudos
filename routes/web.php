@@ -74,6 +74,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(FileController:
 /**              Rotas Classe Laudo               */
 Route::middleware(['checkUserType:comercial,admin'])->controller(LaudoController::class)->group(function () {
     Route::get('/laudo','readLaudo')->name('readLaudo'); # retorna a view contendo os laudos
+    Route::get('/laudo/filtered', 'filterCliente')->name('filter.laudo-cliente'); # Filtro de cliente para a showLaudo
 
     Route::get('/laudo/cadastro','cadastroLaudo')->name('cadastro.laudo'); # retorna o formulario de cadastro do laudo
     Route::post('/laudo/cadastro', 'createLaudo')->name('create.laudo'); # salva o laudo no bd
