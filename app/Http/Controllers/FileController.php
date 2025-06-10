@@ -92,12 +92,12 @@ class FileController extends Controller
         $cnpjOuCpfFormatado = $this->formatarCpfCnpj($request->cnpjCliente);
 
         $template->setValue('numProposta', $request->numProposta);
-        $template->setValue('razaoSocialCliente', $request->razaoSocialCliente);
-        $template->setValue('nomeUnidade', $request->nomeUnidade);
+        $template->setValue('razaoSocialCliente',  $this->escapeForXml($request->razaoSocialCliente));
+        $template->setValue('nomeUnidade', $this->escapeForXml($request->nomeUnidade));
         $template->setValue('cnpjCliente', $cnpjOuCpfFormatado);
         $template->setValue('telefoneCliente', $request->telefoneCliente);
-        $template->setValue('emailCliente', $request->emailCliente);
-        $template->setValue('nomeContato', $request->nomeContato);
+        $template->setValue('emailCliente', $this->escapeForXml($request->emailCliente));
+        $template->setValue('nomeContato', $this->escapeForXml($request->nomeContato));
         $template->setValue('numFuncionarios', $request->numFuncionarios);
         $template->setValue('investimento', number_format($request->investimento, 2, ',', '.'));
         $template->setValue('parcelasTexto', $textoParcela);
@@ -135,6 +135,10 @@ class FileController extends Controller
             // Se não for nem CPF nem CNPJ válido, retorna o valor sem formatação
             return $valor;
         }
+    }
+
+    private function escapeForXml($value) {
+        return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
     }
 
     /**
