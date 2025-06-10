@@ -4,21 +4,15 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-end flex-wrap mb-4">
         <h3 class="m-0">Indicadores de Laudos</h4>
-        <form action="{{ route('dashboard.filter') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3">
-            <!-- Data Conclusão -->
+        <form action="{{ route('dashboard.indicadores') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3">
             <div style="width: 160px;">
-                <label for="dataFilterConclusao" class="form-label text-muted small mb-1">Conclusão</label>
-                <input type="date" class="form-control" id="dataFilterConclusao" name="dataConclusao">
+                <label for="dataFilterInicial" class="form-label text-muted small mb-1">Data Inicial</label>
+                <input type="date" class="form-control" id="dataFilterInicial" name="dataInicial">
             </div>
-
-
-            <!-- Data Conclusão -->
             <div style="width: 160px;">
-                <label for="dataFilterConclusao" class="form-label text-muted small mb-1">Conclusão</label>
-                <input type="date" class="form-control" id="dataFilterConclusao" name="dataConclusao">
+                <label for="dataFilterFinal" class="form-label text-muted small mb-1">Data Final</label>
+                <input type="date" class="form-control" id="dataFilterFinal" name="dataFinal">      
             </div>
-
-            <!-- Botão buscar -->
             <div>
                 <label class="form-label d-block invisible">Buscar</label>
                 <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm" style="background-color: var(--primary-color); border: none;">
@@ -27,7 +21,6 @@
             </div>
         </form>
     </div>
-    <br>
     <div class="row justify-content-center">
         <div class="col-md-4 d-flex justify-content-center mb-4">
             <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">

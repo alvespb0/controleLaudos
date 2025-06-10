@@ -109,7 +109,11 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
     Route::post('/dashboard/kanban', 'updateLaudoKanban')->name('update.laudoKanban');
 });
 
-Route::middleware(['checkUserType:admin'])->get('/graphs', [IndicadoresController::class, 'dashboardGerencial'])->name('dashboard.indicadores'); # tela somente para admins, por isso não vai fazer parte da group class anterior
+/** --------------------------------------------- */
+/**             Rotas Classe indicadores          */
+Route::middleware(['checkUserType:admin'])->controller(IndicadoresController::class)->group(function (){
+    Route::get('/graphs', 'dashboardGerencial')->name('dashboard.indicadores'); # tela somente para admins, por isso não vai fazer parte da group class anterior
+});
 
 /** --------------------------------------------- */
 /**              Rotas Classe Relatorio           */

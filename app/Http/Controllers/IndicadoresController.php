@@ -21,27 +21,34 @@ class IndicadoresController extends Controller
      * @return view
      */
     public function dashboardGerencial(Request $request){
-        $chartStatus = $this->indicadorLaudoStatus();
+        $chartStatus = $this->indicadorLaudoStatus($request->dataInicial, $request->dataFinal);
 
-        $chartTecnico = $this->indicadorLaudoPorTecnico();
+        $chartTecnico = $this->indicadorLaudoPorTecnico($request->dataInicial, $request->dataFinal);
 
-        $chartVendedor = $this->indicadorLaudoPorVendedor();
+        $chartVendedor = $this->indicadorLaudoPorVendedor($request->dataInicial, $request->dataFinal);
 
-        $chartClientes = $this->indicadorCliente();
+        $chartClientes = $this->indicadorCliente($request->dataInicial, $request->dataFinal);
 
-        $chartOrcamentos = $this->indicadorOrcamentos();
+        $chartOrcamentos = $this->indicadorOrcamentos($request->dataInicial, $request->dataFinal);
 
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
                     'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos]);
     }
 
 
-    private function indicadorLaudoStatus(){
+    private function indicadorLaudoStatus($dataInicio = null, $dataFim = null){
         /* LAUDOS POR STATUS */
-        $statusList = Status::withCount('laudos')->get();
+        $statusList = Status::withCount(['laudos' => function ($query) use ($dataInicio, $dataFim) {
+            if ($dataInicio) {
+                $query->whereDate('data_aceite', '>=', $dataInicio);
+            }
+            if ($dataFim) {
+                $query->whereDate('data_aceite', '<=', $dataFim);
+            }
+        }])->get();
 
         $labels = $statusList->pluck('nome')->toArray();
-        $data   = $statusList->pluck('laudos_count')->toArray(); # usa a relação para fazer uma coluna temporária e retornar a count
+        $data   = $statusList->pluck('laudos_count')->toArray();
         $colors = $statusList->pluck('cor')->toArray();          
 
         $chartStatus = new Chart;
@@ -52,9 +59,16 @@ class IndicadoresController extends Controller
         return $chartStatus;
     }
 
-    private function indicadorLaudoPorTecnico(){
+    private function indicadorLaudoPorTecnico($dataInicio = null, $dataFim = null){
         /* LAUDOS POR TÉCNICO RESPONSÁVEL */
-        $tecnicosList = Op_Tecnico::withCount('laudos')->get();
+        $tecnicosList = Op_Tecnico::withCount(['laudos' => function ($query) use ($dataInicio, $dataFim) {
+            if ($dataInicio) {
+                $query->whereDate('data_aceite', '>=', $dataInicio);
+            }
+            if ($dataFim) {
+                $query->whereDate('data_aceite', '<=', $dataFim);
+            }
+        }])->get();
 
         $labelsTecnico = $tecnicosList->pluck('usuario');
         $dataTecnico = $tecnicosList->pluck('laudos_count');
@@ -66,9 +80,16 @@ class IndicadoresController extends Controller
         return $chartTecnico;
     }
 
-    private function indicadorLaudoPorVendedor(){
+    private function indicadorLaudoPorVendedor($dataInicio = null, $dataFim = null){
         /* LAUDOS POR VENDEDOR */
-        $vendedorList = Op_Comercial::withCount('laudos')->get();
+        $vendedorList = Op_Comercial::withCount(['laudos' => function ($query) use ($dataInicio, $dataFim) {
+            if ($dataInicio) {
+                $query->whereDate('data_aceite', '>=', $dataInicio);
+            }
+            if ($dataFim) {
+                $query->whereDate('data_aceite', '<=', $dataFim);
+            }
+        }])->get();
 
         $labelsVendedor = $vendedorList->pluck('usuario');
         $dataVendedor = $vendedorList->pluck('laudos_count');
@@ -80,28 +101,60 @@ class IndicadoresController extends Controller
         return $chartVendedor;
     }
 
-    private function indicadorCliente(){
+    private function indicadorCliente($dataInicio = null, $dataFim = null){
         /* CLIENTES NOVOS X RENOVAÇOES */
-        $clientesNovos = Cliente::where('cliente_novo', 1)->count();
-        $clientesRenovacoes = Cliente::where('cliente_novo', 0)->count();
+        $query = Cliente::query();
+        if ($dataInicio) {
+            $query->whereDate('updated_at', '>=', $dataInicio);
+        }
+        if ($dataFim) {
+            $query->whereDate('updated_at', '<=', $dataFim);
+        }
 
-        $numClientes = [$clientesNovos, $clientesRenovacoes];
+        $clientes = $query->selectRaw("DATE_FORMAT(updated_at, '%m/%y') as mes, cliente_novo, COUNT(*) as total")
+                        ->groupBy('mes', 'cliente_novo')
+                        ->orderByRaw("STR_TO_DATE(mes, '%m/%y') ASC")
+                        ->get();
 
+        $labels = [];
+        $dadosNovos = [];
+        $dadosRenovados = [];
+
+        $mesesUnicos = $clientes->pluck('mes')->unique();
+
+        foreach ($mesesUnicos as $mes) {
+            $labels[] = $mes;
+            $novos = $clientes->where('mes', $mes)->where('cliente_novo', 1)->first();
+            $renov = $clientes->where('mes', $mes)->where('cliente_novo', 0)->first();
+
+            $dadosNovos[] = $novos ? $novos->total : 0;
+            $dadosRenovados[] = $renov ? $renov->total : 0;
+        }
         $chartClientes = new Chart;
-        $chartClientes->labels(['Clientes Novos', 'Renovações']);
-        $chartClientes->dataset('Clientes', 'bar', [$clientesNovos, $clientesRenovacoes])
-              ->backgroundColor(['#79c5b6', '#5c9c90']);
+        $chartClientes->labels($labels);
+        $chartClientes->dataset('Clientes Novos', 'bar', $dadosNovos)
+            ->backgroundColor('#79c5b6');
+
+        $chartClientes->dataset('Renovações', 'bar', $dadosRenovados)
+            ->backgroundColor('#5c9c90');
 
         return $chartClientes;
     }
 
-    private function indicadorOrcamentos(){
-        /*  ORÇAMENTOS ENVIADOS POR MES */
-        $orcamentosPorMes = File::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as mes, COUNT(*) as total")
-                ->where('tipo', 'orcamento')
-                ->groupBy('mes')
-                ->orderBy('mes')
-                ->get();
+    private function indicadorOrcamentos($dataInicio = null, $dataFim = null){
+        /* ORÇAMENTOS ENVIADOS POR MÊS */
+        $query = File::selectRaw("DATE_FORMAT(data_referencia, '%Y-%m') as mes, COUNT(*) as total")
+            ->where('tipo', 'orcamento');
+
+        // Aplica filtro por data de referência, se houver
+        if ($dataInicio && $dataFim) {
+            $query->whereBetween('data_referencia', [$dataInicio, $dataFim]);
+        }
+
+        $orcamentosPorMes = $query->groupBy('mes')
+            ->orderBy('mes')
+            ->get();
+
         $labelsOrcamento = [];
         $valoresOrcamento = [];
 
@@ -113,7 +166,7 @@ class IndicadoresController extends Controller
         $chartOrcamentos = new Chart;
         $chartOrcamentos->labels($labelsOrcamento);
         $chartOrcamentos->dataset('Orçamentos por Mês', 'bar', $valoresOrcamento)
-                ->backgroundColor('rgba(54, 162, 235, 0.7)');
+            ->backgroundColor('rgba(54, 162, 235, 0.7)');
 
         return $chartOrcamentos;
     }
