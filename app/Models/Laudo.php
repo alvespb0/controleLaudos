@@ -32,7 +32,8 @@ class Laudo extends Model
         'cliente_id',
         'comercial_id',
         'deleted_by',
-        'position'
+        'position',
+        'observacao',
     ];
 
     public function cliente(){

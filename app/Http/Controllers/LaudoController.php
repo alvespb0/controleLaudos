@@ -296,7 +296,8 @@ class LaudoController extends Controller
         $laudo->update([
             'data_conclusao' => $request->dataConclusao,
             'status_id' => $request->status,
-            'tecnico_id' => $request->tecnicoResponsavel
+            'tecnico_id' => $request->tecnicoResponsavel,
+            'observacao' => $request->observacao,
         ]);
 
         return response()->json(['message' => 'Laudo Atualizado com sucesso']);

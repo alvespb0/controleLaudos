@@ -177,6 +177,41 @@
                             </select>
 
                             </p>
+                            <div class="mb-2 position-relative group">
+                                <strong class="d-block">Observação:</strong>
+
+                                {{-- Exibição --}}
+                                <div id="obs-display-{{ $laudo->id }}" 
+                                    class="obs-display px-1 py-1 border rounded bg-light" 
+                                    onmouseover="this.classList.add('hovering')" 
+                                    onmouseout="this.classList.remove('hovering')">
+                                    
+                                    <div id="obs-text-{{ $laudo->id }}" class="text-truncate-obs">
+                                        {{ $laudo->observacao ?? 'Sem observação' }}
+                                    </div>
+
+                                    @if(strlen($laudo->observacao) > 200)
+                                        <a href="javascript:void(0)" 
+                                        id="toggle-link-{{ $laudo->id }}"
+                                        class="btn btn-sm btn-outline-secondary toggle-link" 
+                                        onclick="toggleExpandObservacao({{ $laudo->id }})">
+                                            Ver mais...
+                                        </a>
+                                    @endif
+
+                                    <button type="button" class="btn btn-sm btn-light border-0 position-absolute top-0 end-0 d-none" 
+                                            onclick="toggleObservacao({{ $laudo->id }})" 
+                                            title="Editar">
+                                        <i class="bi bi-pencil small"></i>
+                                    </button>
+                                </div>
+
+                                {{-- Edição --}}
+                                <div id="obs-edit-{{ $laudo->id }}" class="mt-2" style="display: none;">
+                                    <textarea name="observacao" class="form-control form-control-sm auto-expand" rows="2"
+                                            oninput="enableSave({{ $laudo->id }})">{{ $laudo->observacao }}</textarea>
+                                </div>
+                            </div>
                         <hr>
                     <div class="d-flex justify-content-between mt-3 gap-2">
                         <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
@@ -403,24 +438,110 @@
         color: white;
     }
 
+    .obs-display {
+        position: relative;
+        transition: background-color 0.2s ease;
+    }
+
+    .obs-display.hovering {
+        background-color: #f8f9fa;
+    }
+
+    .obs-display.hovering button {
+        display: inline !important;
+    }
+
+    .obs-display button {
+        display: none;
+    }
+
+    .text-truncate-obs {
+        max-height: 1.5em; /* ~3 linhas */
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .text-truncate-obs.expanded {
+        max-height: 1000px; /* grande o suficiente para mostrar tudo */
+    }
+
+    .obs-display.hovering button {
+        display: inline !important;
+    }
+
+    .obs-display button {
+        display: none;
+    }
+
+    textarea.auto-expand {
+        overflow: hidden;
+        resize: none;
+    }
+
+    .toggle-link {
+        cursor: pointer;
+    }
+
 </style>
 
 <script>
+    // PARTE DAS OBSERVAÇÕES DO LAUDO
+    function toggleObservacao(id) {
+        document.getElementById('obs-display-' + id).style.display = 'none';
+        document.getElementById('obs-edit-' + id).style.display = 'block';
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Alternância de dados de contato ---
-    function toggleContatos(laudoId) {
-        const contatosDiv = document.getElementById('contatos' + laudoId);
-        const button = document.getElementById('toggleContatosBtn' + laudoId);
+    function toggleExpandObservacao(id) {
+        const obsText = document.getElementById('obs-text-' + id);
+        const toggleLink = document.getElementById('toggle-link-' + id);
 
-        if (contatosDiv.style.display === "none") {
-            contatosDiv.style.display = "block";
-            button.innerHTML = '<i class="bi bi-phone"></i> Ocultar Dados';
+        obsText.classList.toggle('expanded');
+
+        if (obsText.classList.contains('expanded')) {
+            toggleLink.textContent = 'Ver menos...';
         } else {
-            contatosDiv.style.display = "none";
-            button.innerHTML = '<i class="bi bi-phone"></i> Ver Dados do Cliente';
+            toggleLink.textContent = 'Ver mais...';
         }
     }
+
+    function enableSave(id) {
+        const btn = document.querySelector(`#form-laudo-${id} .save-btn`);
+        if (btn) btn.disabled = false;
+    }
+
+    document.addEventListener('input', function (e) {
+        if (e.target.tagName.toLowerCase() !== 'textarea') return;
+        autoResizeTextarea(e.target);
+    });
+
+    function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    document.querySelectorAll('form[id^="form-laudo-"]').forEach(form => {
+        form.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('change', () => {
+                const btn = form.querySelector('.save-btn');
+                if (btn) btn.disabled = false;
+            });
+        });
+    });
+    // FIM DAS OBSERVAÇÕES DO LAUDO
+
+    document.addEventListener('DOMContentLoaded', () => {
+        function toggleContatos(laudoId) {
+            const contatosDiv = document.getElementById('contatos' + laudoId);
+            const button = document.getElementById('toggleContatosBtn' + laudoId);
+
+            if (contatosDiv.style.display === "none") {
+                contatosDiv.style.display = "block";
+                button.innerHTML = '<i class="bi bi-phone"></i> Ocultar Dados';
+            } else {
+                contatosDiv.style.display = "none";
+                button.innerHTML = '<i class="bi bi-phone"></i> Ver Dados do Cliente';
+            }
+        }
 
     document.querySelectorAll('.btn-info').forEach(button => {
         button.addEventListener('click', () => {

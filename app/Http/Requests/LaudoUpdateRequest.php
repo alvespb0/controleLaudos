@@ -26,6 +26,7 @@ class LaudoUpdateRequest extends FormRequest
             'status' => 'nullable',
             'dataConclusao' => 'nullable|date',
             'tecnicoResponsavel' => 'nullable',
+            'observacao' => 'nullable|string'
         ];
     }
 
@@ -34,8 +35,11 @@ class LaudoUpdateRequest extends FormRequest
         return [
             'laudo_id.required' => 'ID do laudo é obrigatório.',
             'laudo_id.exists' => 'Laudo não encontrado.',
+
             'status.exists' => 'Status inválido.',
+
             'dataConclusao.date' => 'A data de conclusão precisa ser uma data válida.',
+            
             'tecnicoResponsavel.exists' => 'Técnico selecionado inválido.',
         ];
     }
