@@ -178,38 +178,44 @@
 
                             </p>
                             <div class="mb-2 position-relative group">
-                                <strong class="d-block">Observação:</strong>
+                                <strong class="d-block mb-1 text-muted small">Observação:</strong>
 
                                 {{-- Exibição --}}
                                 <div id="obs-display-{{ $laudo->id }}" 
-                                    class="obs-display px-1 py-1 border rounded bg-light" 
+                                    class="obs-display {{ !$laudo->observacao ? 'empty' : '' }}" 
                                     onmouseover="this.classList.add('hovering')" 
                                     onmouseout="this.classList.remove('hovering')">
                                     
-                                    <div id="obs-text-{{ $laudo->id }}" class="text-truncate-obs">
-                                        {{ $laudo->observacao ?? 'Sem observação' }}
+                                    <div id="obs-text-{{ $laudo->id }}" class="text-truncate-obs {{ !$laudo->observacao ? 'empty-obs' : '' }}">
+                                        {{ $laudo->observacao ?? 'Nenhuma observação' }}
                                     </div>
 
                                     @if(strlen($laudo->observacao) > 200)
                                         <a href="javascript:void(0)" 
                                         id="toggle-link-{{ $laudo->id }}"
-                                        class="btn btn-sm btn-outline-secondary toggle-link" 
+                                        class="toggle-link" 
                                         onclick="toggleExpandObservacao({{ $laudo->id }})">
                                             Ver mais...
                                         </a>
                                     @endif
 
-                                    <button type="button" class="btn btn-sm btn-light border-0 position-absolute top-0 end-0 d-none" 
+                                    <button type="button" class="edit-btn" 
                                             onclick="toggleObservacao({{ $laudo->id }})" 
-                                            title="Editar">
-                                        <i class="bi bi-pencil small"></i>
+                                            title="Editar observação">
+                                        <i class="bi bi-pencil"></i>
                                     </button>
                                 </div>
 
                                 {{-- Edição --}}
                                 <div id="obs-edit-{{ $laudo->id }}" class="mt-2" style="display: none;">
                                     <textarea name="observacao" class="form-control form-control-sm auto-expand" rows="2"
+                                            placeholder="Digite uma observação..."
                                             oninput="enableSave({{ $laudo->id }})">{{ $laudo->observacao }}</textarea>
+                                    <div class="mt-1 d-flex gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancelEditObservacao({{ $laudo->id }})">
+                                            Cancelar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         <hr>
@@ -440,46 +446,96 @@
 
     .obs-display {
         position: relative;
-        transition: background-color 0.2s ease;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+        min-height: 2rem;
+    }
+
+    .obs-display.empty {
+        padding: 0.25rem 0;
+        min-height: 1.5rem;
     }
 
     .obs-display.hovering {
-        background-color: #f8f9fa;
+        background-color: transparent;
+        border-bottom-color: var(--primary-color);
     }
 
-    .obs-display.hovering button {
-        display: inline !important;
+    .obs-display.hovering .edit-btn {
+        opacity: 1;
+        transform: translateX(0);
     }
 
-    .obs-display button {
-        display: none;
+    .edit-btn {
+        position: absolute;
+        top: 0.25rem;
+        right: 0;
+        background: none;
+        border: none;
+        color: var(--gray-color);
+        opacity: 0;
+        transform: translateX(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0.25rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        z-index: 1;
+    }
+
+    .edit-btn:hover {
+        color: var(--primary-color);
+        background-color: rgba(121, 197, 182, 0.1);
+        transform: translateX(0) scale(1.05);
     }
 
     .text-truncate-obs {
-        max-height: 1.5em; /* ~3 linhas */
+        max-height: 1.5em;
         overflow: hidden;
         transition: max-height 0.3s ease;
+        line-height: 1.4;
+        color: #495057;
+        font-size: 0.9rem;
     }
 
     .text-truncate-obs.expanded {
-        max-height: 1000px; /* grande o suficiente para mostrar tudo */
+        max-height: 1000px;
     }
 
-    .obs-display.hovering button {
-        display: inline !important;
+    .text-truncate-obs.empty-obs {
+        color: #6c757d;
+        font-style: italic;
+        font-size: 0.85rem;
     }
 
-    .obs-display button {
-        display: none;
+    .toggle-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-top: 0.25rem;
+        display: inline-block;
+        transition: color 0.2s ease;
+    }
+
+    .toggle-link:hover {
+        color: var(--hover-color);
+        text-decoration: underline;
     }
 
     textarea.auto-expand {
         overflow: hidden;
         resize: none;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: border-color 0.2s ease;
     }
 
-    .toggle-link {
-        cursor: pointer;
+    textarea.auto-expand:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.15);
     }
 
 </style>
@@ -489,6 +545,16 @@
     function toggleObservacao(id) {
         document.getElementById('obs-display-' + id).style.display = 'none';
         document.getElementById('obs-edit-' + id).style.display = 'block';
+    }
+
+    function cancelEditObservacao(id) {
+        document.getElementById('obs-edit-' + id).style.display = 'none';
+        document.getElementById('obs-display-' + id).style.display = 'block';
+        
+        // Restaura o valor original do textarea
+        const textarea = document.querySelector(`#obs-edit-${id} textarea[name="observacao"]`);
+        const originalText = document.querySelector(`#obs-text-${id}`).textContent.trim();
+        textarea.value = originalText === 'Nenhuma observação' ? '' : originalText;
     }
 
     function toggleExpandObservacao(id) {
