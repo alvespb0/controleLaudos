@@ -13,7 +13,8 @@ class Status extends Model
 
     protected $fillable = [
         'nome',
-        'cor'
+        'cor',
+        'position'
     ];
 
     public function laudos(){

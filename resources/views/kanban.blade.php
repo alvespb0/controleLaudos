@@ -40,7 +40,7 @@
     <div class="kanban-wrapper">
         @foreach($status as $s)
             <div class="kanban-column" style="--status-color: {{ $s->cor }}" data-status-id="{{ $s->id }}">
-                <div class="kanban-column-header">
+                <div class="kanban-column-header" draggable="true" ondragstart="dragColumn(event)" ondragover="allowDropColumn(event)" ondrop="dropColumn(event)">
                     <span>{{$s->nome}}</span>
                     <span class="column-count">{{ $laudos->where('status.nome', $s->nome)->count() }}</span>
                 </div>
@@ -654,6 +654,25 @@
     .admin-actions .btn i {
         font-size: 1.1rem;
     }
+
+    .kanban-column-header.dragging {
+        opacity: 0.5;
+        transform: rotate(5deg);
+    }
+
+    .kanban-column-header.drag-over {
+        border: 2px dashed var(--status-color);
+        background-color: rgba(var(--status-color-rgb), 0.1);
+    }
+
+    .kanban-column-header {
+        cursor: grab;
+        transition: all 0.3s ease;
+    }
+
+    .kanban-column-header:active {
+        cursor: grabbing;
+    }
 </style>
 
 <script>
@@ -860,10 +879,129 @@
         });
     }
 
+    /**
+     * Função para arrastar colunas
+     * @param {Event} ev - O evento de drag and drop
+     */
+    function dragColumn(ev) {
+        const columnHeader = ev.target.closest('.kanban-column-header');
+        if (columnHeader) {
+            ev.dataTransfer.setData("text", columnHeader.closest('.kanban-column').getAttribute('data-status-id'));
+            columnHeader.classList.add('dragging');
+        }
+    }
+
+    /**
+     * Função para permitir soltar colunas
+     * @param {Event} ev - O evento de drag and drop
+     */
+    function allowDropColumn(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.add('drag-over');
+    }
+
+    /**
+     * Função para soltar colunas
+     * @param {Event} ev - O evento de drag and drop
+     */
+    function dropColumn(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.remove('drag-over');
+        
+        const data = ev.dataTransfer.getData("text");
+        const draggedColumn = document.querySelector(`[data-status-id="${data}"]`);
+        const targetColumn = ev.target.closest('.kanban-column');
+        
+        if (draggedColumn && targetColumn && draggedColumn !== targetColumn) {
+            const kanbanWrapper = document.querySelector('.kanban-wrapper');
+            const columns = Array.from(kanbanWrapper.querySelectorAll('.kanban-column'));
+            const draggedIndex = columns.indexOf(draggedColumn);
+            const targetIndex = columns.indexOf(targetColumn);
+            
+            // Calcula a posição antiga (antes da movimentação)
+            const oldPosition = draggedIndex + 1;
+            
+            // Move a coluna para a nova posição
+            if (draggedIndex < targetIndex) {
+                targetColumn.parentNode.insertBefore(draggedColumn, targetColumn.nextSibling);
+            } else {
+                targetColumn.parentNode.insertBefore(draggedColumn, targetColumn);
+            }
+            
+            // Remove a classe de arrastando
+            draggedColumn.querySelector('.kanban-column-header').classList.remove('dragging');
+            
+            // Calcula a nova posição após a movimentação
+            const newColumns = Array.from(kanbanWrapper.querySelectorAll('.kanban-column'));
+            const newPosition = newColumns.indexOf(draggedColumn) + 1;
+            
+            // Atualiza automaticamente a posição no banco de dados
+            updateColumnPosition(data, newPosition, oldPosition);
+        }
+    }
+
+    /**
+     * Função para atualizar a posição de uma coluna no banco de dados
+     * @param {string} statusId - ID do status da coluna
+     * @param {number} newPosition - Nova posição da coluna
+     * @param {number} oldPosition - Posição antiga da coluna
+     */
+    function updateColumnPosition(statusId, newPosition, oldPosition) {
+        // Pega o token CSRF para segurança
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Envia a requisição para o servidor
+        fetch('{{ route("update.column.position") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                status_id: statusId,
+                position: newPosition,
+                old_position: oldPosition
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log('Posição da coluna atualizada com sucesso');
+            } else {
+                throw new Error(data.message || 'Erro ao atualizar posição da coluna');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar posição da coluna:', error);
+            // Recarrega a página em caso de erro para manter a consistência
+            location.reload();
+        });
+    }
+
     function updateAllPositions() {
         const columns = document.querySelectorAll('.kanban-column-body');
         let allPositions = [];
+        let statusPositions = [];
 
+        // Captura as posições das colunas (status)
+        const statusColumns = document.querySelectorAll('.kanban-column');
+        statusColumns.forEach((column, index) => {
+            const statusId = column.getAttribute('data-status-id');
+            if (statusId && statusId !== 'sem_status') {
+                statusPositions.push({
+                    status_id: statusId,
+                    position: index + 1
+                });
+            }
+        });
+
+        // Captura as posições dos cards (laudos)
         columns.forEach(column => {
             const cards = column.querySelectorAll('.kanban-card');
             cards.forEach((card, index) => {
@@ -887,7 +1025,10 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
-            body: JSON.stringify({ positions: allPositions })
+            body: JSON.stringify({ 
+                positions: allPositions,
+                statusPositions: statusPositions 
+            })
         })
         .then(response => response.json())
         .then(data => {
