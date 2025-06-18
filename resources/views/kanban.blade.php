@@ -40,7 +40,7 @@
     <div class="kanban-wrapper">
         @foreach($status as $s)
             <div class="kanban-column" style="--status-color: {{ $s->cor }}" data-status-id="{{ $s->id }}">
-                <div class="kanban-column-header">
+                <div class="kanban-column-header" draggable="true" ondragstart="dragColumn(event)" ondragover="allowDropColumn(event)" ondrop="dropColumn(event)">
                     <span>{{$s->nome}}</span>
                     <span class="column-count">{{ $laudos->where('status.nome', $s->nome)->count() }}</span>
                 </div>
@@ -362,16 +362,18 @@
 
     .kanban-card.dragging {
         opacity: 0.9;
-        transform: scale(1.02) rotate(1deg);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        transform: rotate(2deg) scale(1.03);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         z-index: 1000;
-        background: white;
-        border: 2px solid var(--status-color);
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        transition: all 0.2s ease;
     }
 
     .kanban-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
     }
 
     .kanban-card.dragging::before {
@@ -399,15 +401,16 @@
     }
 
     .kanban-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        border: 1px solid transparent;
     }
 
-    .kanban-column-body.drag-over .kanban-card {
-        transition: margin 0.2s ease;
-    }
-
-    .kanban-column-body.drag-over .kanban-card:not(.dragging) {
-        margin-top: 0.5rem;
+    .kanban-column-body.drag-over {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.05), rgba(0, 123, 255, 0.1));
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        transform: scale(1.01);
     }
 
     .modal {
@@ -654,6 +657,166 @@
     .admin-actions .btn i {
         font-size: 1.1rem;
     }
+
+    .kanban-column-header.dragging {
+        opacity: 0.8;
+        transform: rotate(3deg) scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        background: linear-gradient(135deg, var(--status-color), rgba(var(--status-color-rgb), 0.8));
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .kanban-column-header.drag-over {
+        border: 3px dashed var(--status-color);
+        background: linear-gradient(135deg, rgba(var(--status-color-rgb), 0.1), rgba(var(--status-color-rgb), 0.2));
+        border-radius: 8px;
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(var(--status-color-rgb), 0.3);
+    }
+
+    .kanban-column-header {
+        cursor: grab;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        border: 2px solid transparent;
+    }
+
+    .kanban-column-header:active {
+        cursor: grabbing;
+        transform: scale(0.98);
+    }
+
+    .kanban-column-header:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Efeito de elevação para elementos arrastáveis */
+    .kanban-card.dragging {
+        opacity: 0.9;
+        transform: rotate(2deg) scale(1.03);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .kanban-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Efeito de sombra dinâmica */
+    .kanban-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .kanban-card:hover:before {
+        opacity: 1;
+    }
+
+    /* Animação de entrada para elementos dropados */
+    @keyframes dropIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.8) translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .kanban-card.dropped,
+    .kanban-column.dropped {
+        animation: dropIn 0.3s ease-out;
+    }
+
+    /* Melhorias visuais para o kanban */
+    .kanban-wrapper {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .kanban-column {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .kanban-column:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .kanban-column-header {
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .kanban-column-body {
+        padding: 1rem;
+        min-height: 200px;
+        transition: all 0.3s ease;
+    }
+
+    /* Efeito de profundidade para cards */
+    .kanban-card {
+        margin-bottom: 0.75rem;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* Cursor personalizado para elementos arrastáveis */
+    .kanban-column-header,
+    .kanban-card {
+        cursor: grab;
+    }
+
+    .kanban-column-header:active,
+    .kanban-card:active {
+        cursor: grabbing;
+    }
+
+    /* Efeito de feedback visual durante o drag */
+    .kanban-column-body.drag-over {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.05), rgba(0, 123, 255, 0.1));
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        transform: scale(1.01);
+        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.2);
+    }
+
+    /* Efeito de elevação para elementos em hover */
+    .kanban-column-header:hover,
+    .kanban-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Transições suaves */
+    * {
+        transition: all 0.2s ease;
+    }
 </style>
 
 <script>
@@ -742,6 +905,9 @@
             card.style.opacity = '1';
             card.classList.remove('dragging');
             
+            // Adiciona classe para animação de entrada
+            card.classList.add('dropped');
+            
             // Encontra a coluna de destino e seu ID de status
             const targetColumn = dropzone.closest('.kanban-column');
             const newStatusId = targetColumn.getAttribute('data-status-id');
@@ -794,6 +960,11 @@
             if (saveBtn) {
                 saveBtn.disabled = false;
             }
+            
+            // Remove a classe de animação após a animação terminar
+            setTimeout(() => {
+                card.classList.remove('dropped');
+            }, 300);
         }
     }
 
@@ -860,10 +1031,137 @@
         });
     }
 
+    /**
+     * Função para arrastar colunas
+     * @param {Event} ev - O evento de drag and drop
+     */
+    function dragColumn(ev) {
+        const columnHeader = ev.target.closest('.kanban-column-header');
+        if (columnHeader) {
+            ev.dataTransfer.setData("text", columnHeader.closest('.kanban-column').getAttribute('data-status-id'));
+            columnHeader.classList.add('dragging');
+        }
+    }
+
+    /**
+     * Função para permitir soltar colunas
+     * @param {Event} ev - O evento de drag and drop
+     */
+    function allowDropColumn(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.add('drag-over');
+    }
+
+    /**
+     * Função para soltar colunas
+     * @param {Event} ev - O evento de drag and drop
+     */
+    function dropColumn(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.remove('drag-over');
+        
+        const data = ev.dataTransfer.getData("text");
+        const draggedColumn = document.querySelector(`[data-status-id="${data}"]`);
+        const targetColumn = ev.target.closest('.kanban-column');
+        
+        if (draggedColumn && targetColumn && draggedColumn !== targetColumn) {
+            const kanbanWrapper = document.querySelector('.kanban-wrapper');
+            const columns = Array.from(kanbanWrapper.querySelectorAll('.kanban-column'));
+            const draggedIndex = columns.indexOf(draggedColumn);
+            const targetIndex = columns.indexOf(targetColumn);
+            
+            // Calcula a posição antiga (antes da movimentação)
+            const oldPosition = draggedIndex + 1;
+            
+            // Move a coluna para a nova posição
+            if (draggedIndex < targetIndex) {
+                targetColumn.parentNode.insertBefore(draggedColumn, targetColumn.nextSibling);
+            } else {
+                targetColumn.parentNode.insertBefore(draggedColumn, targetColumn);
+            }
+            
+            // Remove a classe de arrastando
+            draggedColumn.querySelector('.kanban-column-header').classList.remove('dragging');
+            
+            // Adiciona classe para animação de entrada
+            draggedColumn.classList.add('dropped');
+            
+            // Calcula a nova posição após a movimentação
+            const newColumns = Array.from(kanbanWrapper.querySelectorAll('.kanban-column'));
+            const newPosition = newColumns.indexOf(draggedColumn) + 1;
+            
+            // Atualiza automaticamente a posição no banco de dados
+            updateColumnPosition(data, newPosition, oldPosition);
+            
+            // Remove a classe de animação após a animação terminar
+            setTimeout(() => {
+                draggedColumn.classList.remove('dropped');
+            }, 300);
+        }
+    }
+
+    /**
+     * Função para atualizar a posição de uma coluna no banco de dados
+     * @param {string} statusId - ID do status da coluna
+     * @param {number} newPosition - Nova posição da coluna
+     * @param {number} oldPosition - Posição antiga da coluna
+     */
+    function updateColumnPosition(statusId, newPosition, oldPosition) {
+        // Pega o token CSRF para segurança
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Envia a requisição para o servidor
+        fetch('{{ route("update.column.position") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                status_id: statusId,
+                position: newPosition,
+                old_position: oldPosition
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log('Posição da coluna atualizada com sucesso');
+            } else {
+                throw new Error(data.message || 'Erro ao atualizar posição da coluna');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar posição da coluna:', error);
+            // Recarrega a página em caso de erro para manter a consistência
+            location.reload();
+        });
+    }
+
     function updateAllPositions() {
         const columns = document.querySelectorAll('.kanban-column-body');
         let allPositions = [];
+        let statusPositions = [];
 
+        // Captura as posições das colunas (status)
+        const statusColumns = document.querySelectorAll('.kanban-column');
+        statusColumns.forEach((column, index) => {
+            const statusId = column.getAttribute('data-status-id');
+            if (statusId && statusId !== 'sem_status') {
+                statusPositions.push({
+                    status_id: statusId,
+                    position: index + 1
+                });
+            }
+        });
+
+        // Captura as posições dos cards (laudos)
         columns.forEach(column => {
             const cards = column.querySelectorAll('.kanban-card');
             cards.forEach((card, index) => {
@@ -887,7 +1185,10 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
-            body: JSON.stringify({ positions: allPositions })
+            body: JSON.stringify({ 
+                positions: allPositions,
+                statusPositions: statusPositions 
+            })
         })
         .then(response => response.json())
         .then(data => {

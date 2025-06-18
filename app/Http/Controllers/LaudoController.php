@@ -340,7 +340,7 @@ class LaudoController extends Controller
      */
     public function showKanban(){
         $laudos = Laudo::orderBy('position', 'asc')->orderBy('created_at', 'desc')->get();
-        $status = Status::all();
+        $status = Status::orderBy('position', 'asc')->get();
         $tecnicos = Op_Tecnico::all();
 
         return view("kanban", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos]);
@@ -421,19 +421,21 @@ class LaudoController extends Controller
     }
 
     /**
-     * Atualiza todas as posições dos laudos no Kanban
+     * Atualiza todas as posições dos laudos e status no Kanban
      * Esta função é chamada pelo botão "Atualizar Posições" e:
      * 1. Verifica se o usuário é admin
      * 2. Atualiza todas as posições em uma única transação
      * 3. Atualiza também o status de cada laudo
+     * 4. Atualiza as posições das colunas (status)
      * 
-     * @param Request $request - Request contendo um array de posições
+     * @param Request $request - Request contendo arrays de posições
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateAllPositions(Request $request){
         try {
-            // Pega o array de posições do request
-            $positions = $request->input('positions');
+            // Pega os arrays de posições do request
+            $positions = $request->input('positions', []);
+            $statusPositions = $request->input('statusPositions', []);
             
             // Inicia uma transação no banco de dados
             DB::beginTransaction();
@@ -444,6 +446,14 @@ class LaudoController extends Controller
                     ->update([
                         'position' => $position['position'],
                         'status_id' => $position['status'] ?: null
+                    ]);
+            }
+            
+            // Atualiza cada status com sua nova posição
+            foreach ($statusPositions as $statusPosition) {
+                Status::where('id', $statusPosition['status_id'])
+                    ->update([
+                        'position' => $statusPosition['position']
                     ]);
             }
             
@@ -462,6 +472,69 @@ class LaudoController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao atualizar posições: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Atualiza a posição de uma coluna (status) individual no Kanban
+     * Esta função é chamada automaticamente quando uma coluna é movida via drag and drop
+     * 
+     * @param Request $request - Request contendo status_id, position e old_position
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateColumnPosition(Request $request){
+        try {
+            $request->validate([
+                'status_id' => 'required|exists:status,id',
+                'position' => 'required|integer|min:1',
+                'old_position' => 'required|integer|min:1'
+            ]);
+
+            // Inicia uma transação no banco de dados
+            DB::beginTransaction();
+            
+            // Busca o status que está sendo movido
+            $status = Status::findOrFail($request->status_id);
+            $oldPosition = $request->old_position; // Usa a posição antiga enviada pelo frontend
+            $newPosition = $request->position;
+            
+            // Verifica se houve mudança de posição
+            if ($oldPosition !== $newPosition) {
+                // Se a coluna foi movida para uma posição maior (para direita)
+                if ($oldPosition < $newPosition) {
+                    // Decrementa a posição de todas as colunas entre a posição antiga e nova
+                    Status::where('position', '>', $oldPosition)
+                        ->where('position', '<=', $newPosition)
+                        ->decrement('position');
+                } 
+                // Se a coluna foi movida para uma posição menor (para esquerda)
+                else {
+                    // Incrementa a posição de todas as colunas entre a nova posição e antiga
+                    Status::where('position', '>=', $newPosition)
+                        ->where('position', '<', $oldPosition)
+                        ->increment('position');
+                }
+                
+                // Atualiza a posição da coluna movida
+                $status->update(['position' => $newPosition]);
+            }
+            
+            // Confirma a operação
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Posição da coluna atualizada com sucesso'
+            ]);
+            
+        } catch (\Exception $e) {
+            // Se algo der errado, desfaz a operação
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar posição da coluna: ' . $e->getMessage()
             ], 500);
         }
     }

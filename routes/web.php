@@ -91,6 +91,7 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
 
     Route::get('/laudo/excluidos-anteriormente/restaurar/{id}', 'restoreLaudo')->name('restore.deletedLaudo'); # restaura o dado excluído
     Route::post('/dashboard/kanban/update-all-positions', 'updateAllPositions')->name('update.all.positions');
+    Route::post('/dashboard/kanban/update-column-position', 'updateColumnPosition')->name('update.column.position');
 });
 
 /** --------------------------------------------- */
