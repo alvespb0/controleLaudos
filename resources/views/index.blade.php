@@ -230,7 +230,7 @@
                             Enviar Email
                         </button>
                         <button type="button"
-                            class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
+                            class="btn btn-info btn-sm d-flex align-items-center gap-1 text-white"
                             data-bs-toggle="modal"
                             data-bs-target="#whatsappModal{{ $laudo->id }}"
                             title="Iniciar atendimento via WhatsApp"
@@ -300,7 +300,7 @@
                         <div class="alert alert-info small mb-3" role="alert">
                             Esta mensagem abrirá um atendimento na plataforma de WhatsApp para o seu setor.
                         </div>
-                        <form action="{{route('teste.zappy')}}" method="POST">
+                        <form action="{{route('atendimento.zappy')}}" method="POST">
                             @csrf
                             <input type="hidden" name="numero" value="{{ $laudo->cliente->telefone[0]->telefone ?? '' }}">
                             <div class="mb-3">

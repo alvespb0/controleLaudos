@@ -142,5 +142,6 @@ Route::controller(AuthController::class)->group(function (){
     Route::get('/logout', 'logout')->name('logout');
 });
 
-
-Route::post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('teste.zappy');
+/** --------------------------------------------- */
+/**              Rotas Classe integracao          */
+Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
