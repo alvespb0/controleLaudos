@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RelatorioLaudoController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\IndicadoresController;
+use App\Http\Controllers\ZappyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -141,4 +142,6 @@ Route::controller(AuthController::class)->group(function (){
     Route::get('/logout', 'logout')->name('logout');
 });
 
-
+/** --------------------------------------------- */
+/**              Rotas Classe integracao          */
+Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy

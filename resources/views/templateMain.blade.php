@@ -338,6 +338,15 @@
         };
         toastr.success("{{ session('mensagem') }}");
     @endif
+    @if(session('error'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "4000"
+        };
+        toastr.error("{{ session('error') }}");
+    @endif
 </script>
 
 
