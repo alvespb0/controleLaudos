@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RelatorioLaudoController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\IndicadoresController;
+use App\Http\Controllers\ZappyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,3 +143,4 @@ Route::controller(AuthController::class)->group(function (){
 });
 
 
+Route::post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('teste.zappy');

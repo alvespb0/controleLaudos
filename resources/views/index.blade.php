@@ -229,6 +229,15 @@
                             data-email="{{ $laudo->cliente->email }}">
                             Enviar Email
                         </button>
+                        <button type="button"
+                            class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#whatsappModal{{ $laudo->id }}"
+                            title="Iniciar atendimento via WhatsApp"
+                            style="white-space: nowrap;"
+                        >
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
                     </div>
                 </div>
             </div>
@@ -279,6 +288,36 @@
                 emailInput.value = email; // Preenche o campo de email
             });
          </script>
+        <!-- MODAL PARA ENVIO DE WHATSAPP -->
+        <div class="modal fade" id="whatsappModal{{ $laudo->id }}" tabindex="-1" aria-labelledby="whatsappModalLabel{{ $laudo->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Atendimento via Zappy Plataforma</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info small mb-3" role="alert">
+                            Esta mensagem abrirá um atendimento na plataforma de WhatsApp para o seu setor.
+                        </div>
+                        <form action="{{route('teste.zappy')}}" method="POST">
+                            @csrf
+                            <input type="hidden" name="numero" value="{{ $laudo->cliente->telefone[0]->telefone ?? '' }}">
+                            <div class="mb-3">
+                                <label class="form-label">Número do Cliente</label>
+                                <input type="text" class="form-control" value="{{ $laudo->cliente->telefone[0]->telefone ?? '' }}" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mensagem</label>
+                                <textarea class="form-control" name="mensagem" rows="3" required placeholder="Digite sua mensagem..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Enviar pelo Zappy</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FIM DA MODAL DE WHATSAPP -->
         @endforeach
     </div>
 </div>
