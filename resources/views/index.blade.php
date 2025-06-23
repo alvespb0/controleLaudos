@@ -116,7 +116,7 @@
     <div class="row g-4">
         @foreach($laudos as $laudo)
         <div class="col-md-4">
-            <div class="card h-100">
+            <div class="card h-100 position-relative">
                 <div class="card-body">
                     <form id="form-laudo-{{ $laudo->id }}" action="{{ route('update.laudoIndex') }}" method="POST">
                         @csrf
@@ -223,21 +223,27 @@
                         <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
                     </form>
                             
-                        <button type="button" class="btn btn-secondary enviar-btn" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#emailModal{{ $laudo->id }}"
-                            data-email="{{ $laudo->cliente->email }}">
-                            Enviar Email
-                        </button>
-                        <button type="button"
-                            class="btn btn-info btn-sm d-flex align-items-center gap-1 text-white"
-                            data-bs-toggle="modal"
-                            data-bs-target="#whatsappModal{{ $laudo->id }}"
-                            title="Iniciar atendimento via WhatsApp"
-                            style="white-space: nowrap;"
-                        >
-                            <i class="bi bi-whatsapp"></i> WhatsApp
-                        </button>
+                        <div class="dropdown-acoes">
+                            <button type="button" class="btn btn-light btn-acao" title="Ações">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu-acoes">
+                                <button type="button" class="btn btn-acao-menu w-100 mb-1" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#emailModal{{ $laudo->id }}"
+                                    data-email="{{ $laudo->cliente->email }}">
+                                    <i class="bi bi-envelope"></i> Enviar Email
+                                </button>
+                                <button type="button"
+                                    class="btn btn-acao-menu w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#whatsappModal{{ $laudo->id }}"
+                                    title="Iniciar atendimento via WhatsApp"
+                                >
+                                    <i class="bi bi-whatsapp"></i> WhatsApp
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -354,6 +360,8 @@
 }
 
     .card {
+        position: relative;
+        z-index: 1;
         border: none;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease;
@@ -361,6 +369,7 @@
 
     .card:hover {
         transform: translateY(-5px);
+        z-index: 10;
     }
 
     .card-title {
@@ -577,6 +586,87 @@
         box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.15);
     }
 
+    .dropdown-acoes {
+        position: relative;
+        display: inline-block;
+    }
+
+    .btn-acao {
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+        transition: all 0.2s ease;
+        box-shadow: none;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-acao:hover, .btn-acao:focus {
+        background: #e9ecef;
+        color: #495057;
+        border-color: #ced4da;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .dropdown-menu-acoes {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 160px;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 99999;
+        padding: 0.5rem;
+        margin-top: 0.25rem;
+    }
+
+    .dropdown-acoes:hover .dropdown-menu-acoes,
+    .dropdown-acoes:focus-within .dropdown-menu-acoes {
+        display: block;
+    }
+
+    .dropdown-menu-acoes button {
+        border-radius: 4px;
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+        margin-bottom: 0.25rem;
+        border: none;
+        width: 100%;
+        text-align: left;
+        transition: background-color 0.2s ease;
+    }
+
+    .dropdown-menu-acoes button:last-child {
+        margin-bottom: 0;
+    }
+
+    .dropdown-menu-acoes button:hover {
+        background-color: #f8f9fa;
+    }
+
+    .btn-acao-menu {
+        background-color: #f8f9fa;
+        color: #495057;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .btn-acao-menu:hover {
+        background-color: var(--primary-color);
+        color: #212529;
+        border-color: var(--primary-color);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 </style>
 
 <script>
