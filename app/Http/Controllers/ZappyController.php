@@ -26,12 +26,20 @@ class ZappyController extends Controller
             if($response->status() == 200){
                 $data = $response->json();
                 $ticketId = $data['message']['ticketId'];
+                $transfere = $this->transferAtendimento($ticketId);
+                if($transfere != 200){
+                    session()->flash('error', 'Erro ao abrir o atendimento no zappy'); # ele vai abrir sem setor, então o usuário não vai conseguir ver
+                    return redirect()->route('dashboard.show');
+                }else{
+                    session()->flash('mensagem', 'Atendimento criado com sucesso');
+                    return redirect()->route('dashboard.show');
+                }
             }else{
                 session()->flash('error', 'Erro ao abrir o atendimento no zappy');
                 \Log::error('Erro ao criar o atendimento:', [
-                    'error' => $e->getMessage(),
+                    'error' => $response->body(),
                 ]);
-                return route('dashboard.show');
+                return redirect()->route('dashboard.show');
             }
             
         }catch (\Exception $e) {
@@ -39,24 +47,35 @@ class ZappyController extends Controller
             \Log::error('Erro ao criar o atendimento:', [
                 'error' => $e->getMessage(),
             ]);
-            return route('dashboard.show');
+            return redirect()->route('dashboard.show');
         }
     }
 
     public function transferAtendimento($ticketId){
         try{
+            if(Auth::user()->tipo == 'seguranca'){
+                $queue = 2; # setor de segurança
+            }else if(Auth::user()->tipo == 'comercial'){
+                $queue = 7; # setor de comercial
+            }else{
+                $queue = 11; # setor de TI 
+            }
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Authorization' => self::BEARER_TOKEN,
             ])->post("https://api-segmetre.zapplataforma.chat/api/tickets/$ticketId/transfer",[
-                'queue'
+                'queueId' => $queue,
+                'userId' => 0,
+                'connectionId' => 0
             ]);            
+
+            return $response->status();
         }catch (\Exception $e) {
-            session()->flash('error', 'Erro ao abrir o atendimento no zappy');
-            \Log::error('Erro ao criar o atendimento:', [
+            session()->flash('error', 'Erro ao transferir o atendimento');
+            \Log::error('Erro ao transferir o atendimento:', [
                 'error' => $e->getMessage(),
             ]);
-            return route('dashboard.show');
+            return 400;
         }
     }
 }
