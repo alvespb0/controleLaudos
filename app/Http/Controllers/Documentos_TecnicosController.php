@@ -17,7 +17,7 @@ class Documentos_TecnicosController extends Controller
      * @return view
      */
     public function cadastroDocTecnico(){
-        $clientes = Cliente::all();
+        $clientes = Cliente::orderBy('nome','asc')->get();
         return view('Documentos/Documento_new', ['clientes' => $clientes]);
     }
 
@@ -34,7 +34,7 @@ class Documentos_TecnicosController extends Controller
             'tipo_documento' => $request->tipo_documento,
             'descricao' => $request->descricao,
             'data_elaboracao' => $request->data_elaboracao,
-            'cliente_id' => $request->cliente->id
+            'cliente_id' => $request->cliente_id
         ]);
 
         session()->flash('mensagem', $request->tipo_documento.'registrado com sucesso');
@@ -47,7 +47,7 @@ class Documentos_TecnicosController extends Controller
      * @return Array
      */
     public function readDocsTecnicos(){
-        $docs = Documentos_Tecnicos::orderBy('descricao', 'asc')->paginate(10);
+        $docs = Documentos_Tecnicos::orderBy('data_elaboracao', 'desc')->paginate(10);
         return view('Documentos/Documento_show', ['documentos' => $docs]);
     }
 
@@ -70,13 +70,13 @@ class Documentos_TecnicosController extends Controller
     public function updateDocTecnico(DocumentoRequest $request, $id){
         $request->validated();
 
-        $documento = Documento_Tecnicos::findOrFail($id);
+        $documento = Documentos_Tecnicos::findOrFail($id);
 
         $documento->update([
             'tipo_documento' => $request->tipo_documento,
             'descricao' => $request->descricao,
             'data_elaboracao' => $request->data_elaboracao,
-            'cliente_id' => $request->cliente->id
+            'cliente_id' => $request->cliente_id
         ]);
 
         session()->flash('mensagem', $request->tipo_documento.' alterado com sucesso');
@@ -90,12 +90,12 @@ class Documentos_TecnicosController extends Controller
      * @return view 
      */
     public function deleteDocTecnico($id){
-        $documento = Documento_Tecnicos::findOrFail($id);
+        $documento = Documentos_Tecnicos::findOrFail($id);
 
         $documento->delete();
 
-        session()->flash('mensagem', $request->tipo_documento.' excluido com sucesso');
+        session()->flash('mensagem','Documento excluido com sucesso');
 
-        return redirect()->route('readLaudo');
+        return redirect()->route('readDocs');
     }
 }
