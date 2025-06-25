@@ -98,4 +98,11 @@ class Documentos_TecnicosController extends Controller
 
         return redirect()->route('readDocs');
     }
+
+    public function indexDocTecnico(){
+        $documentos = Documentos_Tecnicos::orderBy('data_elaboracao', 'desc')->paginate(6);
+        $status = Status::all();
+        $tecnicos = Op_Tecnico::all();
+        return view("/Documentos/Documento_index", ["documentos"=> $documentos, "status" => $status, "tecnicos"=> $tecnicos]);
+    }
 }

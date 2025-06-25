@@ -108,6 +108,8 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
     Route::post('/documentos/alteracao/{id}', 'updateDocTecnico')->name('update.documento'); # da update no documento no banco
 
     Route::get('documentos/excluir/{id}', 'deleteDocTecnico')->name('delete.documento');
+
+    Route::get('documentos/controle', 'indexDocTecnico');
 });
 
 /** --------------------------------------------- */
