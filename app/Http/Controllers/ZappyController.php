@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class ZappyController extends Controller
-{
-    private const BEARER_TOKEN  = 'Bearer a92b89c065bc2d2b133ed28bf45994bf4d953a474d45170cc890c296c68072a9ba7fa11c747fa517ab894d3aedae3419617c9bcecebde7e3b0361ed7cdacc07e6e3e001803784d60932292f0ef06650e8a0ed1caea4fdc3292585cf7f02ce634403b131a3d0084a71d0a6ea83a999ee31cb685961b82aed5ae48da330e';
-
+{    
     public function createAtendimento(Request $request){
+        $token = env('ZAPPY_TOKEN');
         try{
             $numeroLimpo = preg_replace('/[()\s-]+/', '', $request->numero);
             $numero = '55' . $numeroLimpo;
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'Authorization' => self::BEARER_TOKEN,
+                'Authorization' => $token,
             ])->post("https://api-segmetre.zapplataforma.chat/api/send/$numero",[
                 'body' => $request->mensagem,
                 'connectionFrom' => 0,
@@ -52,6 +51,7 @@ class ZappyController extends Controller
     }
 
     public function transferAtendimento($ticketId){
+        $token = env('ZAPPY_TOKEN');
         try{
             if(Auth::user()->tipo == 'seguranca'){
                 $queue = 2; # setor de segurança
@@ -62,7 +62,7 @@ class ZappyController extends Controller
             }
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'Authorization' => self::BEARER_TOKEN,
+                'Authorization' => $token,
             ])->post("https://api-segmetre.zapplataforma.chat/api/tickets/$ticketId/transfer",[
                 'queueId' => $queue,
                 'userId' => 0,
