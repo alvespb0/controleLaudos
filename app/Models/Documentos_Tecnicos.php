@@ -19,6 +19,7 @@ class Documentos_Tecnicos extends Model
         'tipo_documento',
         'descricao',
         'data_elaboracao',
+        'data_conclusao',
         'cliente_id',
         'status_id',
         'tecnico_id'

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('tipo_documento', ['CAT', 'PPP', 'ADENDO']);
             $table->string('descricao');
-            $table->date('data_elaboracao');
+            $table->date('data_elaboracao'); # data de acontecimento da cat por exemplo
+            $table->date('data_conclusao')->nullable(); # data de conclusão, já lançado esocial e afins
             $table->unsignedBigInteger('cliente_id')->nullable();
             $table->unsignedBigInteger('status_id')->nullable();
             $table->unsignedBigInteger('tecnico_id')->nullable();
