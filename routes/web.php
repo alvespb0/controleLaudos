@@ -9,6 +9,7 @@ use App\Http\Controllers\RelatorioLaudoController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\IndicadoresController;
 use App\Http\Controllers\ZappyController;
+use App\Http\Controllers\Documentos_TecnicosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,6 +97,24 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
 });
 
 /** --------------------------------------------- */
+/**              Rotas Classe documentos          */
+Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_TecnicosController::class)->group(function (){
+    Route::get('/documentos', 'readDocsTecnicos')->name('readDocs'); # retorna a listagem do documentos técnicos
+
+    Route::get('/documentos/cadastro', 'cadastroDocTecnico')->name('cadastro.documento'); # retorna a view da tela de cadastro de documento tecnico
+    Route::post('/documentos/cadastro', 'createDocTecnico')->name('create.documento'); # salva o documento tecnico no banco
+
+    Route::get('/documentos/alteracao/{id}', 'alteracaoDocTecnico')->name('alteracao.documento'); # retrona a view de edição do documento técnico
+    Route::post('/documentos/alteracao/{id}', 'updateDocTecnico')->name('update.documento'); # da update no documento no banco
+
+    Route::get('documentos/excluir/{id}', 'deleteDocTecnico')->name('delete.documento'); # deleta o documento no banco
+
+    Route::get('documentos/controle', 'indexDocTecnico')->name('show.docIndex');
+    Route::post('documentos/controle', 'updateDocIndex')->name('update.docIndex');
+    Route::get('documentos/controle/filtered', 'filterDocIndex')->name('filter.docIndex');
+});
+
+/** --------------------------------------------- */
 /**    Rotas Classe Laudo para main dashboard     */
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
@@ -145,3 +164,4 @@ Route::controller(AuthController::class)->group(function (){
 /** --------------------------------------------- */
 /**              Rotas Classe integracao          */
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
+

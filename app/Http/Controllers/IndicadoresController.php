@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\Laudo;
+use App\Models\Documentos_Tecnicos;
 use App\Models\Cliente;
 use App\Models\Op_Comercial;
 use App\Models\Op_Tecnico;
@@ -31,8 +32,12 @@ class IndicadoresController extends Controller
 
         $chartOrcamentos = $this->indicadorOrcamentos($request->dataInicial, $request->dataFinal);
 
+        $chartDocsStatus = $this->indicadorDocsStatus($request->dataInicial, $request->dataFinal);
+
+        $chartDocsTecnico = $this->indicadorDocsPorTecnico($request->dataInicial, $request->dataFinal);
+
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
-                    'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos]);
+                    'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos, 'chartDocsStatus' => $chartDocsStatus, 'chartDocsTecnico' => $chartDocsTecnico]);
     }
 
 
@@ -169,5 +174,49 @@ class IndicadoresController extends Controller
             ->backgroundColor('rgba(54, 162, 235, 0.7)');
 
         return $chartOrcamentos;
+    }
+
+    private function indicadorDocsStatus($dataInicio = null, $dataFim = null){
+        /* DOCUMENTOS POR STATUS */
+        $statusList = Status::withCount(['documentos' => function ($query) use ($dataInicio, $dataFim) {
+            if ($dataInicio) {
+                $query->whereDate('data_elaboracao', '>=', $dataInicio);
+            }
+            if ($dataFim) {
+                $query->whereDate('data_elaboracao', '<=', $dataFim);
+            }
+        }])->get();
+
+        $labels = $statusList->pluck('nome')->toArray();
+        $data   = $statusList->pluck('documentos_count')->toArray();
+        $colors = $statusList->pluck('cor')->toArray();          
+
+        $chartStatus = new Chart;
+        $chartStatus->labels($labels);
+        $chartStatus->dataset('Documentos por status', 'pie', $data)
+                    ->backgroundColor($colors);
+
+        return $chartStatus;
+    }
+
+    private function indicadorDocsPorTecnico($dataInicio = null, $dataFim = null){
+        /* DOCUMENTOS POR TÉCNICO RESPONSÁVEL */
+        $tecnicosList = Op_Tecnico::withCount(['documentos' => function ($query) use ($dataInicio, $dataFim) {
+            if ($dataInicio) {
+                $query->whereDate('data_aceite', '>=', $dataInicio);
+            }
+            if ($dataFim) {
+                $query->whereDate('data_aceite', '<=', $dataFim);
+            }
+        }])->get();
+
+        $labelsTecnico = $tecnicosList->pluck('usuario');
+        $dataTecnico = $tecnicosList->pluck('documentos_count');
+
+        $chartTecnico = new Chart;
+        $chartTecnico->labels($labelsTecnico);
+        $chartTecnico->dataset('Documentos por técnico', 'bar', $dataTecnico);
+
+        return $chartTecnico;
     }
 }
