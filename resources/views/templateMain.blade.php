@@ -204,11 +204,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">Controle Segurança</a>
+
         <div class="container">
-            <a class="navbar-brand" href="/dashboard">
-                <i class="bi bi-file-earmark-medical"></i>
-                Controle de Laudos
-            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -221,12 +219,26 @@
                             Dashboard
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-person-plus"></i> Main Dashboard </a></li>
+                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-person-plus"></i> Controle de Laudos </a></li>
+                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-people"></i> Controle de Documentos técnicos </a></li>
                             <li><a class="dropdown-item" href="/graphs"><i class="bi bi-people"></i> Dashboard Gerencial </a></li>
                         </ul>
                     </li>
                     @endif
-                    @if(Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                    @if(Auth::user()->tipo === 'seguranca')
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-person-plus"></i> Controle de Laudos </a></li>
+                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-people"></i> Controle de Documentos técnicos </a></li>
+                        </ul>
+                    </li>
+
+                    @endif
+                    @if(Auth::user()->tipo === 'comercial')
                     <li class="nav-item">
                         <a class="nav-link" href="/dashboard">
                             <i class="bi bi-speedometer2"></i>
@@ -243,6 +255,18 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/user/register"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
                             <li><a class="dropdown-item" href="/user"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
+                        </ul>
+                    </li>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i>
+                            Documentos técnicos
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/documentos/cadastro"><i class="bi bi-person-plus"></i> Novo Documento</a></li>
+                            <li><a class="dropdown-item" href="/documentos"><i class="bi bi-people"></i> Documentos cadastrados</a></li>
                         </ul>
                     </li>
                     @endif

@@ -50,6 +50,7 @@
         </div>
 
 
+        <div class="md-2"></div>
         <div class="col-md-4 d-flex justify-content-center mb-4">
             <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
                 <h5 class="text-center mb-3">Clientes Novos X Renovações</h5>
@@ -67,6 +68,25 @@
                 </div>
             </div>
         </div>
+        <div class="md-2"></div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Documentos por status</h5>
+                <div style="height: 300px;">
+                    {!! $chartDocsStatus->container() !!}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Documentos por status</h5>
+                <div style="height: 300px;">
+                    {!! $chartDocsTecnico->container() !!}
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -77,6 +97,9 @@
     {!! $chartVendedor->script() !!}
     {!! $chartClientes->script() !!}
     {!! $chartOrcamentos->script() !!}
+    {!! $chartDocsStatus->script() !!}
+    {!! $chartDocsTecnico->script() !!}
+
 </div>
 
 @endsection

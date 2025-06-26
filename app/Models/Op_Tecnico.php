@@ -24,4 +24,8 @@ class Op_Tecnico extends Model
     public function laudos(){
         return $this->hasMany(Laudo::class, 'tecnico_id');
     }
+
+    public function documentos(){
+        return $this->hasMany(Documentos_Tecnicos::class, 'tecnico_id');
+    }
 }

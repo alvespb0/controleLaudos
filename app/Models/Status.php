@@ -21,4 +21,7 @@ class Status extends Model
         return $this->hasMany(Laudo::class);
     }
 
+    public function documentos(){
+        return $this->hasMany(Documentos_Tecnicos::class, 'status_id');
+    }
 }

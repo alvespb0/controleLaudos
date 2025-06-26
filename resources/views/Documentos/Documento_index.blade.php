@@ -45,7 +45,6 @@
         flex-wrap: wrap;
         gap: 1.2rem;
         align-items: end;
-        justify-content: flex-end;
     }
     .filtros-bloco label {
         font-weight: 500;
@@ -70,7 +69,7 @@
         background: var(--hover-color);
         transform: translateY(-2px) scale(1.05);
     }
-    /* Cards de laudo */
+    /* Cards de documento mantendo cor do status */
     .card.h-100 {
         border-radius: 16px;
         box-shadow: 0 4px 24px rgba(44,100,92,0.08);
@@ -214,6 +213,33 @@
         font-size: 0.8rem;
         pointer-events: none;
     }
+    /* Badge tipo_documento */
+    .badge-tipo {
+        display: inline-block;
+        padding: 0.35em 0.8em;
+        font-size: 0.95em;
+        font-weight: 600;
+        border-radius: 12px;
+        letter-spacing: 0.5px;
+        color: #fff;
+        margin-right: 0.5em;
+        margin-bottom: 0.1em;
+        text-transform: uppercase;
+    }
+    .badge-CAT { background:rgb(255, 51, 0); }
+    .badge-ADENDO { background:rgb(17, 184, 161); }
+    .badge-PPP { background:rgb(245, 241, 0);}
+    /* Indicadores mais destacados */
+    #indicadores .card {
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(44,100,92,0.10);
+        border: none;
+        transition: transform 0.2s;
+    }
+    #indicadores .card:hover {
+        transform: scale(1.04);
+        box-shadow: 0 6px 24px rgba(44,100,92,0.18);
+    }
     /* Responsividade aprimorada */
     @media (max-width: 768px) {
         .filtros-bloco {
@@ -221,47 +247,6 @@
             gap: 0.7rem;
             padding: 1rem 0.7rem;
         }
-    }
-    .obs-display {
-        position: relative;
-        padding: 0;
-        border: none;
-        background: none;
-        min-height: 1.8rem;
-    }
-    .obs-display .text-truncate-obs {
-        border-bottom: 2px solid #b2dfdb;
-        display: inline-block;
-        width: 100%;
-        padding: 0.1rem 0.5rem 0.1rem 0;
-        font-size: 0.97rem;
-        color: #495057;
-        font-style: italic;
-        transition: border-color 0.2s;
-    }
-    .obs-display.hovering .text-truncate-obs {
-        border-bottom-color: var(--primary-color);
-    }
-    .obs-display .edit-btn {
-        position: absolute;
-        right: 0.2rem;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #7b8a8b;
-        opacity: 0;
-        pointer-events: none;
-        font-size: 1.1rem;
-        padding: 0;
-        margin: 0;
-        transition: opacity 0.2s, color 0.2s;
-        z-index: 2;
-    }
-    .obs-display.hovering .edit-btn {
-        opacity: 1;
-        pointer-events: auto;
-        color: var(--primary-color);
     }
     .filtros-bloco form {
         display: flex;
@@ -279,11 +264,22 @@
             margin-left: auto;
         }
     }
+    .navbar-brand {
+        margin-right: 1.2rem !important;
+        padding-right: 0 !important;
+        font-size: 1.2rem !important;
+        gap: 0.3rem !important;
+    }
+    @media (max-width: 1200px) {
+        .navbar-brand {
+            font-size: 1rem !important;
+            gap: 0.1rem !important;
+        }
+    }
 </style>
 <div class="sidebar-discreta">
     <span class="icon" title="Ir para o topo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></span>
     <span class="icon" title="Indicadores" id="sidebarIndicadores"><i class="bi bi-bar-chart"></i></span>
-    <span class="icon" title="Kanban" onclick="window.location.href='/dashboard/kanban'"><i class="bi bi-kanban"></i></span>
 </div>
 <div class="container">
     <!-- Modal de Mensagem -->
@@ -312,7 +308,7 @@
                         <div class="card-body p-3 text-center">
                             <h6 class="card-title mb-1 text-white">{{ $s->nome }}</h6>
                             <h4 class="fw-bold mb-0">{{ $contagemPorStatus[$s->id] ?? 0 }}</h4>
-                            <small>laudos</small>
+                            <small>documento</small>
                         </div>
                     </div>
                 </div>
@@ -321,9 +317,8 @@
     </div>
 
 <div class="filtros-bloco">
-    <form action="{{ route('dashboard.filter') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
-        <div style="font-weight: 700; font-size: 1.15rem; color: var(--secondary-color); align-self: center; margin-right: 5rem; white-space: nowrap;">Controle de Laudos</div>
-
+    <form action="{{ route('filter.docIndex') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
+        <div style="font-weight: 700; font-size: 1.15rem; color: var(--secondary-color); align-self: center; margin-right: 5rem; white-space: nowrap;">Controle de Documentos</div>
         <!-- Cliente -->
         <div style="width: 180px;">
             <label for="clienteFilter" class="form-label">Cliente</label>
@@ -375,30 +370,32 @@
         </div>
     @endif
 
-    @if($laudos->isEmpty())
+    @if($documentos->isEmpty())
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            Nenhum Laudo Cadastrado no sistema!
+            Nenhum Documento Técnico Cadastrado no sistema!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     @endif
     <div class="row g-4">
-        @foreach($laudos as $laudo)
+        @foreach($documentos as $documento)
         <div class="col-md-4">
             <div class="card h-100 position-relative">
                 <div class="card-body">
-                    <form id="form-laudo-{{ $laudo->id }}" action="{{ route('update.laudoIndex') }}" method="POST">
+                    <form id="form-documento-{{ $documento->id }}" action="{{route('update.docIndex')}}" method="POST">
                         @csrf
-                        <input type="hidden" name="laudo_id" value="{{$laudo->id}}">
+                        <input type="hidden" name="documento_id" value="{{$documento->id}}">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="card-title mb-0">{{$laudo->nome}}</h5>
+                            <span>
+                                <span class="badge-tipo badge-{{$documento->tipo_documento}}">{{$documento->tipo_documento}}</span>
+                            </span>
                             <div class="status-container position-relative">
-                                <div class="status-indicator" style="background-color: {{ $laudo->status ? $laudo->status->cor : '#808080' }}"></div>
+                                <div class="status-indicator" style="background-color: {{ $documento->status ? $documento->status->cor : '#808080' }}"></div>
                                 <select class="status-select" name="status">
-                                    @if(!$laudo->status)
+                                    @if(!$documento->status)
                                         <option value="" selected disabled>Sem Status</option>
                                     @endif
                                     @foreach($status as $s)
-                                        <option value="{{$s->id}}" data-color="{{$s->cor}}" {{ $laudo->status && $laudo->status->id === $s->id ? 'selected' : '' }}>
+                                        <option value="{{$s->id}}" data-color="{{$s->cor}}" {{ $documento->status && $documento->status->id === $s->id ? 'selected' : '' }}>
                                             {{$s->nome}}
                                         </option>
                                     @endforeach
@@ -406,86 +403,24 @@
                             </div>
                         </div>
                         <p class="card-text">
-                            <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}}
-                            @if($laudo->esocial)
-                                <span class="badge bg-primary rounded-pill">Esocial</span>
-                            @endif 
-                            @if($laudo->cliente->cliente_novo)
-                                <span class="badge bg-success rounded-pill">Cliente Novo</span>
-                            @else
-                                <span class="badge bg-warning rounded-pill">Cliente Renovação</span>
-                            @endif
+                            <strong>Cliente: </strong>{{$documento->cliente ? $documento->cliente->nome : 'Cliente não definido'}}
                             <br>
-                            <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
-                            <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
-                            <strong>Data de Aceite: </strong>{{$laudo->data_aceite !== null ? $laudo->data_aceite : 'Data de aceite não definido'}} <br>
-                            <strong>Data Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$laudo->data_conclusao !== null ? $laudo->data_conclusao : ''}}"> <br> 
-                            <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br><br>
-                            <button type="button" class="btn btn-info" id="toggleContatosBtn{{$laudo->id}}">
-                                <i class="bi bi-phone"></i> Ver Dados do cliente
-                            </button>
-                            <div id="contatos{{$laudo->id}}" class="mt-2" style="display: none;">
-                                <strong>Email: </strong>{{ $laudo->cliente->email }} <br>
-                                <strong>Telefone(s): </strong>
-                                @foreach($laudo->cliente->telefone as $telefone)
-                                    {{ $telefone->telefone }} <br>
-                                @endforeach
-                                <strong>CNPJ:</strong> {{$laudo->cliente->cnpj}} <br>
-                                <br>
-
-                            </div>
+                            <strong>Data de Solicitação: </strong>{{$documento->data_elaboracao !== null ? $documento->data_elaboracao : 'Data de aceite não definido'}} 
+                            <br>
+                            <strong>Data de Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$documento->data_conclusao !== null ? $documento->data_conclusao : ''}}"> 
+                            <br> 
+                            <strong>Descrição: </strong>{{$documento->descricao !== null ? $documento->descricao : 'nenhuma descrição definida'}}
+                            <br>
                             <Strong>Técnico Responsável: </Strong>
                             <select name="tecnicoResponsavel" class="form-select mt-2">
                                 <option value="" selected>Selecione um Técnico Responsável</option>
                                 @foreach($tecnicos as $tecnico)
-                                <option value="{{$tecnico->id}}" {{ ($laudo->tecnico && $laudo->tecnico->id == $tecnico->id) ? 'selected' : '' }}>
+                                <option value="{{$tecnico->id}}" {{ ($documento->tecnico && $documento->tecnico->id == $tecnico->id) ? 'selected' : '' }}>
                                     {{$tecnico->usuario}}
                                 </option>
                                 @endforeach
                             </select>
-
                             </p>
-                            <div class="mb-2 position-relative group">
-                                <strong class="d-block mb-1 text-muted small">Observação:</strong>
-
-                                {{-- Exibição --}}
-                                <div id="obs-display-{{ $laudo->id }}" 
-                                    class="obs-display {{ !$laudo->observacao ? 'empty' : '' }}" 
-                                    onmouseover="this.classList.add('hovering')" 
-                                    onmouseout="this.classList.remove('hovering')">
-                                    
-                                    <div id="obs-text-{{ $laudo->id }}" class="text-truncate-obs {{ !$laudo->observacao ? 'empty-obs' : '' }}">
-                                        {{ $laudo->observacao ?? 'Nenhuma observação' }}
-                                    </div>
-
-                                    @if(strlen($laudo->observacao) > 200)
-                                        <a href="javascript:void(0)" 
-                                        id="toggle-link-{{ $laudo->id }}"
-                                        class="toggle-link" 
-                                        onclick="toggleExpandObservacao({{ $laudo->id }})">
-                                            Ver mais...
-                                        </a>
-                                    @endif
-
-                                    <button type="button" class="edit-btn" 
-                                            onclick="toggleObservacao({{ $laudo->id }})" 
-                                            title="Editar observação">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-
-                                {{-- Edição --}}
-                                <div id="obs-edit-{{ $laudo->id }}" class="mt-2" style="display: none;">
-                                    <textarea name="observacao" class="form-control form-control-sm auto-expand" rows="2"
-                                            placeholder="Digite uma observação..."
-                                            oninput="enableSave({{ $laudo->id }})">{{ $laudo->observacao }}</textarea>
-                                    <div class="mt-1 d-flex gap-2">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancelEditObservacao({{ $laudo->id }})">
-                                            Cancelar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         <hr>
                     <div class="d-flex justify-content-between mt-3 gap-2">
                         <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
@@ -498,14 +433,14 @@
                             <div class="dropdown-menu-acoes">
                                 <button type="button" class="btn btn-acao-menu w-100 mb-1" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#emailModal{{ $laudo->id }}"
-                                    data-email="{{ $laudo->cliente->email }}">
+                                    data-bs-target="#emailModal{{ $documento->id }}"
+                                    data-email="{{ $documento->cliente->email }}">
                                     <i class="bi bi-envelope"></i> Enviar Email
                                 </button>
                                 <button type="button"
                                     class="btn btn-acao-menu w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#whatsappModal{{ $laudo->id }}"
+                                    data-bs-target="#whatsappModal{{ $documento->id }}"
                                     title="Iniciar atendimento via WhatsApp"
                                 >
                                     <i class="bi bi-whatsapp"></i> WhatsApp
@@ -517,7 +452,7 @@
             </div>
         </div>
         <!-- MODAL PARA ENVIO DE EMAIL -->
-        <div class="modal fade" id="emailModal{{ $laudo->id }}" tabindex="-1" aria-labelledby="emailModalLabel{{ $laudo->id }}" aria-hidden="true">
+        <div class="modal fade" id="emailModal{{ $documento->id }}" tabindex="-1" aria-labelledby="emailModalLabel{{ $documento->id }}" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -527,10 +462,10 @@
                     <div class="modal-body">
                         <form action="{{route('envia-email.cliente')}}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <input type="hidden" name="email" value = "{{$laudo->cliente->email}}">
+                            <input type="hidden" name="email" value = "{{$documento->cliente->email}}">
                             <div class="mb-3">
                                 <label class="form-label">Destinatário</label>
-                                <input type="email" class="form-control recipient-email" value = "{{$laudo->cliente->email}}" disabled required>
+                                <input type="email" class="form-control recipient-email" value = "{{$documento->cliente->email}}" disabled required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">assunto</label>
@@ -553,17 +488,17 @@
         <!-- FIM DA MODAL DE ENVIO DE EMAIL -->
          <script>
             // Ao abrir a modal
-            var myModal = document.getElementById('emailModal{{ $laudo->id }}');
+            var myModal = document.getElementById('emailModal{{ $documento->id }}');
             myModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget; // O botão que acionou a modal
                 var email = button.getAttribute('data-email'); // Pega o email do cliente
 
-                var emailInput = myModal.querySelector('#recipientEmail{{ $laudo->id }}');
+                var emailInput = myModal.querySelector('#recipientEmail{{ $documento->id }}');
                 emailInput.value = email; // Preenche o campo de email
             });
          </script>
         <!-- MODAL PARA ENVIO DE WHATSAPP -->
-        <div class="modal fade" id="whatsappModal{{ $laudo->id }}" tabindex="-1" aria-labelledby="whatsappModalLabel{{ $laudo->id }}" aria-hidden="true">
+        <div class="modal fade" id="whatsappModal{{ $documento->id }}" tabindex="-1" aria-labelledby="whatsappModalLabel{{ $documento->id }}" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -576,10 +511,10 @@
                         </div>
                         <form action="{{route('atendimento.zappy')}}" method="POST">
                             @csrf
-                            <input type="hidden" name="numero" value="{{ $laudo->cliente->telefone[0]->telefone ?? '' }}">
+                            <input type="hidden" name="numero" value="{{ $documento->cliente->telefone[0]->telefone ?? '' }}">
                             <div class="mb-3">
                                 <label class="form-label">Número do Cliente</label>
-                                <input type="text" class="form-control" value="{{ $laudo->cliente->telefone[0]->telefone ?? '' }}" disabled>
+                                <input type="text" class="form-control" value="{{ $documento->cliente->telefone[0]->telefone ?? '' }}" disabled>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Mensagem</label>
@@ -596,23 +531,23 @@
     </div>
 </div>
 
-@if(!$laudos->isEmpty())
+@if(!$documentos->isEmpty())
 <div class="col-auto ms-auto">
     <nav aria-label="Page navigation example">
         <ul class="pagination">
-            @if ($laudos->currentPage() > 1)
+            @if ($documentos->currentPage() > 1)
             <li class="page-item">
-            <a class="page-link" href="{{ $laudos->previousPageUrl() }}" aria-label="Previous">
+            <a class="page-link" href="{{ $documento->previousPageUrl() }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
             </li>
-            <li class="page-item"><a class="page-link" href="{{ $laudos->previousPageUrl() }}">{{ $laudos->currentPage() - 1}}</a></li>
+            <li class="page-item"><a class="page-link" href="{{ $documentos->previousPageUrl() }}">{{ $documentos->currentPage() - 1}}</a></li>
             @endif
-            <li class="page-item active"><a class="page-link" href="{{ $laudos->nextPageUrl() }}">{{ $laudos->currentPage() }}</a></li>
-            @if ($laudos->hasMorePages())
-            <li class="page-item"><a class="page-link" href="{{ $laudos->nextPageUrl() }}">{{ $laudos->currentPage() + 1 }}</a></li>
+            <li class="page-item active"><a class="page-link" href="{{ $documentos->nextPageUrl() }}">{{ $documentos->currentPage() }}</a></li>
+            @if ($documentos->hasMorePages())
+            <li class="page-item"><a class="page-link" href="{{ $documentos->nextPageUrl() }}">{{ $documentos->currentPage() + 1 }}</a></li>
             <li class="page-item">
-                <a class="page-link" href="{{ $laudos->nextPageUrl() }}" aria-label="Next">
+                <a class="page-link" href="{{ $documentos->nextPageUrl() }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -623,64 +558,10 @@
 @endif
 
 <script>
-    // PARTE DAS OBSERVAÇÕES DO LAUDO
-    function toggleObservacao(id) {
-        document.getElementById('obs-display-' + id).style.display = 'none';
-        document.getElementById('obs-edit-' + id).style.display = 'block';
-    }
-
-    function cancelEditObservacao(id) {
-        document.getElementById('obs-edit-' + id).style.display = 'none';
-        document.getElementById('obs-display-' + id).style.display = 'block';
-        
-        // Restaura o valor original do textarea
-        const textarea = document.querySelector(`#obs-edit-${id} textarea[name="observacao"]`);
-        const originalText = document.querySelector(`#obs-text-${id}`).textContent.trim();
-        textarea.value = originalText === 'Nenhuma observação' ? '' : originalText;
-    }
-
-    function toggleExpandObservacao(id) {
-        const obsText = document.getElementById('obs-text-' + id);
-        const toggleLink = document.getElementById('toggle-link-' + id);
-
-        obsText.classList.toggle('expanded');
-
-        if (obsText.classList.contains('expanded')) {
-            toggleLink.textContent = 'Ver menos...';
-        } else {
-            toggleLink.textContent = 'Ver mais...';
-        }
-    }
-
-    function enableSave(id) {
-        const btn = document.querySelector(`#form-laudo-${id} .save-btn`);
-        if (btn) btn.disabled = false;
-    }
-
-    document.addEventListener('input', function (e) {
-        if (e.target.tagName.toLowerCase() !== 'textarea') return;
-        autoResizeTextarea(e.target);
-    });
-
-    function autoResizeTextarea(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-    }
-
-    document.querySelectorAll('form[id^="form-laudo-"]').forEach(form => {
-        form.querySelectorAll('input, select, textarea').forEach(input => {
-            input.addEventListener('change', () => {
-                const btn = form.querySelector('.save-btn');
-                if (btn) btn.disabled = false;
-            });
-        });
-    });
-    // FIM DAS OBSERVAÇÕES DO LAUDO
-
     document.addEventListener('DOMContentLoaded', () => {
-        function toggleContatos(laudoId) {
-            const contatosDiv = document.getElementById('contatos' + laudoId);
-            const button = document.getElementById('toggleContatosBtn' + laudoId);
+        function toggleContatos(documentoId) {
+            const contatosDiv = document.getElementById('contatos' + documentoId);
+            const button = document.getElementById('toggleContatosBtn' + documentoId);
 
             if (contatosDiv.style.display === "none") {
                 contatosDiv.style.display = "block";
@@ -691,12 +572,7 @@
             }
         }
 
-    document.querySelectorAll('.btn-info').forEach(button => {
-        button.addEventListener('click', () => {
-            const laudoId = button.id.replace('toggleContatosBtn', '');
-            toggleContatos(laudoId);
-        });
-    });
+
 
     // --- Modal de mensagens ---
     const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
@@ -707,7 +583,7 @@
         messageModal.show();
     }
 
-    // --- Inicializa cada formulário de laudo ---
+    // --- Inicializa cada formulário de documento ---
     function initializeCard(form) {
         const saveBtn = form.querySelector('.save-btn');
         const statusSelect = form.querySelector('.status-select');
@@ -752,7 +628,7 @@
 
             const formData = new FormData(this);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const laudoId = this.querySelector('input[name="laudo_id"]').value;
+            const documentoId = this.querySelector('input[name="documento_id"]').value;
 
             fetch(this.action, {
                 method: 'POST',
@@ -775,14 +651,14 @@
                 }
             })
             .catch(error => {
-                console.error('Erro ao atualizar o laudo:', error);
-                showMessage('Ocorreu um erro ao atualizar o laudo. Por favor, tente novamente.', true);
+                console.error('Erro ao atualizar o documento:', error);
+                showMessage('Ocorreu um erro ao atualizar o documento. Por favor, tente novamente.', true);
             });
         });
     }
 
-    // --- Inicializa todos os forms de laudos ---
-    document.querySelectorAll('form[id^="form-laudo-"]').forEach(form => {
+    // --- Inicializa todos os forms de documento ---
+    document.querySelectorAll('form[id^="form-documento-"]').forEach(form => {
         initializeCard(form);
     });
 
@@ -806,4 +682,5 @@
     });
 });
 </script>
+
 @endsection 
