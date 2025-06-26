@@ -305,7 +305,7 @@
     </div>
 
 <div class="filtros-bloco">
-    <form action="{{ route('dashboard.filter') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
+    <form action="{{ route('filter.docIndex') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
         <!-- Cliente -->
         <div style="width: 180px;">
             <label for="clienteFilter" class="form-label">Cliente</label>

@@ -111,6 +111,7 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
 
     Route::get('documentos/controle', 'indexDocTecnico')->name('show.docIndex');
     Route::post('documentos/controle', 'updateDocIndex')->name('update.docIndex');
+    Route::get('documentos/controle/filtered', 'filterDocIndex')->name('filter.docIndex');
 });
 
 /** --------------------------------------------- */
