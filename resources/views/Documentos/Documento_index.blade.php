@@ -264,6 +264,18 @@
             margin-left: auto;
         }
     }
+    .navbar-brand {
+        margin-right: 1.2rem !important;
+        padding-right: 0 !important;
+        font-size: 1.2rem !important;
+        gap: 0.3rem !important;
+    }
+    @media (max-width: 1200px) {
+        .navbar-brand {
+            font-size: 1rem !important;
+            gap: 0.1rem !important;
+        }
+    }
 </style>
 <div class="sidebar-discreta">
     <span class="icon" title="Ir para o topo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></span>
@@ -306,6 +318,7 @@
 
 <div class="filtros-bloco">
     <form action="{{ route('filter.docIndex') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
+        <div style="font-weight: 700; font-size: 1.15rem; color: var(--secondary-color); align-self: center; margin-right: 5rem; white-space: nowrap;">Controle de Documentos</div>
         <!-- Cliente -->
         <div style="width: 180px;">
             <label for="clienteFilter" class="form-label">Cliente</label>

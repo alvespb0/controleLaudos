@@ -110,7 +110,7 @@ class Documentos_TecnicosController extends Controller
 
         $contagemPorStatus = [];
         foreach ($status as $s) {
-            $contagemPorStatus[$s->id] = Laudo::where('status_id', $s->id)->count();
+            $contagemPorStatus[$s->id] = Documentos_Tecnicos::where('status_id', $s->id)->count();
         }
         $semStatusCount = Documentos_Tecnicos::whereNull('status_id')->count();
         $status->push((object)[

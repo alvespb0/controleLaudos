@@ -322,6 +322,8 @@
 
 <div class="filtros-bloco">
     <form action="{{ route('dashboard.filter') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
+        <div style="font-weight: 700; font-size: 1.15rem; color: var(--secondary-color); align-self: center; margin-right: 5rem; white-space: nowrap;">Controle de Laudos</div>
+
         <!-- Cliente -->
         <div style="width: 180px;">
             <label for="clienteFilter" class="form-label">Cliente</label>
