@@ -22,6 +22,6 @@ class Status extends Model
     }
 
     public function documentos(){
-        return $this->hasMany(Documentos_Tecnicos::class, 'id');
+        return $this->hasMany(Documentos_Tecnicos::class, 'status_id');
     }
 }

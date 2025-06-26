@@ -204,6 +204,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">Controle Segurança</a>
+
         <div class="container">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -263,8 +265,8 @@
                             Documentos técnicos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/user/register"><i class="bi bi-person-plus"></i> Novo Documento</a></li>
-                            <li><a class="dropdown-item" href="/user"><i class="bi bi-people"></i> Documentos cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/documentos/cadastro"><i class="bi bi-person-plus"></i> Novo Documento</a></li>
+                            <li><a class="dropdown-item" href="/documentos"><i class="bi bi-people"></i> Documentos cadastrados</a></li>
                         </ul>
                     </li>
                     @endif
