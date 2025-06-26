@@ -107,9 +107,10 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
     Route::get('/documentos/alteracao/{id}', 'alteracaoDocTecnico')->name('alteracao.documento'); # retrona a view de edição do documento técnico
     Route::post('/documentos/alteracao/{id}', 'updateDocTecnico')->name('update.documento'); # da update no documento no banco
 
-    Route::get('documentos/excluir/{id}', 'deleteDocTecnico')->name('delete.documento');
+    Route::get('documentos/excluir/{id}', 'deleteDocTecnico')->name('delete.documento'); # deleta o documento no banco
 
-    Route::get('documentos/controle', 'indexDocTecnico');
+    Route::get('documentos/controle', 'indexDocTecnico')->name('show.docIndex');
+    Route::post('documentos/controle', 'updateDocIndex')->name('update.docIndex');
 });
 
 /** --------------------------------------------- */

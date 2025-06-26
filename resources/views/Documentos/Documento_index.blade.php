@@ -2,6 +2,273 @@
 
 @section('content')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+    /* Barra lateral discreta */
+    .sidebar-discreta {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        height: 70vh;
+        width: 48px;
+        background: rgba(121,197,182,0.10);
+        border-radius: 0 16px 16px 0;
+        box-shadow: 2px 0 8px rgba(44,100,92,0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.2rem;
+        z-index: 100;
+        padding: 1.2rem 0;
+    }
+    .sidebar-discreta .icon {
+        color: var(--secondary-color);
+        font-size: 1.3rem;
+        opacity: 0.7;
+        transition: color 0.2s, opacity 0.2s;
+        cursor: pointer;
+    }
+    .sidebar-discreta .icon:hover {
+        color: var(--primary-color);
+        opacity: 1;
+    }
+    @media (max-width: 768px) {
+        .sidebar-discreta { display: none; }
+    }
+    /* Filtros mais clean */
+    .filtros-bloco {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(121,197,182,0.07);
+        padding: 1.2rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        align-items: end;
+    }
+    .filtros-bloco label {
+        font-weight: 500;
+        color: var(--secondary-color);
+    }
+    .filtros-bloco .form-control, .filtros-bloco .form-select {
+        background: #f8fafc;
+        border: 1px solid #e0f7fa;
+        transition: border-color 0.2s;
+    }
+    .filtros-bloco .form-control:focus, .filtros-bloco .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.1rem rgba(121,197,182,0.10);
+    }
+    .filtros-bloco .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        box-shadow: 0 2px 8px rgba(121,197,182,0.10);
+        transition: background 0.2s, transform 0.2s;
+    }
+    .filtros-bloco .btn-primary:hover {
+        background: var(--hover-color);
+        transform: translateY(-2px) scale(1.05);
+    }
+    /* Cards de documento mantendo cor do status */
+    .card.h-100 {
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(44,100,92,0.08);
+        border: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        background: #fff;
+        position: relative;
+        overflow: visible;
+    }
+    .card.h-100:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 8px 32px rgba(44,100,92,0.16);
+        z-index: 2;
+    }
+    .card-title {
+        color: var(--secondary-color);
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+    .card .status-container {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 0.2rem 0.7rem;
+        box-shadow: 0 1px 4px rgba(121,197,182,0.07);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .status-indicator {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px rgba(0,0,0,0.04);
+    }
+    .save-btn {
+        background: var(--primary-color);
+        border: none;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        padding: 0.25rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 6px;
+        min-width: 80px;
+        height: 36px;
+        transition: background 0.2s, transform 0.2s;
+        box-shadow: 0 1px 4px rgba(121,197,182,0.07);
+    }
+    .save-btn:enabled:hover {
+        background: var(--hover-color);
+        transform: scale(1.05);
+    }
+    .save-btn:disabled {
+        opacity: 0.7;
+        background: #bdbdbd;
+        color: #fff;
+    }
+    /* Dropdown de ações: só abre ao clicar */
+    .dropdown-acoes {
+        position: relative;
+        display: inline-block;
+    }
+    .btn-acao {
+        background: var(--light-color);
+        color: var(--secondary-color);
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        padding: 0.25rem 0.5rem;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-acao:hover {
+        background: var(--primary-color);
+        color: #fff;
+    }
+    .dropdown-menu-acoes {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 110%;
+        min-width: 160px;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        box-shadow: 0 4px 24px rgba(44,100,92,0.18);
+        z-index: 1055;
+        padding: 0.5rem;
+        margin-top: 0.25rem;
+    }
+    .dropdown-acoes.open .dropdown-menu-acoes {
+        display: block;
+    }
+    .dropdown-menu-acoes button {
+        border-radius: 4px;
+        font-size: 0.95rem;
+        padding: 0.375rem 0.75rem;
+        margin-bottom: 0.25rem;
+        border: none;
+        width: 100%;
+        text-align: left;
+        background: none;
+        transition: background-color 0.2s;
+    }
+    .dropdown-menu-acoes button:last-child {
+        margin-bottom: 0;
+    }
+    .dropdown-menu-acoes button:hover {
+        background-color: #f8f9fa;
+    }
+    /* Select de status mais clean */
+    .status-select {
+        width: 100%;
+        height: 32px;
+        padding: 0 30px 0 10px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.98rem;
+        color: var(--gray-color);
+        outline: none;
+        box-shadow: none;
+        appearance: none;
+    }
+    .status-select:focus {
+        outline: none;
+        box-shadow: none;
+        border: none;
+    }
+    .status-container::after {
+        content: "▼";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-color);
+        font-size: 0.8rem;
+        pointer-events: none;
+    }
+    /* Badge tipo_documento */
+    .badge-tipo {
+        display: inline-block;
+        padding: 0.35em 0.8em;
+        font-size: 0.95em;
+        font-weight: 600;
+        border-radius: 12px;
+        letter-spacing: 0.5px;
+        color: #fff;
+        margin-right: 0.5em;
+        margin-bottom: 0.1em;
+        text-transform: uppercase;
+    }
+    .badge-CAT { background:rgb(255, 51, 0); }
+    .badge-ADENDO { background:rgb(17, 184, 161); }
+    .badge-PPP { background:rgb(245, 241, 0);}
+    /* Indicadores mais destacados */
+    #indicadores .card {
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(44,100,92,0.10);
+        border: none;
+        transition: transform 0.2s;
+    }
+    #indicadores .card:hover {
+        transform: scale(1.04);
+        box-shadow: 0 6px 24px rgba(44,100,92,0.18);
+    }
+    /* Responsividade aprimorada */
+    @media (max-width: 768px) {
+        .filtros-bloco {
+            flex-direction: column;
+            gap: 0.7rem;
+            padding: 1rem 0.7rem;
+        }
+    }
+    .filtros-bloco form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        align-items: end;
+        justify-content: flex-end;
+        width: 100%;
+    }
+    .filtros-bloco form > div {
+        margin-left: 0;
+    }
+    @media (min-width: 768px) {
+        .filtros-bloco form > div:first-child {
+            margin-left: auto;
+        }
+    }
+</style>
+<div class="sidebar-discreta">
+    <span class="icon" title="Ir para o topo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></span>
+    <span class="icon" title="Indicadores" id="sidebarIndicadores"><i class="bi bi-bar-chart"></i></span>
+</div>
 <div class="container">
     <!-- Modal de Mensagem -->
     <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -18,16 +285,6 @@
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#indicadores" aria-expanded="false" aria-controls="indicadores">
-                <i class="bi bi-graph-up"></i> Mostrar indicadores
-            </button>
-            <a href="/dashboard/kanban" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-kanban"></i> Visualização Kanban
-            </a>
         </div>
     </div>
 
@@ -47,25 +304,21 @@
         </div>
     </div>
 
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-    <h2 class="mb-0">documento Cadastrados</h2>
-    
-    <form action="{{ route('dashboard.filter') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3">
+<div class="filtros-bloco">
+    <form action="{{ route('dashboard.filter') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 w-100">
         <!-- Cliente -->
         <div style="width: 180px;">
-            <label for="clienteFilter" class="form-label text-muted small mb-1">Cliente</label>
+            <label for="clienteFilter" class="form-label">Cliente</label>
             <input type="text" class="form-control" name="search" id="clienteFilter" placeholder="Buscar...">
         </div>
-
         <!-- Mês -->
         <div style="width: 150px;">
-            <label for="dataFilterMes" class="form-label text-muted small mb-1">Mês</label>
+            <label for="dataFilterMes" class="form-label">Mês</label>
             <input type="month" class="form-control" id="dataFilterMes" name="mesCompetencia">
         </div>
-
         <!-- Status -->
         <div style="width: 160px;">
-            <label for="statusFilter" class="form-label text-muted small mb-1">Status</label>
+            <label for="statusFilter" class="form-label">Status</label>
             <select name="status" class="form-select" id="statusFilter">
                 <option value="" {{ request('status') === '' ? 'selected' : '' }}>Todos</option>
                 @foreach($status as $s)
@@ -73,26 +326,23 @@
                 @endforeach
             </select>
         </div>
-
         <!-- Data Conclusão -->
         <div style="width: 160px;">
-            <label for="dataFilterConclusao" class="form-label text-muted small mb-1">Conclusão</label>
+            <label for="dataFilterConclusao" class="form-label">Conclusão</label>
             <input type="date" class="form-control" id="dataFilterConclusao" name="dataConclusao">
         </div>
-
         <!-- Toggle de Ordenação -->
         <div style="width: 60px;">
-            <label class="form-label text-muted small mb-1 d-block">Ordem</label>
+            <label class="form-label d-block">Ordem</label>
             <button type="submit" name="ordenarPor" value="{{ request('ordenarPor') === 'mais_antigos' ? 'mais_novos' : 'mais_antigos' }}"
                 class="btn btn-outline-secondary px-2 w-100" title="Ordenar {{ request('ordenarPor') === 'mais_antigos' ? 'por mais novos' : 'por mais antigos' }}">
                 <i class="bi {{ request('ordenarPor') === 'mais_antigos' ? 'bi-arrow-down-short' : 'bi-arrow-up-short' }}"></i>
             </button>
         </div>
-
         <!-- Botão buscar -->
         <div>
             <label class="form-label d-block invisible">Buscar</label>
-            <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm" style="background-color: var(--primary-color); border: none;">
+            <button type="submit" class="btn btn-primary px-3 py-2 rounded-circle shadow-sm">
                 <i class="bi bi-search"></i>
             </button>
         </div>
@@ -118,12 +368,14 @@
         <div class="col-md-4">
             <div class="card h-100 position-relative">
                 <div class="card-body">
-                    <form id="form-documento-{{ $documento->id }}" action="" method="POST">
+                    <form id="form-documento-{{ $documento->id }}" action="{{route('update.docIndex')}}" method="POST">
                         @csrf
                         <input type="hidden" name="documento_id" value="{{$documento->id}}">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="card-title mb-0">{{$documento->tipo_documento}}</h5>
-                            <div class="status-container">
+                            <span>
+                                <span class="badge-tipo badge-{{$documento->tipo_documento}}">{{$documento->tipo_documento}}</span>
+                            </span>
+                            <div class="status-container position-relative">
                                 <div class="status-indicator" style="background-color: {{ $documento->status ? $documento->status->cor : '#808080' }}"></div>
                                 <select class="status-select" name="status">
                                     @if(!$documento->status)
@@ -162,7 +414,7 @@
                     </form>
                             
                         <div class="dropdown-acoes">
-                            <button type="button" class="btn btn-light btn-acao" title="Ações">
+                            <button type="button" class="btn btn-light btn-acao" title="Ações" onclick="this.parentNode.classList.toggle('open')">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </button>
                             <div class="dropdown-menu-acoes">
@@ -292,321 +544,6 @@
 </div>
 @endif
 
-<style>
-    .modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.5); /* Opacidade do fundo */
-}
-
-    .card {
-        position: relative;
-        z-index: 1;
-        border: none;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        z-index: 10;
-    }
-
-    .card-title {
-        color: var(--secondary-color);
-        font-weight: bold;
-    }
-
-    /* Estilos para o select de status */
-    .status-container {
-        position: relative;
-        width: 150px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .status-indicator {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-
-    .status-select {
-        width: 100%;
-        height: 32px;
-        padding: 0 30px 0 10px;
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        font-size: 0.9rem;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        color: var(--gray-color);
-    }
-
-    .status-container::after {
-        content: "▼";
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-color);
-        font-size: 0.8rem;
-        pointer-events: none;
-    }
-
-    .status-select option {
-        padding: 8px;
-        background-color: white;
-        color: black;
-    }
-
-    /* Estilos para os filtros */
-    .form-control, .form-select {
-        border-radius: 4px;
-        padding: 0.375rem 0.75rem;
-        font-size: 0.9rem;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.25);
-    }
-
-    /* Estilos para o botão de salvar */
-    .save-btn {
-        padding: 0.375rem 1.5rem;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-
-    .save-btn:disabled {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        cursor: not-allowed;
-    }
-
-    .save-btn:not(:disabled):hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
-
-    .enviar-btn{
-        padding: 0.375rem 1.5rem;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;  
-        border: none;
-        background-color: var(--primary-color);      
-    }
-    /* Estilo para o input de data */
-    .border-light {
-        border-color: #ced4da !important;
-        border-radius: 4px;
-    }
-
-    .border-light:focus {
-        border-color: var(--primary-color) !important;
-        box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.25);
-    }
-
-    .btn-info {
-        background-color: var(--primary-color);
-        transition: background-color 0.3s ease;
-        border: none;
-    }
-
-    .btn-info:hover {
-        background-color: var(--hover-color)
-    }
-
-    .kanban-btn {
-        color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-    
-    .kanban-btn:hover {
-        background-color: var(--primary-color);
-        color: white;
-    }
-
-    .obs-display {
-        position: relative;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #e9ecef;
-        transition: all 0.2s ease;
-        min-height: 2rem;
-    }
-
-    .obs-display.empty {
-        padding: 0.25rem 0;
-        min-height: 1.5rem;
-    }
-
-    .obs-display.hovering {
-        background-color: transparent;
-        border-bottom-color: var(--primary-color);
-    }
-
-    .obs-display.hovering .edit-btn {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    .edit-btn {
-        position: absolute;
-        top: 0.25rem;
-        right: 0;
-        background: none;
-        border: none;
-        color: var(--gray-color);
-        opacity: 0;
-        transform: translateX(10px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        padding: 0.25rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.875rem;
-        z-index: 1;
-    }
-
-    .edit-btn:hover {
-        color: var(--primary-color);
-        background-color: rgba(121, 197, 182, 0.1);
-        transform: translateX(0) scale(1.05);
-    }
-
-    .text-truncate-obs {
-        max-height: 1.5em;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        line-height: 1.4;
-        color: #495057;
-        font-size: 0.9rem;
-    }
-
-    .text-truncate-obs.expanded {
-        max-height: 1000px;
-    }
-
-    .text-truncate-obs.empty-obs {
-        color: #6c757d;
-        font-style: italic;
-        font-size: 0.85rem;
-    }
-
-    .toggle-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-top: 0.25rem;
-        display: inline-block;
-        transition: color 0.2s ease;
-    }
-
-    .toggle-link:hover {
-        color: var(--hover-color);
-        text-decoration: underline;
-    }
-
-    textarea.auto-expand {
-        overflow: hidden;
-        resize: none;
-        border: 1px solid #e9ecef;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        transition: border-color 0.2s ease;
-    }
-
-    textarea.auto-expand:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(121, 197, 182, 0.15);
-    }
-
-    .dropdown-acoes {
-        position: relative;
-        display: inline-block;
-    }
-
-    .btn-acao {
-        background: #f8f9fa;
-        color: #6c757d;
-        border: 1px solid #e9ecef;
-        border-radius: 4px;
-        font-size: 0.875rem;
-        padding: 0.25rem 0.5rem;
-        transition: all 0.2s ease;
-        box-shadow: none;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-acao:hover, .btn-acao:focus {
-        background: #e9ecef;
-        color: #495057;
-        border-color: #ced4da;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .dropdown-menu-acoes {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 100%;
-        min-width: 160px;
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 99999;
-        padding: 0.5rem;
-        margin-top: 0.25rem;
-    }
-
-    .dropdown-acoes:hover .dropdown-menu-acoes,
-    .dropdown-acoes:focus-within .dropdown-menu-acoes {
-        display: block;
-    }
-
-    .dropdown-menu-acoes button {
-        border-radius: 4px;
-        font-size: 0.875rem;
-        padding: 0.375rem 0.75rem;
-        margin-bottom: 0.25rem;
-        border: none;
-        width: 100%;
-        text-align: left;
-        transition: background-color 0.2s ease;
-    }
-
-    .dropdown-menu-acoes button:last-child {
-        margin-bottom: 0;
-    }
-
-    .dropdown-menu-acoes button:hover {
-        background-color: #f8f9fa;
-    }
-
-    .btn-acao-menu {
-        background-color: #f8f9fa;
-        color: #495057;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-    }
-
-    .btn-acao-menu:hover {
-        background-color: var(--primary-color);
-        color: #212529;
-        border-color: var(--primary-color);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         function toggleContatos(documentoId) {
@@ -678,7 +615,7 @@
 
             const formData = new FormData(this);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const documentoId = this.querySelector('input[name="documento"]').value;
+            const documentoId = this.querySelector('input[name="documento_id"]').value;
 
             fetch(this.action, {
                 method: 'POST',
@@ -710,6 +647,25 @@
     // --- Inicializa todos os forms de documento ---
     document.querySelectorAll('form[id^="form-documento-"]').forEach(form => {
         initializeCard(form);
+    });
+
+    // Fechar dropdown de ações ao clicar fora
+    window.addEventListener('click', function(e) {
+        document.querySelectorAll('.dropdown-acoes').forEach(function(drop) {
+            if (!drop.contains(e.target)) {
+                drop.classList.remove('open');
+            }
+        });
+    });
+
+    // Sidebar: mostrar indicadores ao clicar no ícone de gráfico
+    document.getElementById('sidebarIndicadores').addEventListener('click', function() {
+        const collapse = document.getElementById('indicadores');
+        if (collapse.classList.contains('show')) {
+            collapse.classList.remove('show');
+        } else {
+            collapse.classList.add('show');
+        }
     });
 });
 </script>

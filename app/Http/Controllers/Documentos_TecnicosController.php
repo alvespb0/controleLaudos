@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\DocumentoRequest; 
+use App\Http\Requests\DocumentoUpdateRequest; 
 
 use App\Models\Cliente;
 use App\Models\Op_Tecnico;
@@ -99,10 +100,32 @@ class Documentos_TecnicosController extends Controller
         return redirect()->route('readDocs');
     }
 
+    /**
+     * Retorna a view da index de controle de documento técnico
+     */
     public function indexDocTecnico(){
         $documentos = Documentos_Tecnicos::orderBy('data_elaboracao', 'desc')->paginate(6);
         $status = Status::all();
         $tecnicos = Op_Tecnico::all();
         return view("/Documentos/Documento_index", ["documentos"=> $documentos, "status" => $status, "tecnicos"=> $tecnicos]);
+    }
+
+    /**
+     * Recebe uma request vinda da index através de fetch, valida, e dá update no banco
+     * @param DocumentoUpdateRequest $request
+     * @return json
+     */
+    public function updateDocIndex(DocumentoUpdateRequest $request){
+        $request->validated();
+
+        $documento = Documentos_Tecnicos::findOrFail($request->documento_id);
+
+        $documento->update([
+            'status_id' => $request->status,
+            'data_conclusao' => $request->dataConclusao,
+            'tecnico_id' => $request->tecnicoResponsavel
+        ]);
+
+        return response()->json(['message' => $documento->tipo_documento.' Atualizado com sucesso']);
     }
 }
