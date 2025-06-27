@@ -13,6 +13,8 @@ use App\Models\User;
 use App\Models\Cliente;
 use App\Models\File;
 
+use Carbon\Carbon;
+
 class FileController extends Controller
 {
     /**
@@ -102,8 +104,13 @@ class FileController extends Controller
         $template->setValue('investimento', number_format($request->investimento, 2, ',', '.'));
         $template->setValue('parcelasTexto', $textoParcela);
         $template->setValue('investimentoDesconto', number_format($descontoAvista, 2, ',', '.'));
+        
+        $dataHoje = Carbon::now()->translatedFormat('d \d\e F \d\e Y');
+
+        $template->setValue('dataHoje', $dataHoje);
 
         $fileName = $this->escapeForXml('orcamento_'.$request->razaoSocialCliente.'.docx');
+        $fileName = preg_replace('/[\/:*?"<>|\\\\]/', '-', $fileName);
         $tempPath = storage_path('app/temp/' . $fileName);
 
         if (!Storage::exists('temp')) {
@@ -112,9 +119,11 @@ class FileController extends Controller
 
         $template->saveAs($tempPath);
 
-        $this->saveOrcamento($fileName);
-
-        return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
+        return view('Orcamento/Orcamento_confirm',[
+            'fileName' => $fileName,
+            'tempPath' => $tempPath,
+            'dados' => $request->all(),
+        ]);
     }
 
     /**
@@ -162,5 +171,44 @@ class FileController extends Controller
             'laudo_id' => null,
             'criado_por' => $criado_por
         ]);
+
+        session()->flash('mensagem','Orçamento aprovado com sucesso');
+
+        return redirect()->route('entrada.orcamento');
+    }
+
+    /**
+     * Faz o download do orçamento dado o file name, após isso, excluí o mesmo da pasta
+     */
+    public function downloadOrcamento($fileName){
+        $tempPath = storage_path('app/temp/' . $fileName);
+
+        if (!file_exists($tempPath)) {
+            abort(404, 'Arquivo não encontrado');
+        }
+
+        return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Recebe uma request com os dados do último form de gerar orçamento
+     * além disso, recebe um file name para deletar na pasta temporária já
+     * @param \Illuminate\Http\Request $request
+     * @return view
+     */
+    public function retificarOrcamento(Request $request){
+        $fileName = $request->fileName;
+
+        if ($fileName) {
+            $filePath = storage_path('app/temp/' . $fileName);
+
+            if (file_exists($filePath)) {
+                unlink($filePath); 
+            }
+        }
+
+        $dados = $request->dados;
+
+        return view('Orcamento/Orcamento_retificar', ['dados' => $dados]);
     }
 }
