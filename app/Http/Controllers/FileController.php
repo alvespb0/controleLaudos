@@ -103,8 +103,7 @@ class FileController extends Controller
         $template->setValue('parcelasTexto', $textoParcela);
         $template->setValue('investimentoDesconto', number_format($descontoAvista, 2, ',', '.'));
 
-        $fileName = 'orcamento_'.$request->razaoSocialCliente.'.docx';
-
+        $fileName = $this->escapeForXml('orcamento_'.$request->razaoSocialCliente.'.docx');
         $tempPath = storage_path('app/temp/' . $fileName);
 
         if (!Storage::exists('temp')) {
