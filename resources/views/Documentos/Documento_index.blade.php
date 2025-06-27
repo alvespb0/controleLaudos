@@ -264,18 +264,6 @@
             margin-left: auto;
         }
     }
-    .navbar-brand {
-        margin-right: 1.2rem !important;
-        padding-right: 0 !important;
-        font-size: 1.2rem !important;
-        gap: 0.3rem !important;
-    }
-    @media (max-width: 1200px) {
-        .navbar-brand {
-            font-size: 1rem !important;
-            gap: 0.1rem !important;
-        }
-    }
 </style>
 <div class="sidebar-discreta">
     <span class="icon" title="Ir para o topo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></span>
