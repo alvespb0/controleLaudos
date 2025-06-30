@@ -219,9 +219,9 @@
                             Dashboard
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-person-plus"></i> Controle de Laudos </a></li>
-                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-people"></i> Controle de Documentos técnicos </a></li>
-                            <li><a class="dropdown-item" href="/graphs"><i class="bi bi-people"></i> Dashboard Gerencial </a></li>
+                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-map"></i> Controle de Laudos </a></li>
+                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-map"></i> Controle de Documentos técnicos </a></li>
+                            <li><a class="dropdown-item" href="/graphs"><i class="bi bi-file-bar-graph"></i> Dashboard Gerencial </a></li>
                         </ul>
                     </li>
                     @endif
@@ -232,8 +232,8 @@
                             Dashboard
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-person-plus"></i> Controle de Laudos </a></li>
-                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-people"></i> Controle de Documentos técnicos </a></li>
+                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-map"></i> Controle de Laudos </a></li>
+                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-map"></i> Controle de Documentos técnicos </a></li>
                         </ul>
                     </li>
 
@@ -261,12 +261,12 @@
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i>
+                        <i class="bi bi-file-earmark-text"></i>
                             Documentos técnicos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/documentos/cadastro"><i class="bi bi-person-plus"></i> Novo Documento</a></li>
-                            <li><a class="dropdown-item" href="/documentos"><i class="bi bi-people"></i> Documentos cadastrados</a></li>
+                            <li><a class="dropdown-item" href="/documentos/cadastro"><i class="bi bi-plus-circle"></i> Novo Documento</a></li>
+                            <li><a class="dropdown-item" href="/documentos"><i class="bi bi-files"></i> Documentos cadastrados</a></li>
                         </ul>
                     </li>
                     @endif
