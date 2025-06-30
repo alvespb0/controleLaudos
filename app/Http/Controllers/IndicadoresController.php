@@ -203,10 +203,10 @@ class IndicadoresController extends Controller
         /* DOCUMENTOS POR TÉCNICO RESPONSÁVEL */
         $tecnicosList = Op_Tecnico::withCount(['documentos' => function ($query) use ($dataInicio, $dataFim) {
             if ($dataInicio) {
-                $query->whereDate('data_aceite', '>=', $dataInicio);
+                $query->whereDate('data_elaboracao', '>=', $dataInicio);
             }
             if ($dataFim) {
-                $query->whereDate('data_aceite', '<=', $dataFim);
+                $query->whereDate('data_elaboracao', '<=', $dataFim);
             }
         }])->get();
 
