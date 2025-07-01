@@ -19,24 +19,12 @@ class RelatorioLaudoController extends Controller
     public function tipoRelatorio(){
         $status = Status::all();
         $clientes = Cliente::all();
-        return view('Relatorios/Relatorios_unificado', ['clientes' => $clientes, 'status' => $status]);
-    }
-
-    /**
-     * recebe via método POST um select tipoRelatorio retorna a view de solicitação de relatório, dado esse parâmetro
-     * @param string tipoRelatorio
-     * @return view
-     */
-    public function requestTipoRelatorio(Request $request){
-        $tipoRelatorio = $request->tipoRelatorio;
-        $status = Status::all();
-        $clientes = Cliente::all();
-        return view('Relatorios/Relatorios_new', ['tipoRelatorio' => $tipoRelatorio, 'status'=> $status, 'clientes'=> $clientes]);
+        return view('Relatorios/Relatorios', ['clientes' => $clientes, 'status' => $status]);
     }
 
     /**
      * recebe os parâmetros do relatório via POST e chama o consturtor da classe LaudoExport
-     * @param Request
+     * @param Request $request
      * @return download
      */
     public function gerarRelatorio(Request $request){
@@ -73,7 +61,4 @@ class RelatorioLaudoController extends Controller
         }
     }
 
-    public function exportar(){
-        return Excel::download(new LaudosExport, 'relatorio_laudos.xlsx');
-    }
 }

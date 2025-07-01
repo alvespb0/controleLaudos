@@ -131,7 +131,7 @@
             <div class="col-md-6">
                 <label for="statusDocumento" class="form-label">Status</label>
                 <select class="form-select" id="statusDocumento" name="statusDocumento">
-                    <option selected disabled>Selecione um status</option>
+                    <option value="" selected disabled>Selecione um status</option>
                     @foreach($status as $s)
                         <option value="{{$s->id}}">{{$s->nome}}</option>
                     @endforeach
@@ -143,7 +143,7 @@
             <div class="col-md-12">
                 <label for="clienteDocumento" class="form-label">Cliente</label>
                 <select name="clienteDocumento" class="form-select" id="clienteDocumento">
-                    <option selected disabled>Selecione um cliente</option>
+                    <option value="" selected disabled>Selecione um cliente</option>
                     @foreach($clientes as $cliente)
                         <option value="{{$cliente->id}}">{{$cliente->nome}}</option>
                     @endforeach
