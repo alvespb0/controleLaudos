@@ -143,7 +143,7 @@ Route::middleware(['checkUserType:admin'])->controller(IndicadoresController::cl
 
 /** --------------------------------------------- */
 /**              Rotas Classe Relatorio           */
-Route::middleware(['checkUserType:admin'])->controller(RelatorioLaudoController::class)->group(function (){
+Route::middleware(['checkUserType:admin,comercial,seguranca'])->controller(RelatorioLaudoController::class)->group(function (){
     Route::get('/relatorios', 'tipoRelatorio')->name('tipo.relatorio');
     Route::post('/relatorios/download', 'gerarRelatorio')->name('gerar.relatorio');
 });
