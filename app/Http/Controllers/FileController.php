@@ -174,7 +174,7 @@ class FileController extends Controller
 
         session()->flash('mensagem','Orçamento aprovado com sucesso');
 
-        return redirect()->route('entrada.orcamento');
+        return response()->json(['success'=>'atendimento aprovado']);
     }
 
     /**
