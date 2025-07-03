@@ -6,6 +6,7 @@
     <title>Orçamento Gerado</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         body {
             background: linear-gradient(135deg, #dfeeec 0%, #79c5b6 100%);
@@ -80,9 +81,9 @@
             <div class="title-success mt-2">{{$fileName}} gerado com sucesso!</div>
         </div>
         <div class="d-flex flex-column gap-2 align-items-center">
-            <form method="GET" action="{{ route('orcamento.aprovar', $fileName) }}" style="display:inline-block;">
+            <form id="aprovarForm" method="GET" action="{{ route('orcamento.aprovar', $fileName) }}" style="display:inline-block;">
                 @csrf
-                <button type="submit" class="btn btn-success btn-custom me-2">Aprovar</button>
+                <button type="button" id="aprovarBtn" class="btn btn-success btn-custom me-2">Aprovar</button>
             </form>
             <form method="POST" action="{{ route('orcamento.retificar') }}" style="display:inline-block;">
                 @csrf
@@ -93,7 +94,7 @@
                 <button type="submit" class="btn btn-warning btn-custom me-2">Retificar</button>
             </form>
             <button id="downloadBtn" class="btn btn-primary btn-custom me-2" onclick="handleDownload(event)">Download</button>
-            <button id="whatsappBtn" class="btn btn-whatsapp btn-custom d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#whatsappModal">
+            <button id="whatsappBtn" class="btn btn-whatsapp btn-custom d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#whatsappModal" disabled>
                 <i class="bi bi-whatsapp"></i> Encaminhar pelo WhatsApp
             </button>
         </div>
@@ -150,6 +151,50 @@
             document.getElementById('downloadAlert').style.display = 'block';
             document.getElementById('downloadForm').submit();
         }
+
+        // Aprovar via fetch
+        document.getElementById('aprovarBtn').addEventListener('click', function() {
+            const btnAprovar = document.getElementById('aprovarBtn');
+            const btnWhatsapp = document.getElementById('whatsappBtn');
+            btnAprovar.disabled = true;
+            btnAprovar.innerText = 'Aprovando...';
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            console.log('Enviando requisição para aprovação...');
+            fetch("{{ route('orcamento.aprovar', $fileName) }}", {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+            })
+            .then(function(response) {
+                console.log('Status HTTP:', response.status);
+                return response.json().catch(function(jsonErr) {
+                    console.error('Erro ao fazer parse do JSON:', jsonErr);
+                    return null;
+                });
+            })
+            .then(function(data) {
+                console.log('Resposta JSON:', data);
+                if (data && data.success) {
+                    btnAprovar.innerText = 'Aprovado';
+                    btnAprovar.classList.remove('btn-success');
+                    btnAprovar.classList.add('btn-secondary');
+                    btnWhatsapp.disabled = false;
+                } else {
+                    btnAprovar.disabled = false;
+                    btnAprovar.innerText = 'Aprovar';
+                    alert('Erro ao aprovar orçamento.');
+                    console.error('Resposta inesperada:', data);
+                }
+            })
+            .catch(function(e) {
+                btnAprovar.disabled = false;
+                btnAprovar.innerText = 'Aprovar';
+                alert('Erro de conexão ao aprovar orçamento.');
+                console.error('Erro no fetch:', e);
+            });
+        });
     </script>
 </body>
 </html>
