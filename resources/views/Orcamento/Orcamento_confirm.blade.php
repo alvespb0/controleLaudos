@@ -69,6 +69,13 @@
             color: #fff;
             transform: translateY(-2px);
         }
+        .btn-whatsapp:disabled, .btn-whatsapp.disabled {
+            background-color: #bdbdbd !important;
+            color: #fff !important;
+            border: none !important;
+            opacity: 1;
+            cursor: not-allowed;
+        }
         .icon-success { color: #79c5b6; font-size: 2.5rem; }
         .title-success { font-size: 1.3rem; font-weight: 600; color: #2c645c; }
         #downloadAlert { font-size: 0.95rem; }
