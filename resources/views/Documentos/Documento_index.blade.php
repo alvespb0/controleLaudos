@@ -525,7 +525,7 @@
         <ul class="pagination">
             @if ($documentos->currentPage() > 1)
             <li class="page-item">
-            <a class="page-link" href="{{ $documento->previousPageUrl() }}" aria-label="Previous">
+            <a class="page-link" href="{{ $documentos->previousPageUrl() }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
             </li>
