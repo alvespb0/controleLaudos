@@ -119,6 +119,12 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
     Route::get('documentos/controle/filtered', 'filterDocIndex')->name('filter.docIndex');
 });
 
+Route::middleware(['checkUserType:admin'])->controller(Documentos_TecnicosController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
+    Route::get('/documentos/excluidos-anteriormente','docsExcluidos')->name('read.deletedDoc'); # Abre a view dos excluídos anteriormente
+
+    Route::get('/documentos/excluidos-anteriormente/restaurar/{id}', 'restoreDoc')->name('restore.deletedDoc'); # restaura o dado excluído
+});
+
 /** --------------------------------------------- */
 /**    Rotas Classe Laudo para main dashboard     */
 Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
