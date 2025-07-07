@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\DocumentoRequest; 
 use App\Http\Requests\DocumentoUpdateRequest; 
@@ -93,12 +95,42 @@ class Documentos_TecnicosController extends Controller
     public function deleteDocTecnico($id){
         $documento = Documentos_Tecnicos::findOrFail($id);
 
+        $documento->update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
         $documento->delete();
 
         session()->flash('mensagem','Documento excluido com sucesso');
 
         return redirect()->route('readDocs');
     }
+
+    /**
+     * Retorna a view da 'lixeira' contendo os laudos deletados com softdelete
+     * @return View
+     */
+    public function docsExcluidos(){
+        $docsExcluidos = Documentos_Tecnicos::onlyTrashed()->with('deletedBy')->orderByDesc('deleted_at')->paginate(10);
+
+        return view('/Documentos/Documentos_deleted', ['docsExcluidos' => $docsExcluidos]);
+    }
+
+    /**
+     * recebe um ID via get e restaura esse laudo excluído
+     * @param int
+     * @return view
+     */
+    public function restoreDoc($id){
+        $doc = Documentos_Tecnicos::withTrashed()->findOrFail($id);
+
+        $doc->restore();
+
+        session()->flash('mensagem', 'Documento restaurado com sucesso');
+
+        return redirect()->route('readDocs');
+    }
+
 
     /**
      * Retorna a view da index de controle de documento técnico

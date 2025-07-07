@@ -267,6 +267,9 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/documentos/cadastro"><i class="bi bi-plus-circle"></i> Novo Documento</a></li>
                             <li><a class="dropdown-item" href="/documentos"><i class="bi bi-files"></i> Documentos cadastrados</a></li>
+                            @if(Auth::user()->tipo === 'admin') 
+                            <li><a class="dropdown-item" href="/documentos/excluidos-anteriormente"><i class="bi bi-trash"></i> Documentos Excluídos</a></li>
+                            @endif
                         </ul>
                     </li>
                     @endif

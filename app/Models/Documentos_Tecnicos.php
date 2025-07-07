@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Cliente;
 use App\Models\Op_Tecnico;
 use App\Models\Status;
+use App\Models\User;
+
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Documentos_Tecnicos extends Model
 {
     protected $table = 'documentos_tecnicos';
 
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'tipo_documento',
@@ -22,7 +26,8 @@ class Documentos_Tecnicos extends Model
         'data_conclusao',
         'cliente_id',
         'status_id',
-        'tecnico_id'
+        'tecnico_id',
+        'deleted_by'
     ];
 
     public function cliente(){
@@ -35,6 +40,10 @@ class Documentos_Tecnicos extends Model
     
     public function status(){
         return $this->belongsTo(Status::class);
+    }
+
+    public function deletedBy(){
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 
 }
