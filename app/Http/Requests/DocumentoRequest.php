@@ -22,7 +22,7 @@ class DocumentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tipo_documento' => 'required|in:CAT,PPP,ADENDO',
+            'tipo_documento' => 'required|in:CAT,PPP,ADENDO,OS',
             'descricao' => 'required|string|max:255',
             'data_elaboracao' => 'required|date',
             'cliente_id' => 'required|exists:cliente,id',
@@ -33,7 +33,7 @@ class DocumentoRequest extends FormRequest
     {
         return [
             'tipo_documento.required' => 'O campo Tipo de Documento é obrigatório.',
-            'tipo_documento.in' => 'O Tipo de Documento selecionado é inválido. Escolha entre CAT, PPP ou ADENDO.',
+            'tipo_documento.in' => 'O Tipo de Documento selecionado é inválido. Escolha entre CAT, PPP, ADENDO ou OS.',
 
             'descricao.required' => 'O campo Descrição é obrigatório.',
             'descricao.string' => 'A Descrição deve ser um texto válido.',
