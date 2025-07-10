@@ -22,6 +22,7 @@
                         <option value="CAT">CAT</option>
                         <option value="ADENDO">ADENDO</option>
                         <option value="PPP">PPP</option>
+                        <option value="OS">OS</option>
                     </select>
                 </div>
 
