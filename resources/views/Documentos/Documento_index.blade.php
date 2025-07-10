@@ -229,6 +229,7 @@
     .badge-CAT { background:rgb(255, 51, 0); }
     .badge-ADENDO { background:rgb(17, 184, 161); }
     .badge-PPP { background:rgb(245, 241, 0);}
+    .badge-OS { background:rgb(127, 0, 245);}
     /* Indicadores mais destacados */
     #indicadores .card {
         border-radius: 14px;
