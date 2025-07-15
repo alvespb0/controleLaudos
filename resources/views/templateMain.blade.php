@@ -334,10 +334,17 @@
                         <i class="bi bi-speedometer2 me-2"></i><span>Dashboard</span>
                     </a>
                     <div class="collapse" id="dashboardMenu" data-bs-parent="#sidebarMenu">
+                        @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
                         <a href="/dashboard" class="list-group-item list-group-item-action ps-5">Controle de Laudos</a>
+                        @endif
+                        @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
                         <a href="/documentos/controle" class="list-group-item list-group-item-action ps-5">Controle de Documentos técnicos</a>
+                        @endif
+                        @if(Auth::user()->tipo === 'admin')
                         <a href="/graphs" class="list-group-item list-group-item-action ps-5">Dashboard Gerencial</a>
+                        @endif
                     </div>
+                    @if(Auth::user()->tipo === 'admin')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#operadoresMenu" role="button" aria-expanded="false" aria-controls="operadoresMenu">
                         <i class="bi bi-person-circle me-2"></i><span>Operadores</span>
                     </a>
@@ -345,6 +352,8 @@
                         <a href="/user/register" class="list-group-item list-group-item-action ps-5">Novo Operador</a>
                         <a href="/user" class="list-group-item list-group-item-action ps-5">Operadores Cadastrados</a>
                     </div>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#documentosMenu" role="button" aria-expanded="false" aria-controls="documentosMenu">
                         <i class="bi bi-file-earmark-text me-2"></i><span>Documentos técnicos</span>
                     </a>
@@ -353,6 +362,8 @@
                         <a href="/documentos" class="list-group-item list-group-item-action ps-5">Documentos cadastrados</a>
                         <a href="/documentos/excluidos-anteriormente" class="list-group-item list-group-item-action ps-5">Documentos Excluídos</a>
                     </div>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#laudosMenu" role="button" aria-expanded="false" aria-controls="laudosMenu">
                         <i class="bi bi-file-earmark-text me-2"></i><span>Laudos</span>
                     </a>
@@ -369,6 +380,8 @@
                         <a href="/cliente" class="list-group-item list-group-item-action ps-5">Clientes Cadastrados</a>
                         <a href="/orcamento" class="list-group-item list-group-item-action ps-5">Gerar Orçamento</a>
                     </div>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#statusMenu" role="button" aria-expanded="false" aria-controls="statusMenu">
                         <i class="bi bi-list-check me-2"></i><span>Status</span>
                     </a>
@@ -376,12 +389,15 @@
                         <a href="/status/cadastro" class="list-group-item list-group-item-action ps-5">Novo Status</a>
                         <a href="/status" class="list-group-item list-group-item-action ps-5">Status Cadastrados</a>
                     </div>
+                    @endif
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
                     <a href="/relatorios" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="bi bi-file-earmark me-2"></i><span>Relatórios</span>
                     </a>
                     <a href="/logout" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="bi bi-box-arrow-right me-2"></i><span>Sair</span>
                     </a>
+                    @endif
                 </div>
         </div>
     </nav>
