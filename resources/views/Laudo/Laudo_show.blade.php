@@ -48,22 +48,23 @@
                 <div class="col-auto mx-auto">
                     <nav aria-label="Navegação de páginas">
                         <ul class="pagination">
-                            {{-- Botão "Anterior" --}}
-                            <li class="page-item {{ $laudos->onFirstPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $laudos->previousPageUrl() }}" tabindex="-1">&laquo;</a>
+                            @if ($laudos->currentPage() > 1)
+                            <li class="page-item">
+                            <a class="page-link" href="{{ $laudos->previousPageUrl() }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
                             </li>
-
-                            {{-- Links de páginas com intervalo dinâmico --}}
-                            @for ($i = 1; $i <= $laudos->lastPage(); $i++)
-                                <li class="page-item {{ $i == $laudos->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ $laudos->url($i) }}">{{ $i }}</a>
-                                </li>
-                            @endfor
-
-                            {{-- Botão "Próxima" --}}
-                            <li class="page-item {{ !$laudos->hasMorePages() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $laudos->nextPageUrl() }}">&raquo;</a>
+                            <li class="page-item"><a class="page-link" href="{{ $laudos->previousPageUrl() }}">{{ $laudos->currentPage() - 1}}</a></li>
+                            @endif
+                            <li class="page-item active"><a class="page-link" href="{{ $laudos->nextPageUrl() }}">{{ $laudos->currentPage() }}</a></li>
+                            @if ($laudos->hasMorePages())
+                            <li class="page-item"><a class="page-link" href="{{ $laudos->nextPageUrl() }}">{{ $laudos->currentPage() + 1 }}</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $laudos->nextPageUrl() }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
                             </li>
+                            @endif
                         </ul>
                     </nav>
                 </div>

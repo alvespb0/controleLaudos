@@ -47,22 +47,23 @@
                 <div class="col-auto mx-auto">
                     <nav aria-label="Navegação de páginas">
                         <ul class="pagination">
-                            {{-- Botão "Anterior" --}}
-                            <li class="page-item {{ $clientes->onFirstPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $clientes->previousPageUrl() }}" tabindex="-1">&laquo;</a>
+                            @if ($clientes->currentPage() > 1)
+                            <li class="page-item">
+                            <a class="page-link" href="{{ $clientes->previousPageUrl() }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
                             </li>
-
-                            {{-- Links de páginas com intervalo dinâmico --}}
-                            @for ($i = 1; $i <= $clientes->lastPage(); $i++)
-                                <li class="page-item {{ $i == $clientes->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ $clientes->url($i) }}">{{ $i }}</a>
-                                </li>
-                            @endfor
-
-                            {{-- Botão "Próxima" --}}
-                            <li class="page-item {{ !$clientes->hasMorePages() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $clientes->nextPageUrl() }}">&raquo;</a>
+                            <li class="page-item"><a class="page-link" href="{{ $clientes->previousPageUrl() }}">{{ $clientes->currentPage() - 1}}</a></li>
+                            @endif
+                            <li class="page-item active"><a class="page-link" href="{{ $clientes->nextPageUrl() }}">{{ $clientes->currentPage() }}</a></li>
+                            @if ($clientes->hasMorePages())
+                            <li class="page-item"><a class="page-link" href="{{ $clientes->nextPageUrl() }}">{{ $clientes->currentPage() + 1 }}</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $clientes->nextPageUrl() }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
                             </li>
+                            @endif
                         </ul>
                     </nav>
                 </div>
