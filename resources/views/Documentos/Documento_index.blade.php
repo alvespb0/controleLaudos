@@ -9,7 +9,7 @@
         top: 80px;
         right: 0;
         height: 70vh;
-        width: 48px;
+        width: 20px;
         background: rgba(121,197,182,0.10);
         border-radius: 16px 0 0 16px;
         box-shadow: -2px 0 8px rgba(44,100,92,0.04);
@@ -34,6 +34,7 @@
     @media (max-width: 768px) {
         .sidebar-discreta { display: none; }
     }
+
     /* Filtros mais clean */
     .filtros-bloco {
         background: #fff;
