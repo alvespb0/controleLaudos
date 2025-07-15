@@ -104,6 +104,7 @@
             <button id="whatsappBtn" class="btn btn-whatsapp btn-custom d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#whatsappModal" disabled>
                 <i class="bi bi-whatsapp"></i> Encaminhar pelo WhatsApp
             </button>
+            <a href="/" id="linkHome" class="mt-2 small text-decoration-none text-secondary" style="display:none;">Página Inicial</a>
         </div>
         <div id="downloadAlert" class="mt-3 text-danger fw-bold text-center" style="display:none;">
             O download só pode ser realizado uma vez. Caso precise novamente, gere um novo orçamento.
@@ -188,6 +189,7 @@
                     btnAprovar.classList.remove('btn-success');
                     btnAprovar.classList.add('btn-secondary');
                     btnWhatsapp.disabled = false;
+                    document.getElementById('linkHome').style.display = 'block';
                 } else {
                     btnAprovar.disabled = false;
                     btnAprovar.innerText = 'Aprovar';

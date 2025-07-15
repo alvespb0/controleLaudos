@@ -197,144 +197,252 @@
             border-color: #ddd;
         }
 
-
+        .sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+            background: var(--secondary-color) !important;
+            transition: all 0.3s;
+            z-index: 1040;
+        }
+        .sidebar.collapsed {
+            min-width: 70px;
+            max-width: 70px;
+        }
+        .sidebar .list-group-item {
+            background: var(--secondary-color) !important;
+            color: var(--light-color) !important;
+            border: none;
+            transition: background 0.2s, color 0.2s, padding 0.3s;
+        }
+        .sidebar .list-group-item:hover, .sidebar .list-group-item.active {
+            background: var(--primary-color) !important;
+            color: #fff !important;
+        }
+        .sidebar .list-group-item i {
+            font-size: 1.2rem;
+        }
+        .sidebar .list-group-item span {
+            transition: opacity 0.3s, margin 0.3s;
+        }
+        .sidebar.collapsed .list-group-item span {
+            opacity: 0;
+            margin-left: -999px;
+        }
+        .sidebar.collapsed .collapse,
+        .sidebar.collapsed .collapsing {
+            display: none !important;
+        }
+        .sidebar .collapse {
+            transition: height 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .sidebar .list-group-item[data-bs-toggle="collapse"]:after {
+            content: '\f282';
+            font-family: 'bootstrap-icons';
+            float: right;
+            transition: transform 0.3s;
+        }
+        .sidebar .list-group-item[aria-expanded="true"]:after {
+            transform: rotate(90deg);
+        }
+        .sidebar.collapsed .list-group-item[data-bs-toggle="collapse"]:after {
+            display: none;
+        }
+        .sidebar-toggle-btn {
+            position: absolute;
+            top: 10px;
+            left: 260px;
+            z-index: 1100;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.3s;
+        }
+        .sidebar.collapsed + .sidebar-toggle-btn {
+            left: 80px;
+        }
+        @media (max-width: 991.98px) {
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                height: 100vh;
+                transition: left 0.3s;
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .sidebar-toggle-btn {
+                left: 10px;
+            }
+        }
+        .main-content {
+            transition: margin-left 0.3s;
+        }
+        @media (min-width: 992px) {
+            .main-content {
+                margin-left: 50px;
+            }
+            .sidebar.collapsed ~ .flex-grow-1 .main-content {
+                margin-left: 70px;
+            }
+        }
+        .sidebar.collapsed .list-group-item {
+            text-align: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .sidebar.collapsed .list-group-item:hover, .sidebar.collapsed .list-group-item.active {
+            background: var(--primary-color) !important;
+            color: #fff !important;
+        }
+        .sidebar.collapsed .list-group-item i {
+            margin-right: 0 !important;
+        }
+        .sidebar.collapsed .list-group-item span {
+            display: none !important;
+        }
+        .sidebar.collapsed .list-group-item {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin: 8px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="/">Controle Segurança</a>
-
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+    <!-- Sidebar -->
+    <div class="d-flex position-relative">
+        <nav id="sidebarMenu" class="sidebar d-lg-block text-white">
+            <div class="position-sticky">
+                <div class="list-group list-group-flush mx-3 mt-4">
+                    <a href="/" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="bi bi-house me-2"></i><span>Início</span>
+                    </a>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#dashboardMenu" role="button" aria-expanded="false" aria-controls="dashboardMenu">
+                        <i class="bi bi-speedometer2 me-2"></i><span>Dashboard</span>
+                    </a>
+                    <div class="collapse" id="dashboardMenu" data-bs-parent="#sidebarMenu">
+                        @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                        <a href="/dashboard" class="list-group-item list-group-item-action ps-5">Controle de Laudos</a>
+                        @endif
+                        @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
+                        <a href="/documentos/controle" class="list-group-item list-group-item-action ps-5">Controle de Documentos técnicos</a>
+                        @endif
+                        @if(Auth::user()->tipo === 'admin')
+                        <a href="/graphs" class="list-group-item list-group-item-action ps-5">Dashboard Gerencial</a>
+                        @endif
+                    </div>
                     @if(Auth::user()->tipo === 'admin')
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-speedometer2"></i>
-                            Dashboard
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-map"></i> Controle de Laudos </a></li>
-                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-map"></i> Controle de Documentos técnicos </a></li>
-                            <li><a class="dropdown-item" href="/graphs"><i class="bi bi-file-bar-graph"></i> Dashboard Gerencial </a></li>
-                        </ul>
-                    </li>
-                    @endif
-                    @if(Auth::user()->tipo === 'seguranca')
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-speedometer2"></i>
-                            Dashboard
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-map"></i> Controle de Laudos </a></li>
-                            <li><a class="dropdown-item" href="/documentos/controle"><i class="bi bi-map"></i> Controle de Documentos técnicos </a></li>
-                        </ul>
-                    </li>
-
-                    @endif
-                    @if(Auth::user()->tipo === 'comercial')
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">
-                            <i class="bi bi-speedometer2"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    @endif
-                    @if(Auth::user()->tipo === 'admin')
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i>
-                            Operadores
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/user/register"><i class="bi bi-person-plus"></i> Novo Operador</a></li>
-                            <li><a class="dropdown-item" href="/user"><i class="bi bi-people"></i> Operadores Cadastrados</a></li>
-                        </ul>
-                    </li>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#operadoresMenu" role="button" aria-expanded="false" aria-controls="operadoresMenu">
+                        <i class="bi bi-person-circle me-2"></i><span>Operadores</span>
+                    </a>
+                    <div class="collapse" id="operadoresMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/user/register" class="list-group-item list-group-item-action ps-5">Novo Operador</a>
+                        <a href="/user" class="list-group-item list-group-item-action ps-5">Operadores Cadastrados</a>
+                    </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-file-earmark-text"></i>
-                            Documentos técnicos
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/documentos/cadastro"><i class="bi bi-plus-circle"></i> Novo Documento</a></li>
-                            <li><a class="dropdown-item" href="/documentos"><i class="bi bi-files"></i> Documentos cadastrados</a></li>
-                            @if(Auth::user()->tipo === 'admin') 
-                            <li><a class="dropdown-item" href="/documentos/excluidos-anteriormente"><i class="bi bi-trash"></i> Documentos Excluídos</a></li>
-                            @endif
-                        </ul>
-                    </li>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#documentosMenu" role="button" aria-expanded="false" aria-controls="documentosMenu">
+                        <i class="bi bi-file-earmark-text me-2"></i><span>Documentos técnicos</span>
+                    </a>
+                    <div class="collapse" id="documentosMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/documentos/cadastro" class="list-group-item list-group-item-action ps-5">Novo Documento</a>
+                        <a href="/documentos" class="list-group-item list-group-item-action ps-5">Documentos cadastrados</a>
+                        <a href="/documentos/excluidos-anteriormente" class="list-group-item list-group-item-action ps-5">Documentos Excluídos</a>
+                    </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-file-earmark-text"></i>
-                            Laudos
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/laudo/cadastro"><i class="bi bi-plus-circle"></i> Novo Laudo</a></li>
-                            <li><a class="dropdown-item" href="/laudo"><i class="bi bi-files"></i> Laudos Cadastrados</a></li>
-                            @if(Auth::user()->tipo === 'admin')
-                            <li><a class="dropdown-item" href="/laudo/excluidos-anteriormente"><i class="bi bi-trash"></i>Laudos Excluídos</a></li>
-                            @endif
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-badge"></i>
-                            Clientes
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/cliente/cadastro"><i class="bi bi-person-plus"></i> Novo Cliente</a></li>
-                            <li><a class="dropdown-item" href="/cliente"><i class="bi bi-people"></i> Clientes Cadastrados</a></li>
-                            <li><a class="dropdown-item" href="/orcamento"><i class="bi bi-file-earmark-text"></i> Gerar Orçamento</a></li>
-                        </ul>
-                    </li>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#laudosMenu" role="button" aria-expanded="false" aria-controls="laudosMenu">
+                        <i class="bi bi-file-earmark-text me-2"></i><span>Laudos</span>
+                    </a>
+                    <div class="collapse" id="laudosMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/laudo/cadastro" class="list-group-item list-group-item-action ps-5">Novo Laudo</a>
+                        <a href="/laudo" class="list-group-item list-group-item-action ps-5">Laudos Cadastrados</a>
+                        <a href="/laudo/excluidos-anteriormente" class="list-group-item list-group-item-action ps-5">Laudos Excluídos</a>
+                    </div>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#clientesMenu" role="button" aria-expanded="false" aria-controls="clientesMenu">
+                        <i class="bi bi-person-badge me-2"></i><span>Clientes</span>
+                    </a>
+                    <div class="collapse" id="clientesMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/cliente/cadastro" class="list-group-item list-group-item-action ps-5">Novo Cliente</a>
+                        <a href="/cliente" class="list-group-item list-group-item-action ps-5">Clientes Cadastrados</a>
+                        <a href="/orcamento" class="list-group-item list-group-item-action ps-5">Gerar Orçamento</a>
+                    </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-list-check"></i>
-                            Status
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/status/cadastro"><i class="bi bi-plus-circle"></i> Novo Status</a></li>
-                            <li><a class="dropdown-item" href="/status"><i class="bi bi-list-ul"></i> Status Cadastrados</a></li>
-                        </ul>
-                    </li>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#statusMenu" role="button" aria-expanded="false" aria-controls="statusMenu">
+                        <i class="bi bi-list-check me-2"></i><span>Status</span>
+                    </a>
+                    <div class="collapse" id="statusMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/status/cadastro" class="list-group-item list-group-item-action ps-5">Novo Status</a>
+                        <a href="/status" class="list-group-item list-group-item-action ps-5">Status Cadastrados</a>
+                    </div>
                     @endif
-                    <li class="nav-item">
-                        <a class="nav-link" href="/relatorios">
-                        <i class="bi bi-file-earmark"></i>
-                        Relatórios
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
-                            <i class="bi bi-box-arrow-right"></i>
-                            Sair
-                        </a>
-                    </li>
-                </ul>
-            </div>
+                    @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                    <a href="/relatorios" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="bi bi-file-earmark me-2"></i><span>Relatórios</span>
+                    </a>
+                    <a href="/logout" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="bi bi-box-arrow-right me-2"></i><span>Sair</span>
+                    </a>
+                    @endif
+                </div>
         </div>
     </nav>
-
+        <button class="sidebar-toggle-btn" id="sidebarToggle" type="button" title="Expandir/Colapsar Sidebar">
+            <i class="bi bi-chevron-double-left"></i>
+        </button>
+        <div class="flex-grow-1">
+            <!-- Conteúdo principal -->
     <div class="main-content">
         <div class="container">
             @yield('content')
         </div>
     </div>
+        </div>
+    </div>
+    <script>
+        // Sidebar collapse/expand
+        const sidebar = document.getElementById('sidebarMenu');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        let collapsed = false;
+        toggleBtn.addEventListener('click', function() {
+            collapsed = !collapsed;
+            sidebar.classList.toggle('collapsed');
+            if (collapsed) {
+                toggleBtn.querySelector('i').classList.remove('bi-chevron-double-left');
+                toggleBtn.querySelector('i').classList.add('bi-chevron-double-right');
+            } else {
+                toggleBtn.querySelector('i').classList.remove('bi-chevron-double-right');
+                toggleBtn.querySelector('i').classList.add('bi-chevron-double-left');
+            }
+        });
+        // Dropdown fluido (abre/fecha suavemente)
+        const collapseEls = document.querySelectorAll('#sidebarMenu .collapse');
+        collapseEls.forEach(function(el) {
+            el.addEventListener('show.bs.collapse', function (e) {
+                el.style.transition = 'height 0.35s cubic-bezier(0.4,0,0.2,1)';
+            });
+            el.addEventListener('hide.bs.collapse', function (e) {
+                el.style.transition = 'height 0.35s cubic-bezier(0.4,0,0.2,1)';
+            });
+        });
+    </script>
+    <!-- Sidebar -->
+
+    <!-- Footer permanece igual -->
 
     <footer class="footer">
         <div class="container">

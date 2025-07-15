@@ -3,16 +3,16 @@
 @section('content')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-    /* Barra lateral discreta */
+    /* Barra lateral discreta à direita */
     .sidebar-discreta {
         position: fixed;
         top: 80px;
-        left: 0;
+        right: 0;
         height: 70vh;
         width: 48px;
         background: rgba(121,197,182,0.10);
-        border-radius: 0 16px 16px 0;
-        box-shadow: 2px 0 8px rgba(44,100,92,0.04);
+        border-radius: 16px 0 0 16px;
+        box-shadow: -2px 0 8px rgba(44,100,92,0.04);
         display: flex;
         flex-direction: column;
         align-items: center;
