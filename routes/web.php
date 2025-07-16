@@ -10,6 +10,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\IndicadoresController;
 use App\Http\Controllers\ZappyController;
 use App\Http\Controllers\Documentos_TecnicosController;
+use App\Http\Controllers\CRMController;
 
 /*
 |--------------------------------------------------------------------------
@@ -175,6 +176,9 @@ Route::controller(AuthController::class)->group(function (){
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('orcamento/enviar', [ZappyController::class, 'encaminhaOrcamentoCliente'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
 
-Route::get('teste/crm', function(){
-    return view('Crm/CRM_index');
+/** --------------------------------------------- */
+/**                  Rotas Classe CRM             */
+Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->group(function (){
+    Route::get('/CRM', 'showCRM')->name('show.CRM'); 
+    Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead');
 });

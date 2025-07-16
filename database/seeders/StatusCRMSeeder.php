@@ -14,7 +14,7 @@ class StatusCRMSeeder extends Seeder
     public function run(): void
     {
         Status_Crm::Create([
-            'nome' => 'lead',
+            'nome' => 'Lead',
             'descricao' => 'Novos contatos',
             'position' => 1,
             'padrao_sistema' => 1

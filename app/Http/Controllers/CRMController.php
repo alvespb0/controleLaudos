@@ -28,8 +28,9 @@ class CRMController extends Controller
         $clientes = Cliente::all();
         $comercial = Op_Comercial::all();
         $status_crm = Status_Crm::orderBy('position', 'asc')->get();
+        $leads = Lead::all();
         return view('Crm/CRM_index', ['clientes' => $clientes, 'comercial' => $comercial,
-                                        'etapas' => $status_crm]);
+                                        'etapas' => $status_crm, 'leads' => $leads]);
     }
     
     /**
@@ -50,6 +51,6 @@ class CRMController extends Controller
             'proximo_contato' => $request->proximo_contato
         ]);
 
-        return redirect()->route('showCRMIndex');
+        return redirect()->route('show.CRM');
     }
 }

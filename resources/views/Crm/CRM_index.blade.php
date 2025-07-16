@@ -176,91 +176,50 @@
         color: #22313a;
     }
 </style>
-@php
-    $colunas = [
-        'Lead' => [
-            'icon' => 'bi-lightbulb',
-            'desc' => 'Novos contatos',
-            'cards' => [
-                ['cliente' => 'Empresa Alfa', 'responsavel' => 'João', 'valor' => 12000, 'status' => 'Novo'],
-                ['cliente' => 'Beta Ltda', 'responsavel' => 'Maria', 'valor' => 8000, 'status' => 'Frio'],
-            ]
-        ],
-        'Contato' => [
-            'icon' => 'bi-telephone-forward',
-            'desc' => 'Contato inicial realizado',
-            'cards' => [
-                ['cliente' => 'Gamma S/A', 'responsavel' => 'Carlos', 'valor' => 15000, 'status' => 'Quente'],
-            ]
-        ],
-        'Proposta' => [
-            'icon' => 'bi-file-earmark-text',
-            'desc' => 'Proposta enviada',
-            'cards' => [
-                ['cliente' => 'Delta Corp', 'responsavel' => 'Ana', 'valor' => 20000, 'status' => 'Novo'],
-            ]
-        ],
-        'Negociação' => [
-            'icon' => 'bi-handshake',
-            'desc' => 'Negociação em andamento',
-            'cards' => [
-                ['cliente' => 'Epsilon ME', 'responsavel' => 'Pedro', 'valor' => 18000, 'status' => 'Quente'],
-            ]
-        ],
-        'Fechado (Ganho)' => [
-            'icon' => 'bi-trophy',
-            'desc' => 'Oportunidade ganha',
-            'cards' => [
-                ['cliente' => 'Zeta Ind.', 'responsavel' => 'Lucas', 'valor' => 25000, 'status' => 'Quente'],
-            ]
-        ],
-        'Fechado (Perdido)' => [
-            'icon' => 'bi-x-octagon',
-            'desc' => 'Oportunidade perdida',
-            'cards' => [
-                ['cliente' => 'Theta Ltda', 'responsavel' => 'Julia', 'valor' => 9000, 'status' => 'Frio'],
-            ]
-        ],
-    ];
-@endphp
+
 <div class="crm-kanban-container">
     <div class="crm-kanban-header">
         <h1>Kanban de CRM</h1>
         <p class="text-muted mb-0">Arraste as oportunidades entre as etapas do funil.</p>
     </div>
     <div class="crm-kanban-board" id="crmKanbanBoard">
-        @foreach($colunas as $coluna => $info)
+        @foreach($etapas as $etapa)
             <div class="crm-kanban-col">
                 <div class="crm-kanban-col-header">
                     <div class="crm-kanban-col-title-row">
                         <span class="crm-kanban-col-title">
-                            <i class="bi {{ $info['icon'] }}" title="{{ $coluna }}"></i> {{ $coluna }}
+                             {{ $etapa->nome }}
                         </span>
                         <button class="btn-add-card" title="Adicionar Oportunidade"><i class="bi bi-plus"></i></button>
                     </div>
-                    <span class="crm-kanban-col-count">{{ count($info['cards']) }} oportunidade(s)</span>
-                    <span class="crm-kanban-col-desc">{{ $info['desc'] }}</span>
+                    <span class="crm-kanban-col-count">colocar numero de leads</span>
+                    <span class="crm-kanban-col-desc">{{ $etapa->descricao }}</span>
                 </div>
-                <div class="crm-kanban-col-body sortable-col" data-coluna="{{ $coluna }}">
-                    @foreach($info['cards'] as $i => $card)
+                <div class="crm-kanban-col-body sortable-col" data-coluna="{{ $etapa->id }}">
+                    @foreach($leads as $lead)
+                        @if($lead->status_id == $etapa->id)
                         <div class="crm-kanban-card">
                             <div class="crm-card-title">
-                                <i class="bi bi-person-circle"></i> {{ $card['cliente'] }}
+                                <i class="bi bi-person-circle"></i> {{ $lead->cliente->nome }}
                             </div>
+
                             <div class="crm-card-info">
-                                <span><i class="bi bi-person-badge"></i> {{ $card['responsavel'] }}</span>
+                                <span><i class="bi bi-person-badge"></i>Vendedor: {{ $lead->vendedor->usuario }}</span>
                             </div>
+                            @if($lead->proximo_contato != null)
                             <div class="crm-card-info">
-                                <span><i class="bi bi-cash-coin"></i> <span class="crm-value">R$ {{ number_format($card['valor'], 2, ',', '.') }}</span></span>
+                                <span><i class="bi bi-calendar-date"></i>Próximo Contato: {{$lead->proximo_contato}}</span>
                             </div>
+                            @endif
                             <div class="crm-card-footer">
-                                <span class="crm-badge">{{ $card['status'] }}</span>
+                                {{$lead->observacoes ? $lead->observacoes : 'nenhuma observação adicionada'}}
                                 <div class="crm-card-actions">
                                     <button class="btn" title="Ver detalhes"><i class="bi bi-eye"></i></button>
                                     <button class="btn" title="Editar"><i class="bi bi-pencil"></i></button>
                                 </div>
                             </div>
                         </div>
+                        @endif
                     @endforeach
                 </div>
             </div>
