@@ -16,7 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('cliente_id');
             $table->unsignedBigInteger('vendedor_id')->nullable();
             $table->unsignedBigInteger('status_id')->nullable();
-            $table->text('observacoes');
+            $table->text('observacoes')->nullable();
+            $table->string('nome_contato')->nullable();
+            $table->float('investimento')->nullable();
             $table->boolean('orcamento_gerado')->default(false);
             $table->boolean('contrato_assinado')->default(false);
             $table->date('proximo_contato')->nullable();

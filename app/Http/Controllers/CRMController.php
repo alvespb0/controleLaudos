@@ -45,9 +45,11 @@ class CRMController extends Controller
 
         Lead::create([
             'cliente_id' => $request->cliente_id,
-            'vendedor_id' => $user->comercial->id,
+            'vendedor_id' => $user->comercial->id ?? null,
             'status_id' => $request->status_id,
             'observacoes' => $request->observacoes,
+            'nome_contato' => $request->nome_contato,
+            'investimento' => $request->investimento,
             'proximo_contato' => $request->proximo_contato
         ]);
 

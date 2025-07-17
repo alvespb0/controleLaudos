@@ -16,6 +16,8 @@ class Lead extends Model
         'vendedor_id',
         'status_id',
         'observacoes',
+        'nome_contato',
+        'investimento',
         'orcamento_gerado', # bool default false
         'contrato_assinado', # bool default false
         'proximo_contato'

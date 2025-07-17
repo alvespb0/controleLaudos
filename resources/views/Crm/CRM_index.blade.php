@@ -1,6 +1,15 @@
 @extends('templateMain')
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
     .crm-kanban-container {
@@ -190,7 +199,9 @@
                         <span class="crm-kanban-col-title">
                              {{ $etapa->nome }}
                         </span>
-                        <button class="btn-add-card" title="Adicionar Oportunidade"><i class="bi bi-plus"></i></button>
+                        <button class="btn-add-card" title="Adicionar Oportunidade" data-etapa-id="{{ $etapa->id }}" data-bs-toggle="modal" data-bs-target="#modalCadastroLead">
+                            <i class="bi bi-plus"></i>
+                        </button>
                     </div>
                     <span class="crm-kanban-col-count">colocar numero de leads</span>
                     <span class="crm-kanban-col-desc">{{ $etapa->descricao }}</span>
@@ -204,7 +215,7 @@
                             </div>
 
                             <div class="crm-card-info">
-                                <span><i class="bi bi-person-badge"></i>Vendedor: {{ $lead->vendedor->usuario }}</span>
+                                <span><i class="bi bi-person-badge"></i>Vendedor: {{ $lead->vendedor ? $lead->vendedor->usuario : 'Sem vendedor responsável'}}</span>
                             </div>
                             @if($lead->proximo_contato != null)
                             <div class="crm-card-info">
@@ -226,6 +237,67 @@
         @endforeach
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="modalCadastroLead" tabindex="-1" aria-labelledby="modalCadastroLeadLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{route('create.lead')}}" method="POST">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCadastroLeadLabel">Cadastrar Lead</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Input hidden com etapa_id -->
+          <input type="hidden" name="status_id" id="inputEtapaId">
+            <div class="mb-3">
+            <label for="cliente" class="form-label">Cliente</label>
+                <select name="cliente_id" id="cliente" class = "form-control" required>
+                    <option selected>Selecione um cliente</option>
+                    @foreach($clientes as $cliente)
+                        <option value="{{$cliente->id}}">{{$cliente->nome}}</option>
+                    @endforeach
+                </select>          
+            </div>
+            <div class="mb-3">
+                <label for="investimento" class="form-label">Investimento</label>
+                <input type="number" name="investimento" id="" class="form-control" step="0.01" min="0">
+            </div>
+            <div class="mb-3">
+                <label for="contato" class="form-label">Nome do Contato</label>
+                <input type="text" name="nome_contato" id="contato" class="form-control" step="0.01" min="0">
+            </div>
+            <div class="mb-3">
+              <label for="observacoes" class="form-label">Próximo contato</label>
+              <input type="date" name="proximo_contato" class="form-control" id="">
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Observações</label>
+              <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('modalCadastroLead');
+    const inputEtapaId = document.getElementById('inputEtapaId');
+
+    document.querySelectorAll('.btn-add-card').forEach(button => {
+      button.addEventListener('click', () => {
+        const etapaId = button.getAttribute('data-etapa-id');
+        inputEtapaId.value = etapaId;
+      });
+    });
+  });
+</script>
+
 <!-- SortableJS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
