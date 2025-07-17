@@ -184,6 +184,49 @@
         background: #e3e9ed;
         color: #22313a;
     }
+/* Hover discreto para badges de troca de etapa */
+.etapa-badge:hover {
+    filter: brightness(0.92);
+    box-shadow: 0 2px 8px rgba(44,100,92,0.10);
+    transform: translateY(-2px) scale(1.04);
+    transition: all 0.18s;
+}
+/* Alinhar badges à direita na modal */
+#etapasBadges {
+    justify-content: flex-end !important;
+}
+
+.modal .card,
+.modal .card-body,
+.modal .crm-value,
+.modal .badge,
+.modal .form-label,
+.modal .form-control,
+.modal .row,
+.modal .col-12,
+.modal .col-md-6 {
+    user-select: text !important;
+}
+
+.modal i {
+    user-select: none !important;
+}
+/* CSS extra para alinhar os botões de ação na modal */
+.btn-enviar-whatsapp {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 0.5rem 1.2rem !important;
+    font-size: 1rem !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 38px;
+}
+.btn-enviar-whatsapp:hover {
+    background: var(--hover-color) !important;
+    color: #fff !important;
+}
 </style>
 
 <div class="crm-kanban-container">
@@ -225,18 +268,12 @@
                             <div class="crm-card-footer">
                                 {{$lead->observacoes ? $lead->observacoes : 'nenhuma observação adicionada'}}
                                 <div class="crm-card-actions">
-                                    <button class="btn" title="Ver detalhes"><i class="bi bi-eye"></i></button>
+                                    <button class="btn" title="Ver detalhes" data-bs-toggle="modal" data-bs-target="#modalDetalhesLead{{ $lead->id }}"><i class="bi bi-eye"></i></button>
                                     <button class="btn" title="Editar"><i class="bi bi-pencil"></i></button>
                                 </div>
                             </div>
                         </div>
-                        @endif
-                    @endforeach
-                </div>
-            </div>
-        @endforeach
-    </div>
-</div>
+
 <!-- Modal -->
 <div class="modal fade" id="modalCadastroLead" tabindex="-1" aria-labelledby="modalCadastroLeadLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -284,11 +321,12 @@
     </div>
   </div>
 </div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Modal de cadastro
     const modal = document.getElementById('modalCadastroLead');
     const inputEtapaId = document.getElementById('inputEtapaId');
-
     document.querySelectorAll('.btn-add-card').forEach(button => {
       button.addEventListener('click', () => {
         const etapaId = button.getAttribute('data-etapa-id');
@@ -297,6 +335,153 @@
     });
   });
 </script>
+
+                        <!-- Modal Detalhes Lead -->
+                        <div class="modal fade" id="modalDetalhesLead{{ $lead->id }}" tabindex="-1" aria-labelledby="modalDetalhesLeadLabel{{ $lead->id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content" style="min-height: 70vh;">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="modalDetalhesLeadLabel{{ $lead->id }}">Detalhes do Lead</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="row mb-3">
+                                  <div class="col-12">
+                                    <div class="card shadow-sm border-0 mb-3" style="background: #f8fafc;">
+                                      <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                          <i class="bi bi-person-circle me-2" style="font-size:2rem;color:var(--primary-color)"></i>
+                                          <h4 class="mb-0">{{ $lead->cliente->nome ?? '' }}</h4>
+                                          @if($lead->cliente->cliente_novo)
+                                            <span class="badge bg-success ms-3">Novo Cliente</span>
+                                          @endif
+                                          @if($lead->orcamento_gerado)
+                                            <span class="badge bg-info ms-2">Orçamento Gerado</span>
+                                          @else
+                                            <span class="badge bg-warning text-dark ms-2">Sem Orçamento</span>
+                                            <form method="POST" action="{{ url('/crm/lead/'.$lead->id.'/gerar-orcamento') }}" class="ms-2 d-inline">
+                                              @csrf
+                                              <button type="submit" class="btn btn-sm btn-outline-primary align-middle">Gerar Orçamento</button>
+                                            </form>
+                                          @endif
+                                        </div>
+                                        <div class="row mb-1">
+                                          <div class="col-md-6">
+                                            <strong>CNPJ:</strong> <span class="crm-value">{{ $lead->cliente->cnpj ?? '-' }}</span>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <strong>E-mail:</strong> <span class="crm-value">{{ $lead->cliente->email ?? '-' }}</span>
+                                          </div>
+                                        </div>
+                                        <div class="row mb-1">
+                                          <div class="col-md-6">
+                                            <strong>Telefones:</strong>
+                                            @if($lead->cliente->telefone && $lead->cliente->telefone->count())
+                                              @foreach($lead->cliente->telefone as $tel)
+                                                <span class="badge bg-light text-dark border me-1">{{ $tel->telefone }}</span>
+                                              @endforeach
+                                            @else
+                                              <span class="text-muted">Nenhum telefone cadastrado</span>
+                                            @endif
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row mb-3">
+                                  <div class="col-12 d-flex align-items-center gap-2">
+                                    <button class="btn btn-primary btn-enviar-whatsapp" type="button" data-bs-toggle="collapse" data-bs-target="#whatsappForm{{ $lead->id }}" aria-expanded="false" aria-controls="whatsappForm{{ $lead->id }}">
+                                      <i class="bi bi-whatsapp"></i> Enviar WhatsApp
+                                    </button>
+                                    <button class="btn btn-primary btn-enviar-whatsapp" type="button" data-bs-toggle="collapse" data-bs-target="#emailForm{{ $lead->id }}" aria-expanded="false" aria-controls="emailForm{{ $lead->id }}">
+                                      <i class="bi bi-envelope-fill"></i> Enviar Email
+                                    </button>
+                                    <div class="collapse w-100" id="whatsappForm{{ $lead->id }}">
+                                      <form action="{{route('orcamento.zappy')}}" method="POST" enctype="multipart/form-data" class="mt-3 p-3 border rounded bg-light">
+                                        @csrf
+                                        <div class="mb-2">
+                                          <label class="form-label">Número do Cliente</label>
+                                          <input type="text" class="form-control" value="{{ optional($lead->cliente->telefone->first())->telefone ?? '' }}" disabled>
+                                          <input type="hidden" name="numero" value="{{ optional($lead->cliente->telefone->first())->telefone ?? '' }}">
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">Mensagem</label>
+                                          <textarea class="form-control" name="mensagem" rows="2" required></textarea>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">Arquivo (opcional)</label>
+                                          <input type="file" class="form-control" name="file">
+                                        </div>
+                                        <button type="submit" class="btn btn-success"><i class="bi bi-whatsapp"></i> Enviar</button>
+                                      </form>
+                                    </div>
+                                    <div class="collapse w-100" id="emailForm{{ $lead->id }}">
+                                      <form action="#" method="POST" enctype="multipart/form-data" class="mt-3 p-3 border rounded bg-light">
+                                        @csrf
+                                        <div class="mb-2">
+                                          <label class="form-label">E-mail do Cliente</label>
+                                          <input type="text" class="form-control" value="{{ $lead->cliente->email ?? '' }}" disabled>
+                                          <input type="hidden" name="email" value="{{ $lead->cliente->email ?? '' }}">
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">Assunto</label>
+                                          <input type="text" class="form-control" name="assunto" required>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">Mensagem</label>
+                                          <textarea class="form-control" name="mensagem" rows="2" required></textarea>
+                                        </div>
+                                        <div class="mb-2">
+                                          <label class="form-label">Arquivo (opcional)</label>
+                                          <input type="file" class="form-control" name="arquivo">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary"><i class="bi bi-envelope-fill"></i> Enviar</button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-6"><strong>Vendedor:</strong> {{ $lead->vendedor->usuario ?? 'Sem vendedor responsável' }}</div>
+                                  <div class="col-md-6"><strong>Investimento:</strong> R$ {{ $lead->investimento ?? '-' }}</div>
+                                </div>
+                                <div class="row mt-2">
+                                  <div class="col-md-6"><strong>Nome do Contato:</strong> {{ $lead->nome_contato ?? '-' }}</div>
+                                  <div class="col-md-6"><strong>Próximo Contato:</strong> {{ $lead->proximo_contato ?? '-' }}</div>
+                                </div>
+                                <div class="row mt-2">
+                                  <div class="col-md-6"><strong>Status:</strong> {{ $etapas->firstWhere('id', $lead->status_id)->nome ?? '-' }}</div>
+                                  <div class="col-md-6"><strong>Observações:</strong> {{ $lead->observacoes ?? '-' }}</div>
+                                </div>
+                              </div>
+                              <div class="modal-footer flex-column align-items-stretch">
+                                <div class="mb-2 w-100">
+                                  <label class="form-label">Trocar de etapa:</label>
+                                  <div class="d-flex flex-wrap gap-2 w-100 justify-content-end">
+                                    @foreach($etapas as $idx => $etapaTroca)
+                                      <form method="POST" action="{{ url('/crm/lead/'.$lead->id.'/trocar-etapa') }}" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="etapa_id" value="{{ $etapaTroca->id }}">
+                                        <button type="submit" class="badge rounded-pill etapa-badge {{ $lead->status_id == $etapaTroca->id ? 'bg-primary' : '' }}"
+                                          style="cursor:pointer; font-size:1.1rem; padding:0.7em 1.2em; background:var(--primary-color); color:#fff; border:none; outline:none;">
+                                          {{ $etapaTroca->nome }}
+                                        </button>
+                                      </form>
+                                    @endforeach
+                                  </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Fechar</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
 
 <!-- SortableJS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -314,3 +499,8 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+
+<!-- Adicionar meta CSRF para AJAX -->
+@push('head')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endpush

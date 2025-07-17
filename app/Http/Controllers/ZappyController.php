@@ -113,6 +113,96 @@ class ZappyController extends Controller
         }
     }
 
+    public function encaminhaWhatsLead(Request $request){
+        $token = env('ZAPPY_TOKEN');
+        if($request->file != null){
+            $arquivo = $request->file('file');
+            $mimeType = $arquivo->getMimeType();
+            $tipoDocumento = $this->getTipoDocumento($mimeType);
+
+            try{
+                $numeroLimpo = preg_replace('/[()\s-]+/', '', $request->numero);
+                $numero = '55' . $numeroLimpo;
+                
+                $response = Http::withHeaders([
+                    'Authorization' => $token,
+                ])->attach(
+                    'media',
+                    file_get_contents($arquivo->getRealPath()),
+                    $arquivo->getClientOriginalName()
+                )->post("https://api-segmetre.zapplataforma.chat/api/send/$tipoDocumento/$numero",[
+                    'caption' => $request->mensagem, # legenda para o arquivo
+                    'connectionFrom' => 0,
+                    'ticketStrategy' => 'create',
+                ]);
+                
+                if($response->status() == 200){
+                    $data = $response->json();
+                    $ticketId = $data['message']['ticketId'];
+                    $transfere = $this->transferAtendimento($ticketId);
+                    if($transfere != 200){
+                        session()->flash('error', 'Erro ao abrir o atendimento no zappy'); # ele vai abrir sem setor, então o usuário não vai conseguir ver
+                        return redirect()->route('show.CRM');
+                    }else{
+                        session()->flash('mensagem', 'Atendimento criado com sucesso');
+                        return redirect()->route('show.CRM');
+                    }
+                }else{
+                    session()->flash('error', 'Erro ao abrir o atendimento no zappy');
+                    \Log::error('Erro ao criar o atendimento:', [
+                        'error' => $response->body(),
+                    ]);
+                    return redirect()->route('show.CRM');
+                }
+                
+            }catch (\Exception $e) {
+                session()->flash('error', 'Erro ao abrir o atendimento no zappy');
+                \Log::error('Erro ao criar o atendimento:', [
+                    'error' => $e->getMessage(),
+                ]);
+                return redirect()->route('show.CRM');
+            }
+        }else{
+            try{
+                $numeroLimpo = preg_replace('/[()\s-]+/', '', $request->numero);
+                $numero = '55' . $numeroLimpo;
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Authorization' => $token,
+                ])->post("https://api-segmetre.zapplataforma.chat/api/send/$numero",[
+                    'body' => $request->mensagem,
+                    'connectionFrom' => 0,
+                    'ticketStrategy' => 'create',
+                ]);
+                
+                if($response->status() == 200){
+                    $data = $response->json();
+                    $ticketId = $data['message']['ticketId'];
+                    $transfere = $this->transferAtendimento($ticketId);
+                    if($transfere != 200){
+                        session()->flash('error', 'Erro ao abrir o atendimento no zappy'); # ele vai abrir sem setor, então o usuário não vai conseguir ver
+                        return redirect()->route('show.CRM');
+                    }else{
+                        session()->flash('mensagem', 'Atendimento criado com sucesso');
+                        return redirect()->route('show.CRM');
+                    }
+                }else{
+                    session()->flash('error', 'Erro ao abrir o atendimento no zappy');
+                    \Log::error('Erro ao criar o atendimento:', [
+                        'error' => $response->body(),
+                    ]);
+                    return redirect()->route('show.CRM');
+                }
+                
+            }catch (\Exception $e) {
+                session()->flash('error', 'Erro ao abrir o atendimento no zappy');
+                \Log::error('Erro ao criar o atendimento:', [
+                    'error' => $e->getMessage(),
+                ]);
+                return redirect()->route('show.CRM');
+            }
+        }
+    }
     public function encaminhaOrcamentoCliente(Request $request){
         $token = env('ZAPPY_TOKEN');
         $arquivo = $request->file('fileOrcamento');

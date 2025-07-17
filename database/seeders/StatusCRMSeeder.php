@@ -49,7 +49,7 @@ class StatusCRMSeeder extends Seeder
         ]);
 
         Status_Crm::Create([
-            'nome' => 'Fechado (Perdido',
+            'nome' => 'Fechado (Perdido)',
             'descricao' => 'Oportunidade perdida',
             'position' => 6,
             'padrao_sistema' => 1
