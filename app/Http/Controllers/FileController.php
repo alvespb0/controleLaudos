@@ -12,6 +12,7 @@ use App\Http\Requests\GerarOrcamentoRequest;
 use App\Models\User;
 use App\Models\Cliente;
 use App\Models\File;
+use App\Models\Lead;
 
 use Carbon\Carbon;
 
@@ -157,7 +158,7 @@ class FileController extends Controller
      * @param string $nome_arquivo Nome fictício do arquivo gerado
      * @return void
      */
-    public function saveOrcamento($nome_arquivo){
+    public function saveOrcamento($nome_arquivo, $lead_id = null){
         $caminho = 'orcamento'.$nome_arquivo;
         $data_referencia = date("Y-m-d");
         $criado_por = Auth::user()->id;
@@ -173,6 +174,10 @@ class FileController extends Controller
         ]);
 
         session()->flash('mensagem','Orçamento aprovado com sucesso');
+
+        if($lead_id != null){
+            $this->validaOrcamentoLead($lead_id);
+        }
 
         return response()->json(['success'=>'atendimento aprovado']);
     }
@@ -210,5 +215,13 @@ class FileController extends Controller
         $dados = $request->dados;
 
         return view('Orcamento/Orcamento_retificar', ['dados' => $dados]);
+    }
+
+    public function validaOrcamentoLead($lead_id){
+        $lead = Lead::findOrFail($lead_id);
+
+        return $lead->update([
+            'orcamento_gerado' => 1
+        ]);
     }
 }

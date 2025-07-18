@@ -31,7 +31,8 @@ class GerarOrcamentoRequest extends FormRequest
             'nomeContato' => 'required|string|min:4',
             'numFuncionarios' => 'required|integer|min:1',
             'investimento' => 'required|numeric|min:0.01',
-            'parcelasTexto' => 'required|integer|min:1'
+            'parcelasTexto' => 'required|integer|min:1',
+            'lead_id' => 'nullable|integer'
         ];
     }
 

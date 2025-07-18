@@ -67,4 +67,9 @@ class CRMController extends Controller
 
         return redirect()->route('show.CRM');
     }
+
+    public function formularioOrcamento($lead_id){
+        $lead = Lead::findOrFail($lead_id);
+        return view('/Crm/CRM_orcamento_lead', ['lead' => $lead]);
+    }
 }

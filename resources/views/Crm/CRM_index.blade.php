@@ -359,7 +359,7 @@
                     <span class="badge bg-info ms-2">Orçamento Gerado</span>
                   @else
                   <span class="badge bg-warning text-dark ms-2">Sem Orçamento</span>
-                  <form method="POST" action="{{ url('/crm/lead/'.$lead->id.'/gerar-orcamento') }}" class="ms-2 d-inline">
+                  <form method="GET" action="{{ route('gerar.orcamentoLead', $lead->id) }}" class="ms-2 d-inline">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-outline-primary align-middle">Gerar Orçamento</button>
                   </form>

@@ -74,7 +74,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(FileController:
 
     Route::post('/orcamento/gerar', 'gerarOrcamento')->name('baixar.orcamento'); # Faz o download do orçamento
 
-    Route::get('/orcamento/aprovar/{fileName}', 'saveOrcamento')->name('orcamento.aprovar');
+    Route::post('/orcamento/aprovar/{fileName}/{lead_id?}', 'saveOrcamento')->name('orcamento.aprovar');
     Route::post('/orcamento/retificar', 'retificarOrcamento')->name('orcamento.retificar');
     Route::get('/orcamento/download/{fileName}', 'downloadOrcamento')->name('orcamento.download');
 });
@@ -180,7 +180,8 @@ Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/atendi
 /** --------------------------------------------- */
 /**                  Rotas Classe CRM             */
 Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->group(function (){
-    Route::get('/CRM', 'showCRM')->name('show.CRM'); 
-    Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead');
-    Route::get('/CRM/mudar-etapa/{lead_id}/{etapa_id}', 'alterStatusLead')->name('alterStatus.lead');
+    Route::get('/CRM', 'showCRM')->name('show.CRM'); # Retorna a view do CRM
+    Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead'); # Cria um LEAD baseado a etapa id
+    Route::get('/CRM/mudar-etapa/{lead_id}/{etapa_id}', 'alterStatusLead')->name('alterStatus.lead'); # altera a etapa do lead
+    Route::get('/CRM/gerar-orcamento/{lead_id}', 'formularioOrcamento')->name('gerar.orcamentoLead');
 });

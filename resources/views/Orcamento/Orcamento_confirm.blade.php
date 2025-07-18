@@ -88,8 +88,9 @@
             <div class="title-success mt-2">{{$fileName}} gerado com sucesso!</div>
         </div>
         <div class="d-flex flex-column gap-2 align-items-center">
-            <form id="aprovarForm" method="GET" action="{{ route('orcamento.aprovar', $fileName) }}" style="display:inline-block;">
+            <form id="aprovarForm" method="post" action="{{ route('orcamento.aprovar', [$fileName, $dados['lead_id']]) }}" style="display:inline-block;">
                 @csrf
+                <input type="hidden" name="lead_id" value="{{$dados['lead_id']}}">
                 <button type="button" id="aprovarBtn" class="btn btn-success btn-custom me-2">Aprovar</button>
             </form>
             <form method="POST" action="{{ route('orcamento.retificar') }}" style="display:inline-block;">
@@ -168,8 +169,8 @@
             btnAprovar.innerText = 'Aprovando...';
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             console.log('Enviando requisição para aprovação...');
-            fetch("{{ route('orcamento.aprovar', $fileName) }}", {
-                method: 'GET',
+            fetch("{{ route('orcamento.aprovar', [$fileName, $dados['lead_id']]) }}", {
+                method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': csrfToken,
