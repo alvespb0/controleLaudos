@@ -55,4 +55,16 @@ class CRMController extends Controller
 
         return redirect()->route('show.CRM');
     }
+
+    public function alterStatusLead($lead_id, $etapa_id){
+        $lead = Lead::findOrFail($lead_id);
+
+        $lead->update([
+            'status_id' => $etapa_id
+        ]);
+
+        session()->flash('mensagem', 'Etapa alterada com sucesso');
+
+        return redirect()->route('show.CRM');
+    }
 }

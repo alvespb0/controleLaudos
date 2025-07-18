@@ -182,4 +182,5 @@ Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/atendi
 Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->group(function (){
     Route::get('/CRM', 'showCRM')->name('show.CRM'); 
     Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead');
+    Route::get('/CRM/mudar-etapa/{lead_id}/{etapa_id}', 'alterStatusLead')->name('alterStatus.lead');
 });
