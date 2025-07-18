@@ -28,7 +28,12 @@ class CRMController extends Controller
         $clientes = Cliente::all();
         $comercial = Op_Comercial::all();
         $status_crm = Status_Crm::orderBy('position', 'asc')->get();
-        $leads = Lead::all();
+        $periodo = request('periodo');
+        if ($periodo && $periodo !== 'all') {
+            $leads = Lead::where('created_at', '>=', now()->subDays($periodo))->get();
+        } else {
+            $leads = Lead::all();
+        }
         return view('Crm/CRM_index', ['clientes' => $clientes, 'comercial' => $comercial,
                                         'etapas' => $status_crm, 'leads' => $leads]);
     }
