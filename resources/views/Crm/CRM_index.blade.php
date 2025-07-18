@@ -227,6 +227,23 @@
     background: var(--hover-color) !important;
     color: #fff !important;
 }
+.btn-orcamento {
+    background: #f5f7fa;
+    color: var(--primary-color);
+    border: 1.2px solid var(--primary-color);
+    border-radius: 5px;
+    padding: 0.18rem 0.7rem;
+    font-size: 0.89rem;
+    font-weight: 500;
+    transition: all 0.18s;
+    box-shadow: 0 1px 4px rgba(44,100,92,0.07);
+    line-height: 1.1;
+}
+.btn-orcamento:hover, .btn-orcamento:focus {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
 </style>
 
 <div class="crm-kanban-container">
@@ -358,12 +375,13 @@
                   @if($lead->orcamento_gerado)
                     <span class="badge bg-info ms-2">Orçamento Gerado</span>
                   @else
-                  <span class="badge bg-warning text-dark ms-2">Sem Orçamento</span>
-                  <form method="GET" action="{{ route('gerar.orcamentoLead', $lead->id) }}" class="ms-2 d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-primary align-middle">Gerar Orçamento</button>
-                  </form>
+                    <span class="badge bg-warning text-dark ms-2">Sem Orçamento</span>
                   @endif
+                  <form method="GET" action="{{ route('gerar.orcamentoLead', $lead->id) }}" class="ms-2 d-inline">
+                    <button type="submit" class="btn btn-orcamento align-middle">
+                      {{ $lead->orcamento_gerado ? 'Gerar outro orçamento' : 'Gerar Orçamento' }}
+                    </button>
+                  </form>
                 </div>
                 <div class="row mb-1">
                   <div class="col-md-6">
@@ -441,18 +459,42 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-6"><strong>Vendedor:</strong> {{ $lead->vendedor->usuario ?? 'Sem vendedor responsável' }}</div>
-          <div class="col-md-6"><strong>Investimento:</strong> R$ {{ $lead->investimento ?? '-' }}</div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-6"><strong>Nome do Contato:</strong> {{ $lead->nome_contato ?? '-' }}</div>
-          <div class="col-md-6"><strong>Próximo Contato:</strong> {{ $lead->proximo_contato ?? '-' }}</div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-6"><strong>Status:</strong> {{ $etapas->firstWhere('id', $lead->status_id)->nome ?? '-' }}</div>
-          <div class="col-md-6"><strong>Observações:</strong> {{ $lead->observacoes ?? '-' }}</div>
-        </div>
+        <div class="card border-0 shadow-sm mb-2" style="background: #fafdff;">
+    <div class="card-body p-3">
+      <ul class="list-unstyled mb-0">
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-person-badge me-2 text-primary" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Vendedor:</span>
+          <span class="ms-1 text-dark">{{ $lead->vendedor->usuario ?? 'Sem vendedor responsável' }}</span>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-cash-coin me-2 text-success" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Investimento:</span>
+          <span class="ms-1 text-dark">R$ {{ $lead->investimento ?? '-' }}</span>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-person-lines-fill me-2 text-secondary" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Nome do Contato:</span>
+          <span class="ms-1 text-dark">{{ $lead->nome_contato ?? '-' }}</span>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-calendar-event me-2 text-warning" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Próximo Contato:</span>
+          <span class="ms-1 text-dark">{{ $lead->proximo_contato ?? '-' }}</span>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-kanban me-2 text-info" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Status:</span>
+          <span class="ms-1 text-dark">{{ $etapas->firstWhere('id', $lead->status_id)->nome ?? '-' }}</span>
+        </li>
+        <li class="d-flex align-items-center">
+          <i class="bi bi-chat-left-text me-2 text-muted" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Observações:</span>
+          <span class="ms-1 text-dark">{{ $lead->observacoes ?? '-' }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
         </div>
         <div class="modal-footer flex-column align-items-stretch">
           <div class="mb-2 w-100">
@@ -470,7 +512,6 @@
               @endforeach
             </div>
           </div>
-          <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Fechar</button>
         </div>
       </div>
       </div>
