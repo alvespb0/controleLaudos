@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LeadNotifyMail;
+
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
@@ -34,6 +38,7 @@ class CRMController extends Controller
         } else {
             $leads = Lead::all();
         }
+        $this->notificaVendedor();
         return view('Crm/CRM_index', ['clientes' => $clientes, 'comercial' => $comercial,
                                         'etapas' => $status_crm, 'leads' => $leads]);
     }
@@ -61,6 +66,16 @@ class CRMController extends Controller
         return redirect()->route('show.CRM');
     }
 
+    /**
+     * Altera o status (etapa) de um lead específico.
+     *
+     * Busca o lead pelo ID, atualiza seu status para o novo etapa_id,
+     * define uma mensagem de sucesso na sessão e redireciona para a rota 'show.CRM'.
+     *
+     * @param int $lead_id ID do lead que terá o status alterado.
+     * @param int $etapa_id Novo ID da etapa/status para o lead.
+     * @return \Illuminate\Http\RedirectResponse Redireciona para a rota 'show.CRM'.
+     */
     public function alterStatusLead($lead_id, $etapa_id){
         $lead = Lead::findOrFail($lead_id);
 
@@ -72,9 +87,35 @@ class CRMController extends Controller
 
         return redirect()->route('show.CRM');
     }
-
+    /**
+     * 
+     * Exibe o formulário de orçamento para um lead específico.
+     *
+     * Busca o lead pelo ID e retorna a view do formulário de orçamento,
+     * passando o objeto lead para a view.
+     *
+     * @param int $lead_id ID do lead para o qual será exibido o formulário.
+     * @return \Illuminate\View\View Retorna a view 'Crm.CRM_orcamento_lead' com o lead.
+     */
     public function formularioOrcamento($lead_id){
         $lead = Lead::findOrFail($lead_id);
         return view('/Crm/CRM_orcamento_lead', ['lead' => $lead]);
+    }
+
+    public function notificaVendedor(){
+        $leads = Lead::whereNotNull('vendedor_id')
+            ->whereNotNull('proximo_contato')
+            ->whereDate('proximo_contato', '=', now()->addDay()->toDateString())
+            ->where('notificado', false)
+            ->get();
+
+        #dd($leads);
+        foreach ($leads as $lead) {
+            Mail::mailer('default')->to($lead->vendedor->user->email)->send(new LeadNotifyMail($lead));
+
+            $lead->update([
+                'notificado' => true
+            ]);
+        }
     }
 }

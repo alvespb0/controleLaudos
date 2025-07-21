@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('orcamento_gerado')->default(false);
             $table->boolean('contrato_assinado')->default(false);
             $table->date('proximo_contato')->nullable();
+            $table->boolean('notificado')->default(false);
             $table->timestamps();
             $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('cascade');
             $table->foreign('vendedor_id')->references('id')->on('op_comercial')->nullOnDelete();

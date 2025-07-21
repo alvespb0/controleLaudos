@@ -20,6 +20,7 @@ class Lead extends Model
         'investimento',
         'orcamento_gerado', # bool default false
         'contrato_assinado', # bool default false
+        'notificado',
         'proximo_contato'
     ];
 
