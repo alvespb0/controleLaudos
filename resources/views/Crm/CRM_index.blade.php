@@ -12,56 +12,97 @@
 @endif
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
+    body, .crm-kanban-container {
+        background: #fff !important;
+    }
     .crm-kanban-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem 2rem 1rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #e9f3fa 100%);
-        min-height: 100vh;
         width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        min-height: 100vh;
         box-sizing: border-box;
+        overflow-x: hidden;
     }
-    .crm-kanban-header {
-        margin-bottom: 2rem;
+    .crm-kanban-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #f7fafd;
+        border-bottom: 1.5px solid #e3e9ed;
+        padding: 1.2rem 2rem 1.2rem 2rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 2px 8px rgba(44,100,92,0.07);
+        max-width: 100vw;
+        overflow-x: auto;
     }
-    .crm-kanban-header h1 {
-        font-size: 2.2rem;
-        color: #22313a;
-        font-weight: 800;
-        letter-spacing: 1px;
+    .crm-kanban-toolbar .form-control, .crm-kanban-toolbar .form-select {
+        min-width: 180px;
+        max-width: 260px;
+        font-size: 1rem;
+    }
+    .crm-kanban-toolbar .btn-add-lead {
+        background: #1e88e5;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+        font-size: 1.08rem;
+        box-shadow: 0 2px 8px rgba(44,100,92,0.10);
+        border: none;
+        transition: background 0.2s;
+    }
+    .crm-kanban-toolbar .btn-add-lead:hover {
+        background: #1565c0;
     }
     .crm-kanban-board {
         display: flex;
-        gap: 2rem;
+        gap: 2.5rem;
         overflow-x: auto;
-        max-width: 100%;
-        padding-bottom: 1rem;
+        max-width: 100vw;
+        padding: 2rem 2rem 2rem 2rem;
+        box-sizing: border-box;
+    }
+    @media (max-width: 1200px) {
+        .crm-kanban-board {
+            padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+            gap: 1.2rem;
+        }
+        .crm-kanban-toolbar {
+            padding: 1rem 0.7rem 1rem 0.7rem;
+        }
+    }
+    @media (max-width: 700px) {
+        .crm-kanban-board {
+            padding: 0.5rem 0.2rem 0.5rem 0.2rem;
+            gap: 0.5rem;
+        }
+        .crm-kanban-toolbar {
+            padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+        }
     }
     .crm-kanban-col {
         background: #fff;
-        border-radius: 10px;
+        border-radius: 14px;
         width: 370px;
         min-width: 370px;
-        box-shadow: 0 4px 18px rgba(44,100,92,0.10);
+        box-shadow: 0 6px 24px rgba(44,100,92,0.13);
         display: flex;
         flex-direction: column;
         max-height: 85vh;
-        border: 1.5px solid #e3e9ed;
-        border-left: 6px solid var(--primary-color);
-        transition: box-shadow 0.2s, border 0.2s;
+        border: 2.5px solid #e3e9ed;
+        border-top: 8px solid var(--primary-color);
         margin-bottom: 1rem;
-    }
-    @media (max-width: 900px) {
-        .crm-kanban-col {
-            width: 300px;
-            min-width: 300px;
-        }
+        transition: box-shadow 0.2s, border 0.2s;
     }
     .crm-kanban-col-header {
-        background: linear-gradient(90deg, var(--primary-color) 0%, #7dbbe6 100%);
+        background: #fff;
         color: #22313a;
-        border-radius: 5px 5px 0px 0px;
+        border-radius: 12px 12px 0px 0px;
         font-weight: 700;
+        box-shadow: 0 2px 8px rgba(44,100,92,0.07);
+        padding: 1.1rem 1.2rem 0.7rem 1.2rem;
+        border-bottom: 1.5px solid #e3e9ed;
     }
     .crm-kanban-col-title-row {
         display: flex;
@@ -73,33 +114,31 @@
         align-items: center;
         gap: 0.5rem;
         font-size: 1.18rem;
-    }
-    .crm-kanban-col-title .bi {
-        font-size: 1.1rem;
-        color: #7b8a99;
+        font-weight: 700;
     }
     .crm-kanban-col-count {
-        font-size: 0.98rem;
-        color: white;
-        font-weight: 400 bold;
+        font-size: 1rem;
+        color: #1e88e5;
+        font-weight: 600;
         margin-left: 0.5rem;
     }
     .crm-kanban-col-header .btn-add-card {
-        color: #7b8a99;
-        background: transparent;
+        color: #fff;
+        background: #1e88e5;
         border: none;
         border-radius: 50%;
-        width: 28px;
-        height: 28px;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 1.3rem;
+        box-shadow: 0 2px 8px rgba(44,100,92,0.10);
         transition: background 0.2s;
-        font-size: 1.2rem;
     }
     .crm-kanban-col-header .btn-add-card:hover {
-        background: #e3e9ed;
-        color: #22313a;
+        background: #1565c0;
+        color: #fff;
     }
     .crm-kanban-col-body {
         flex: 1;
@@ -107,39 +146,27 @@
         overflow-y: auto;
         min-height: 120px;
         background: #fff;
-        border-radius: 0 0 8px 8px;
+        border-radius: 0 0 12px 12px;
         transition: background 0.2s;
     }
-    .crm-kanban-col-body.drag-over {
-        background: #f0f4f8;
-        border: 2px dashed #b0bfc7;
-    }
     .crm-kanban-card {
-        background: #fff;
-        border-radius: 8px;
+        background: #f7fafd;
+        border-radius: 10px;
         box-shadow: 0 2px 8px rgba(44,100,92,0.10);
         border-top: 4px solid var(--primary-color);
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
         transition: box-shadow 0.2s, border 0.2s;
-    }
-    .crm-kanban-card.dragging {
-        opacity: 0.7;
-        box-shadow: 0 8px 32px rgba(44,100,92,0.13);
-        transform: scale(1.03);
-        z-index: 10;
-        border: 2px solid #b0bfc7;
+        padding: 1.1rem 1rem 0.7rem 1rem;
     }
     .crm-kanban-card:hover {
         box-shadow: 0 4px 16px rgba(44,100,92,0.13);
-        transform: scale(1.01);
-        border-color: #b0bfc7;
+        border-color: #1e88e5;
     }
     .crm-card-title {
         font-weight: 700;
         color: #22313a;
         margin-bottom: 0.3rem;
         font-size: 1.08rem;
-        letter-spacing: 0.1px;
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -156,20 +183,6 @@
         font-size: 0.93rem;
         color: #888;
         margin-top: 0.2rem;
-    }
-    .crm-badge {
-        background: #e3e9ed;
-        color: #22313a;
-        border-radius: 6px;
-        padding: 0.18rem 0.7rem;
-        font-size: 0.91rem;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        text-transform: uppercase;
-    }
-    .crm-value {
-        color: #22313a;
-        font-weight: 700;
     }
     .crm-card-actions {
         display: flex;
@@ -188,118 +201,59 @@
         background: #e3e9ed;
         color: #22313a;
     }
-    /* Hover discreto para badges de troca de etapa */
-    .etapa-badge:hover {
-        filter: brightness(0.92);
-        box-shadow: 0 2px 8px rgba(44,100,92,0.10);
-        transform: translateY(-2px) scale(1.04);
-        transition: all 0.18s;
-    }
-    /* Alinhar badges à direita na modal */
-    #etapasBadges {
-        justify-content: flex-end !important;
-    }
-
-    .modal .card,
-    .modal .card-body,
-    .modal .crm-value,
-    .modal .badge,
-    .modal .form-label,
-    .modal .form-control,
-    .modal .row,
-    .modal .col-12,
-    .modal .col-md-6 {
-        user-select: text !important;
-    }
-
-    .modal i {
-        user-select: none !important;
-    }
-    /* CSS extra para alinhar os botões de ação na modal */
-    .btn-enviar-whatsapp {
-        background: var(--primary-color) !important;
-        color: #fff !important;
-        border: none !important;
-        padding: 0.65rem 1.7rem !important;
-        font-size: 1.08rem !important;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-        height: 46px;
-    }
-    .btn-enviar-whatsapp:hover {
-        background: var(--hover-color) !important;
-        color: #fff !important;
+    .crm-kanban-col-desc {
+        display: block;
+        margin-top: 0.2rem;
+        color: #7b8a99;
+        font-size: 0.97rem;
     }
     .btn-orcamento {
         background: #f5f7fa;
         color: var(--primary-color);
-        border: 1.2px solid var(--primary-color);
-        border-radius: 5px;
-        padding: 0.18rem 0.7rem;
-        font-size: 0.89rem;
-        font-weight: 500;
+        border: 1.5px solid var(--primary-color);
+        border-radius: 6px;
+        padding: 0.45rem 1.2rem;
+        font-size: 1rem;
+        font-weight: 600;
         transition: all 0.18s;
         box-shadow: 0 1px 4px rgba(44,100,92,0.07);
         line-height: 1.1;
+        margin-left: 0.5rem;
     }
     .btn-orcamento:hover, .btn-orcamento:focus {
         background: var(--primary-color);
         color: #fff;
         border-color: var(--primary-color);
     }
-    .crm-kanban-col-count {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        margin-left: 0.2rem;
-        margin-top: 0.1rem;
-        margin-bottom: 0.1rem;
-        font-size: 0.93rem;
-        font-weight: 400;
-    }
-    .crm-kanban-col-count-number {
-        background: rgba(255,255,255,0.7);
-        color: var(--primary-color);
-        font-weight: 600;
-        font-size: 0.98em;
-        border-radius: 12px;
-        min-width: 1.7em;
-        min-height: 1.7em;
-        padding: 0 0.5em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 1px 2px rgba(44,100,92,0.07);
-        border: 1px solid var(--primary-color);
-    }
-    .crm-kanban-col-count-label {
-        color: #fff;
-        font-size: 0.85em;
-        font-weight: 400;
-        opacity: 0.7;
-    }
-    .crm-kanban-col-desc {
-        display: block;
-        margin-top: 0.2rem;
-    }
 </style>
 
-<div class="crm-kanban-container">
-    <form method="GET" action="" class="mb-3 d-flex align-items-center gap-2">
-        <label for="periodo" class="form-label mb-0">Período:</label>
-        <select name="periodo" id="periodo" class="form-select w-auto" onchange="this.form.submit()">
+<div class="crm-kanban-toolbar">
+    <form method="GET" action="" class="d-flex align-items-center gap-2 mb-0 w-100">
+        <input type="text" name="busca" class="form-control" placeholder="Busca global..." value="{{ request('busca') }}" style="max-width: 260px;" onchange="this.form.submit()">
+        <select name="funil" class="form-select">
+            <option value="">Funil Vendas</option>
+            <option value="1">Funil 1</option>
+            <option value="2">Funil 2</option>
+        </select>
+        <select name="vendedor" class="form-select" onchange="this.form.submit()">
+            <option value="">Todos Vendedores</option>
+            @foreach($comercial as $vendedor)
+                <option value="{{$vendedor->id}}" {{ request('vendedor') == $vendedor->id ? 'selected' : '' }} >{{$vendedor->usuario}}</option>
+            @endforeach
+        </select>
+        <select name="periodo" class="form-select" onchange="this.form.submit()">
             <option value="15" {{ request('periodo') == 15 ? 'selected' : '' }}>Últimos 15 dias</option>
             <option value="30" {{ request('periodo') == 30 || request('periodo') === null ? 'selected' : '' }}>Últimos 30 dias</option>
             <option value="45" {{ request('periodo') == 45 ? 'selected' : '' }}>Últimos 45 dias</option>
             <option value="60" {{ request('periodo') == 60 ? 'selected' : '' }}>Últimos 60 dias</option>
             <option value="all" {{ request('periodo') == 'all' ? 'selected' : '' }}>Todos</option>
         </select>
+        <button type="button" class="btn btn-add-lead ms-auto" data-bs-toggle="modal" data-bs-target="#modalCadastroLead">
+            <i class="bi bi-plus-lg"></i> Oportunidade
+        </button>
     </form>
-    <div class="crm-kanban-header">
-        <h1>Kanban de CRM</h1>
-        <p class="text-muted mb-0">Arraste as oportunidades entre as etapas do funil.</p>
-    </div>
+</div>
+<div class="crm-kanban-container">
     <div class="crm-kanban-board" id="crmKanbanBoard">
         @foreach($etapas as $etapa)
             <div class="crm-kanban-col">
@@ -476,7 +430,7 @@
         <li class="d-flex align-items-center mb-2">
           <i class="bi bi-kanban me-2 text-info" style="font-size:1.1rem;"></i>
           <span class="fw-semibold">Status:</span>
-          <span class="ms-1 text-dark">{{ $etapas->firstWhere('id', $lead->status_id)->nome ?? '-' }}</span>
+          <span class="ms-1 text-dark">{{ $lead->status_id ? $lead->status->nome : '' }}</span>
         </li>
         <li class="d-flex align-items-center">
           <i class="bi bi-chat-left-text me-2 text-muted" style="font-size:1.1rem;"></i>
@@ -486,32 +440,32 @@
       </ul>
     </div>
   </div>
-        </div>
-        <div class="modal-footer flex-column align-items-stretch">
-          <div class="mb-2 w-100">
-            <label class="form-label">Trocar de etapa:</label>
-            <div class="d-flex flex-wrap gap-2 w-100 justify-content-end">
-              @foreach($etapas as $idx => $etapaTroca)
-                <form method="GET" action="{{ route('alterStatus.lead', ['lead_id' => $lead->id, 'etapa_id' => $etapaTroca->id]) }}" style="display:inline;">
-                  @csrf
-                  <input type="hidden" name="etapa_id" value="{{ $etapaTroca->id }}">
-                  <button type="submit" class="badge rounded-pill etapa-badge {{ $lead->status_id == $etapaTroca->id ? 'bg-primary' : '' }}"
-                    style="cursor:pointer; font-size:1.1rem; padding:0.7em 1.2em; background:var(--primary-color); color:#fff; border:none; outline:none;">
-                    {{ $etapaTroca->nome }}
-                  </button>
-                </form>
-              @endforeach
-            </div>
-          </div>
-        </div>
+  </div>
+  <div class="modal-footer flex-column align-items-stretch">
+    <div class="mb-2 w-100">
+      <label class="form-label">Trocar de etapa:</label>
+      <div class="d-flex flex-wrap gap-2 w-100 justify-content-end">
+        @foreach($etapas as $idx => $etapaTroca)
+          <form method="GET" action="{{ route('alterStatus.lead', ['lead_id' => $lead->id, 'etapa_id' => $etapaTroca->id]) }}" style="display:inline;">
+            @csrf
+            <input type="hidden" name="etapa_id" value="{{ $etapaTroca->id }}">
+            <button type="submit" class="badge rounded-pill etapa-badge {{ $lead->status_id == $etapaTroca->id ? 'bg-primary' : '' }}"
+              style="cursor:pointer; font-size:1.1rem; padding:0.7em 1.2em; background:var(--primary-color); color:#fff; border:none; outline:none;">
+              {{ $etapaTroca->nome }}
+            </button>
+          </form>
+        @endforeach
       </div>
-      </div>
-      </div>
-      @endif
-    @endforeach
+    </div>
   </div>
   </div>
-  @endforeach
+  </div>
+</div>
+@endif
+@endforeach
+</div>
+</div>
+@endforeach
 </div>
 </div>
 
@@ -526,8 +480,18 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <!-- Input hidden com etapa_id -->
-          <input type="hidden" name="status_id" id="inputEtapaId">
+          <!-- Campo de etapa dinâmico -->
+          <div id="campoEtapaHidden">
+            <input type="hidden" name="status_id" id="inputEtapaId">
+          </div>
+          <div id="campoEtapaSelect" style="display:none;">
+            <label for="selectEtapaId" class="form-label">Etapa</label>
+            <select name="status_id" id="selectEtapaId" class="form-control">
+              @foreach($etapas as $etapa)
+                <option value="{{$etapa->id}}">{{$etapa->nome}}</option>
+              @endforeach
+            </select>
+          </div>
             <div class="mb-3">
             <label for="cliente" class="form-label">Cliente</label>
                 <select name="cliente_id" id="cliente" class = "form-control" required>
@@ -568,10 +532,36 @@
     // Modal de cadastro
     const modal = document.getElementById('modalCadastroLead');
     const inputEtapaId = document.getElementById('inputEtapaId');
+    const campoEtapaHidden = document.getElementById('campoEtapaHidden');
+    const campoEtapaSelect = document.getElementById('campoEtapaSelect');
+    const selectEtapaId = document.getElementById('selectEtapaId');
+
+    // Botão da navbar
+    const btnAddLeadNavbar = document.querySelector('.btn-add-lead');
+
+    // Ao clicar no botão da navbar
+    if(btnAddLeadNavbar) {
+      btnAddLeadNavbar.addEventListener('click', function() {
+        campoEtapaHidden.style.display = 'none';
+        campoEtapaSelect.style.display = 'block';
+        // Desabilita o hidden, habilita o select
+        inputEtapaId.disabled = true;
+        if(selectEtapaId) selectEtapaId.disabled = false;
+        // Seleciona a primeira etapa por padrão
+        if(selectEtapaId) selectEtapaId.selectedIndex = 0;
+      });
+    }
+
+    // Ao clicar no botão de cada etapa
     document.querySelectorAll('.btn-add-card').forEach(button => {
       button.addEventListener('click', () => {
         const etapaId = button.getAttribute('data-etapa-id');
         inputEtapaId.value = etapaId;
+        campoEtapaHidden.style.display = 'block';
+        campoEtapaSelect.style.display = 'none';
+        // Habilita o hidden, desabilita o select
+        inputEtapaId.disabled = false;
+        if(selectEtapaId) selectEtapaId.disabled = true;
       });
     });
   });

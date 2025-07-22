@@ -32,12 +32,29 @@ class CRMController extends Controller
         $clientes = Cliente::all();
         $comercial = Op_Comercial::all();
         $status_crm = Status_Crm::orderBy('position', 'asc')->get();
+
+        $leads = Lead::query();
         $periodo = request('periodo');
-        if ($periodo && $periodo !== 'all') {
-            $leads = Lead::where('created_at', '>=', now()->subDays($periodo))->get();
-        } else {
-            $leads = Lead::all();
+
+        if(!empty(request('periodo')) && request('periodo') !== 'all'){
+            $periodo = request('periodo');
+            $leads->where('created_at', '>=', now()->subDays($periodo));
         }
+
+        if(!empty(request('vendedor'))){
+            $vendedor = request('vendedor');
+            $leads->where('vendedor_id', $vendedor);
+        }
+
+        if(!empty(request('busca'))){
+            $busca = request('busca');
+            $leads->whereHas('cliente', function ($query) use ($busca) {
+                $query->where('nome', 'like', "%{$busca}%");
+            });
+        }
+
+        $leads = $leads->get();
+
         $this->notificaVendedor();
         return view('Crm/CRM_index', ['clientes' => $clientes, 'comercial' => $comercial,
                                         'etapas' => $status_crm, 'leads' => $leads]);
