@@ -11,6 +11,7 @@ use App\Http\Controllers\IndicadoresController;
 use App\Http\Controllers\ZappyController;
 use App\Http\Controllers\Documentos_TecnicosController;
 use App\Http\Controllers\CRMController;
+use App\Http\Controllers\AutentiqueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -176,6 +177,7 @@ Route::controller(AuthController::class)->group(function (){
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('orcamento/enviar', [ZappyController::class, 'encaminhaOrcamentoCliente'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/atendimento', [ZappyController::class, 'encaminhaWhatsLead'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/testeAutentique', [AutentiqueController::class, 'createDocument'])->name('teste.autentique'); # rota para criação de atendimentos no zappy
 
 /** --------------------------------------------- */
 /**                  Rotas Classe CRM             */

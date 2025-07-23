@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70577e2e64171ec405d265cc09e2ada1",
+    "content-hash": "019fac9eb71fceac6f37c7c2a9578687",
     "packages": [
         {
             "name": "balping/json-raw-encoder",
@@ -6234,6 +6234,64 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.3.0"
             },
             "time": "2024-12-21T16:25:41+00:00"
+        },
+        {
+            "name": "vinicinbgs/autentique-v2",
+            "version": "v4.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vinicinbgs/autentique-v2.git",
+                "reference": "21b5a8427a76ba67bff91f7bc08f0d3f932fce93"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vinicinbgs/autentique-v2/zipball/21b5a8427a76ba67bff91f7bc08f0d3f932fce93",
+                "reference": "21b5a8427a76ba67bff91f7bc08f0d3f932fce93",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "2.0.x-dev",
+                "phpunit/phpunit": "^9.5",
+                "vlucas/phpdotenv": "^5.4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "vinicinbgs\\Autentique\\": "src/"
+                },
+                "classmap": [
+                    "src",
+                    "tests"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vinicius Morais Dutra",
+                    "email": "dutra_morais@hotmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Api Autentique V2",
+            "homepage": "https://github.com/vinicinbgs/autentique-v2",
+            "keywords": [
+                "api",
+                "autentique",
+                "v2"
+            ],
+            "support": {
+                "issues": "https://github.com/vinicinbgs/autentique-v2/issues",
+                "source": "https://github.com/vinicinbgs/autentique-v2/tree/v4.3.3"
+            },
+            "time": "2024-11-29T18:59:29+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

@@ -383,7 +383,11 @@
                   <label class="form-label">Arquivo (opcional)</label>
                   <input type="file" class="form-control" name="file">
                 </div>
-                <button type="submit" class="btn btn-success"><i class="bi bi-whatsapp"></i> Enviar</button>
+                <div class="mb-3 text-center">
+                  <button type="submit" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-send"></i> Enviar
+                  </button>
+                </div>
               </form>
             </div>
             <div class="collapse w-100" id="emailForm{{ $lead->id }}">
@@ -464,8 +468,56 @@
         @endforeach
       </div>
     </div>
+    <button type="button" class="btn btn-outline-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalEnviarContrato{{ $lead->id }}">
+      <i class="bi bi-file-earmark-text"></i> Enviar Contrato para assinatura
+    </button>
   </div>
   </div>
+  </div>
+</div>
+
+<!-- Modal Enviar Contrato para assinatura (simples) -->
+<div class="modal fade" id="modalEnviarContrato{{ $lead->id }}" tabindex="-1" aria-labelledby="modalEnviarContratoLabel{{ $lead->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEnviarContratoLabel{{ $lead->id }}">Enviar Contrato para assinatura</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p>ID do Cliente: <strong>{{ $lead->id }}</strong></p>
+          <form action="{{route('teste.autentique')}}" enctype= multipart/form-data method="POST" class="p-3 rounded shadow-sm border bg-light">
+            @csrf
+            <input type="hidden" name="lead_id" value="{{$lead->id}}">
+            <div class="mb-3">
+              <label for="Nome_Documento" class="form-label fw-semibold">Nome do Documento</label>
+              <input type="text" name="nome_documento" class="form-control" id="Nome_Documento" placeholder="Ex: Contrato de Prestação de Serviços">
+            </div>
+            <div class="mb-3">
+              <label for="Documento" class="form-label fw-semibold">Documento para assinatura</label>
+              <input type="file" name="documento" id="Documento" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-people"></i> Signatários</label>
+              <div id="signatariosList{{ $lead->id }}">
+                <div class="input-group mb-2">
+                  <input type="email" class="form-control" name="emails[]" placeholder="E-mail do signatário" required>
+                  <button class="btn btn-danger btn-remove-signatario" type="button" style="display:none;">&times;</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-success mt-2" onclick="adicionarSignatario({{ $lead->id }})">
+                <i class="bi bi-plus"></i> Adicionar signatário
+              </button>
+            </div>
+            <div class="">
+              <button type="submit" class="btn btn-primary col-sm-12">Enviar</button>
+            </div>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -521,7 +573,7 @@
 </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal de cadastro -->
 <div class="modal fade" id="modalCadastroLead" tabindex="-1" aria-labelledby="modalCadastroLeadLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -616,6 +668,36 @@
         if(selectEtapaId) selectEtapaId.disabled = true;
       });
     });
+  });
+
+  // Função para adicionar/remover signatários dinamicamente
+  function adicionarSignatario(leadId) {
+    const list = document.getElementById('signatariosList' + leadId);
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+      <input type="email" class="form-control" name="emails[]" placeholder="E-mail do signatário" required>
+      <button class="btn btn-danger btn-remove-signatario" type="button">&times;</button>
+    `;
+    div.querySelector('.btn-remove-signatario').addEventListener('click', function() {
+      div.remove();
+      atualizarBotoesRemover(list);
+    });
+    list.appendChild(div);
+    atualizarBotoesRemover(list);
+  }
+  function atualizarBotoesRemover(list) {
+    const grupos = list.querySelectorAll('.input-group');
+    grupos.forEach((grupo, idx) => {
+      const btn = grupo.querySelector('.btn-remove-signatario');
+      btn.style.display = grupos.length > 1 && idx > 0 ? '' : 'none';
+    });
+  }
+  // Inicializar botões de remover para todos os leads ao abrir a modal
+  document.addEventListener('DOMContentLoaded', function () {
+    @foreach($leads as $lead)
+      atualizarBotoesRemover(document.getElementById('signatariosList{{ $lead->id }}'));
+    @endforeach
   });
 </script>
 
