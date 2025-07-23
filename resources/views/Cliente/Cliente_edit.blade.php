@@ -58,7 +58,39 @@
                     <button type="button" id="addPhone" class="btn" style="background-color: var(--primary-color); color: white;">+ Adicionar Telefone</button>
                 </div>
 
-
+                <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-geo-alt"></i>&nbsp;Endereço</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP" maxlength="9" value="{{ $cliente->endereco ? $cliente->endereco->cep : '' }}" required>
+                        <button type="button" class="btn btn-outline-secondary" id="buscar-cep" title="Buscar endereço pelo CEP">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-8 mb-2">
+                            <input type="text" class="form-control" id="rua" name="rua" placeholder="Rua" value="{{ $cliente->endereco ? $cliente->endereco->rua : '' }}" required>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <input type="text" class="form-control" id="numero" name="numero" placeholder="Número" value="{{ $cliente->endereco ? $cliente->endereco->numero : ''}}"required>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6 mb-2">
+                            <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro" value="{{ $cliente->endereco ? $cliente->endereco->bairro : '' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Complemento" value="{{ $cliente->endereco && $cliente->endereco->complemento ? $cliente->endereco->complemento : ''}}">
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-8 mb-2">
+                            <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade" value="{{ $cliente->endereco ? $cliente->endereco->cidade : ''}}" required>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <input type="text" class="form-control" id="uf" name="uf" placeholder="UF" maxlength="2" value="{{ $cliente->endereco ? $cliente->endereco->uf : ''}}" required>
+                        </div>
+                    </div>
+                </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary col-sm-12">Editar</button>
                 </div>
@@ -90,6 +122,30 @@
             }
         });
     });
+
+    // Busca CEP via ViaCEP
+    document.getElementById('buscar-cep').addEventListener('click', function() {
+        const cep = document.getElementById('cep').value.replace(/\D/g, '');
+        if (cep.length !== 8) {
+            alert('Digite um CEP válido com 8 dígitos.');
+            return;
+        }
+        axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(function(response) {
+                if (response.data.erro) {
+                    alert('CEP não encontrado.');
+                    return;
+                }
+                document.getElementById('rua').value = response.data.logradouro || '';
+                document.getElementById('bairro').value = response.data.bairro || '';
+                document.getElementById('cidade').value = response.data.localidade || '';
+                document.getElementById('uf').value = response.data.uf || '';
+            })
+            .catch(function() {
+                alert('Erro ao buscar o CEP.');
+            });
+    });
+
 </script>
 
 @endsection

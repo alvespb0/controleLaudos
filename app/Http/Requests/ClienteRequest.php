@@ -30,6 +30,13 @@ class ClienteRequest extends FormRequest
             'cliente_novo' => 'required|boolean',
             'telefone' => 'required|array|min:1',
             'telefone.*' => 'required|string|min:8|max:14',
+            'cep' => 'required|string|min:8|max:9',
+            'rua' => 'required|string|min:4|max:255',
+            'numero' => 'required|numeric|min:1',
+            'bairro' => 'required|string|min:4|max:255',
+            'complemento' => 'nullable|string|min:3|max:255',
+            'cidade' => 'required|string|min:4|max:255',
+            'uf' => 'required|string|size:2'
         ];
     }
 
@@ -63,6 +70,38 @@ class ClienteRequest extends FormRequest
             'telefone.*.string' => 'Cada telefone deve ser um texto válido.',
             'telefone.*.min' => 'Cada telefone deve ter no mínimo :min caracteres.',
             'telefone.*.max' => 'Cada telefone deve ter no máximo :max caracteres.',
+
+            'cep.required' => 'O campo CEP é obrigatório.',
+            'cep.string' => 'O CEP deve ser um valor textual.',
+            'cep.min' => 'O CEP deve ter pelo menos 8 caracteres.',
+            'cep.max' => 'O CEP deve ter no máximo 9 caracteres.',
+            
+            'rua.required' => 'O campo Rua é obrigatório.',
+            'rua.string' => 'A Rua deve ser um valor textual.',
+            'rua.min' => 'O campo Rua deve ter pelo menos 4 caracteres.',
+            'rua.max' => 'O campo Rua deve ter no máximo 255 caracteres.',
+            
+            'numero.required' => 'O campo Número é obrigatório.',
+            'numero.numeric' => 'O Número deve ser um valor numérico.',
+            'numero.min' => 'O Número deve ser pelo menos 1.',
+            
+            'bairro.required' => 'O campo Bairro é obrigatório.',
+            'bairro.string' => 'O Bairro deve ser um valor textual.',
+            'bairro.min' => 'O campo Bairro deve ter pelo menos 4 caracteres.',
+            'bairro.max' => 'O campo Bairro deve ter no máximo 255 caracteres.',
+            
+            'complemento.string' => 'O Complemento deve ser um valor textual.',
+            'complemento.min' => 'O Complemento deve ter pelo menos 3 caracteres.',
+            'complemento.max' => 'O Complemento deve ter no máximo 255 caracteres.',
+            
+            'cidade.required' => 'O campo Cidade é obrigatório.',
+            'cidade.string' => 'A Cidade deve ser um valor textual.',
+            'cidade.min' => 'O campo Cidade deve ter pelo menos 4 caracteres.',
+            'cidade.max' => 'O campo Cidade deve ter no máximo 255 caracteres.',
+            
+            'uf.required' => 'O campo UF é obrigatório.',
+            'uf.string' => 'A UF deve ser um valor textual.',
+            'uf.size' => 'A UF deve ter exatamente 2 caracteres.',
         ];
     }
 }

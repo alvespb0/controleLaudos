@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\Telefone;
+use App\Models\Endereco_Cliente;
 use App\Http\Requests\ClienteRequest;
 
 class ClienteController extends Controller
@@ -39,6 +40,18 @@ class ClienteController extends Controller
                 'cliente_id' => $cliente->id
             ]);
         }
+
+        Endereco_Cliente::create([
+            'cliente_id' => $cliente->id,
+            'cep' => $request->cep,
+            'bairro' => $request->bairro,
+            'rua' => $request->rua,
+            'numero' => $request->numero,
+            'complemento' => $request->complemento,
+            'cidade' => $request->cidade,
+            'uf' => $request->uf
+        ]);
+
        session()->flash('mensagem', 'Cliente registrado com sucesso');
 
        return redirect()->route('readCliente');
@@ -90,6 +103,20 @@ class ClienteController extends Controller
                  'cliente_id' => $cliente->id
              ]);
          }
+
+        $cliente->endereco()->delete();
+
+        Endereco_Cliente::create([
+            'cliente_id' => $cliente->id,
+            'cep' => $request->cep,
+            'bairro' => $request->bairro,
+            'rua' => $request->rua,
+            'numero' => $request->numero,
+            'complemento' => $request->complemento,
+            'cidade' => $request->cidade,
+            'uf' => $request->uf
+        ]);
+        
         session()->flash('mensagem', 'Cliente Alterado com sucesso');
  
         return redirect()->route('readCliente');

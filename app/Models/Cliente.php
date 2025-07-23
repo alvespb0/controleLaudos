@@ -22,4 +22,8 @@ class Cliente extends Model
     public function telefone(){
         return $this->hasMany(Telefone::class);
     }
+
+    public function endereco(){
+        return $this->hasOne(Endereco_Cliente::class);
+    }
 }
