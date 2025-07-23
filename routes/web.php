@@ -183,5 +183,7 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::
     Route::get('/CRM', 'showCRM')->name('show.CRM'); # Retorna a view do CRM
     Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead'); # Cria um LEAD baseado a etapa id
     Route::get('/CRM/mudar-etapa/{lead_id}/{etapa_id}', 'alterStatusLead')->name('alterStatus.lead'); # altera a etapa do lead
-    Route::get('/CRM/gerar-orcamento/{lead_id}', 'formularioOrcamento')->name('gerar.orcamentoLead');
+    Route::get('/CRM/gerar-orcamento/{lead_id}', 'formularioOrcamento')->name('gerar.orcamentoLead'); # retorna view de formulario de gerar orçamento
+    Route::post('/CRM/editar-lead', 'updateLead')->name('update.lead'); # da update no lead
+    Route::get('/CRM/deletar-lead/{id}', 'deleteLead')->name('delete.lead');
 });

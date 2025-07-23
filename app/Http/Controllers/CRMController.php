@@ -80,6 +80,51 @@ class CRMController extends Controller
             'proximo_contato' => $request->proximo_contato
         ]);
 
+       session()->flash('mensagem', 'Lead criado com sucesso');
+
+        return redirect()->route('show.CRM');
+    }
+
+    /**
+     * Atualiza as informações de um lead existente no banco de dados.
+     *
+     * @param  \App\Http\Requests\LeadRequest  $request  Requisição validada contendo os dados do lead.
+     * @return \Illuminate\Http\RedirectResponse  Redireciona de volta para a tela do CRM com uma mensagem de sucesso.
+     */
+    public function updateLead(LeadRequest $request){
+        $request->validated();
+        
+        $lead = Lead::findOrFail($request->lead_id);
+        $user = Auth::user();
+
+        $lead->update([
+            'cliente_id' => $request->cliente_id,
+            'vendedor_id' => $user->comercial->id ?? null,
+            'status_id' => $request->status_id,
+            'observacoes' => $request->observacoes,
+            'nome_contato' => $request->nome_contato,
+            'investimento' => $request->investimento,
+            'proximo_contato' => $request->proximo_contato
+        ]);
+
+        session()->flash('mensagem', 'Lead alterado com sucesso');
+
+        return redirect()->route('show.CRM');
+    }
+
+    /**
+     * Remove um lead do banco de dados.
+     *
+     * @param  int  $id  ID do lead a ser removido.
+     * @return \Illuminate\Http\RedirectResponse  Redireciona de volta para o CRM com mensagem de sucesso.
+     */
+    public function deleteLead($id){
+        $lead = Lead::findOrFail($id);
+
+        $lead->delete();
+        
+        session()->flash('mensagem', 'Lead Excluido com sucesso');
+
         return redirect()->route('show.CRM');
     }
 

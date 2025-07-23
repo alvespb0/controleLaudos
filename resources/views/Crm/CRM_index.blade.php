@@ -225,6 +225,13 @@
         color: #fff;
         border-color: var(--primary-color);
     }
+    .etapa-badge:hover {
+        background: var(--hover-color) !important;
+        color: #fff !important;
+        filter: brightness(1.05);
+        box-shadow: 0 2px 8px rgba(44,100,92,0.13);
+        transition: background 0.18s, color 0.18s;
+    }
 </style>
 
 <div class="crm-kanban-toolbar">
@@ -292,7 +299,7 @@
                                 {{$lead->observacoes ? $lead->observacoes : 'nenhuma observação adicionada'}}
                                 <div class="crm-card-actions">
                                     <button class="btn" title="Ver detalhes" data-bs-toggle="modal" data-bs-target="#modalDetalhesLead{{ $lead->id }}"><i class="bi bi-eye"></i></button>
-                                    <button class="btn" title="Editar"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn" title="Editar" data-bs-toggle="modal" data-bs-target="#modalEditarLead{{ $lead->id }}"><i class="bi bi-pencil"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -461,6 +468,51 @@
   </div>
   </div>
 </div>
+
+<!-- Modal Editar Lead -->
+<div class="modal fade" id="modalEditarLead{{ $lead->id }}" tabindex="-1" aria-labelledby="modalEditarLeadLabel{{ $lead->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditarLeadLabel{{ $lead->id }}">Editar Lead (ID: {{ $lead->id }})</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p>ID do Lead: <strong>{{ $lead->id }}</strong></p>
+        <p>Cliente: {{$lead->cliente->nome}}</p>
+        <form action="{{route('update.lead')}}" method="POST">
+          @csrf
+          <input type="hidden" name="status_id" value="{{$etapa->id}}">
+          <input type="hidden" name="cliente_id" value="{{$lead->cliente->id}}">
+          <input type="hidden" name="lead_id" value="{{$lead->id}}">
+          <div class="mb-3">
+              <label for="investimento" class="form-label">Investimento</label>
+              <input type="number" name="investimento" id="" class="form-control" step="0.01" min="0" value="{{$lead->investimento ? $lead->investimento : ''}}">
+          </div>
+          <div class="mb-3">
+              <label for="contato" class="form-label">Nome do Contato</label>
+              <input type="text" name="nome_contato" id="contato" class="form-control" step="0.01" min="0" value="{{$lead->nome_contato ? $lead->nome_contato : ''}}">
+          </div>
+          <div class="mb-3">
+            <label for="observacoes" class="form-label">Próximo contato</label>
+            <input type="date" name="proximo_contato" class="form-control" id="" value="{{$lead->proximo_contato ? $lead->proximo_contato : ''}}">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Observações</label>
+            <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{$lead->observacoes ? $lead->observacoes : ''}}</textarea>
+          </div>
+          <div class="modal-footer">
+            <a href="{{ route('delete.lead', ['id' => $lead->id]) }}" class="btn btn-danger" title="Excluir Lead">
+              <i class="bi bi-trash"></i>
+            </a>
+            <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 @endif
 @endforeach
 </div>
@@ -492,31 +544,31 @@
               @endforeach
             </select>
           </div>
-            <div class="mb-3">
-            <label for="cliente" class="form-label">Cliente</label>
-                <select name="cliente_id" id="cliente" class = "form-control" required>
-                    <option selected>Selecione um cliente</option>
-                    @foreach($clientes as $cliente)
-                        <option value="{{$cliente->id}}">{{$cliente->nome}}</option>
-                    @endforeach
-                </select>          
-            </div>
-            <div class="mb-3">
-                <label for="investimento" class="form-label">Investimento</label>
-                <input type="number" name="investimento" id="" class="form-control" step="0.01" min="0">
-            </div>
-            <div class="mb-3">
-                <label for="contato" class="form-label">Nome do Contato</label>
-                <input type="text" name="nome_contato" id="contato" class="form-control" step="0.01" min="0">
-            </div>
-            <div class="mb-3">
-              <label for="observacoes" class="form-label">Próximo contato</label>
-              <input type="date" name="proximo_contato" class="form-control" id="">
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Observações</label>
-              <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-            </div>
+          <div class="mb-3">
+          <label for="cliente" class="form-label">Cliente</label>
+              <select name="cliente_id" id="cliente" class = "form-control" required>
+                  <option selected>Selecione um cliente</option>
+                  @foreach($clientes as $cliente)
+                      <option value="{{$cliente->id}}">{{$cliente->nome}}</option>
+                  @endforeach
+              </select>          
+          </div>
+          <div class="mb-3">
+              <label for="investimento" class="form-label">Investimento</label>
+              <input type="number" name="investimento" id="" class="form-control" step="0.01" min="0">
+          </div>
+          <div class="mb-3">
+              <label for="contato" class="form-label">Nome do Contato</label>
+              <input type="text" name="nome_contato" id="contato" class="form-control" step="0.01" min="0">
+          </div>
+          <div class="mb-3">
+            <label for="observacoes" class="form-label">Próximo contato</label>
+            <input type="date" name="proximo_contato" class="form-control" id="">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Observações</label>
+            <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
