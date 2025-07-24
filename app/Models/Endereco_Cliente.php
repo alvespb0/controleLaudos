@@ -19,7 +19,10 @@ class Endereco_Cliente extends Model
         'numero',
         'complemento',
         'cidade',
-        'uf'
+        'uf',
+        'latitude',
+        'longitude',
+        'distancia'
     ];
 
     public function cliente(){

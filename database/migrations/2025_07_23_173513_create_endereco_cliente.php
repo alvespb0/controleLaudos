@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('complemento')->nullable();
             $table->string('cidade');
             $table->string('uf');
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->float('distancia')->nullable();
             $table->timestamps();
             $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('cascade');
         });
