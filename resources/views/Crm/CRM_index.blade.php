@@ -354,6 +354,20 @@
                       <span class="text-muted">Nenhum telefone cadastrado</span>
                     @endif
                   </div>
+                 <div class="col-md-6">
+                   <strong>Endereço:</strong>
+                   <span class="crm-value">
+                     {{ $lead->cliente->endereco ?
+                       $lead->cliente->endereco->rua . ', ' .
+                       $lead->cliente->endereco->numero .
+                       ($lead->cliente->endereco->complemento ? ' - ' . $lead->cliente->endereco->complemento : '') . ', ' .
+                       $lead->cliente->endereco->bairro . ', ' .
+                       $lead->cliente->endereco->cidade . ' - ' .
+                       $lead->cliente->endereco->uf . ' | CEP: ' .
+                       $lead->cliente->endereco->cep
+                       : '-' }}
+                   </span>
+                 </div>
                 </div>
               </div>
             </div>

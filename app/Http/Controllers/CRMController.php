@@ -141,6 +141,12 @@ class CRMController extends Controller
     public function alterStatusLead($lead_id, $etapa_id){
         $lead = Lead::findOrFail($lead_id);
 
+        if($etapa_id == 5 && !$this->validaDadosCobranca($lead)){ # etapa = 5 representa a etapa Oportunidade Ganha é um valor imutável no banco também marcada como padrao_sistema
+            session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
+
+            return redirect()->route('show.CRM');
+        }
+
         $lead->update([
             'status_id' => $etapa_id
         ]);
@@ -148,6 +154,25 @@ class CRMController extends Controller
         session()->flash('mensagem', 'Etapa alterada com sucesso');
 
         return redirect()->route('show.CRM');
+    }
+
+    public function validaDadosCobranca($lead){
+        
+        if (!$lead->cliente || !$lead->cliente->dadosCobranca) {
+            return false;
+        }
+
+        $campos = [
+            'cep', 'bairro', 'rua', 'numero', 'uf', 'cidade', 'email_cobranca', 'telefone_cobranca'
+        ];
+
+        foreach($campos as $campo){
+            if(!$lead->cliente->dadosCobranca->$campo){
+                return false; # se algum campo não passar nessa validação retorna null
+            }
+        }
+
+        return true; # se nenhum campo cair na validação, retorna true
     }
     /**
      * 
