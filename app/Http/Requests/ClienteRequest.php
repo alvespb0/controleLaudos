@@ -36,7 +36,16 @@ class ClienteRequest extends FormRequest
             'bairro' => 'required|string|min:4|max:255',
             'complemento' => 'nullable|string|min:3|max:255',
             'cidade' => 'required|string|min:4|max:255',
-            'uf' => 'required|string|size:2'
+            'uf' => 'required|string|size:2',
+            'cep_cobranca' => 'nullable|string|min:8|max:9',
+            'rua_cobranca' => 'nullable|string|min:4|max:255',
+            'numero_cobranca' => 'nullable|numeric|min:1',
+            'bairro_cobranca' => 'nullable|string|min:4|max:255',
+            'complemento_cobranca' => 'nullable|string|min:3|max:255',
+            'cidade_cobranca' => 'nullable|string|min:4|max:255',
+            'uf_cobranca' => 'nullable|string|size:2',
+            'email_cobranca' => 'nullable|string|min:5|max:255',
+            'telefone_cobranca' => 'nullable|string|min:6'
         ];
     }
 
@@ -102,6 +111,40 @@ class ClienteRequest extends FormRequest
             'uf.required' => 'O campo UF é obrigatório.',
             'uf.string' => 'A UF deve ser um valor textual.',
             'uf.size' => 'A UF deve ter exatamente 2 caracteres.',
+
+            'cep_cobranca.min' => 'O CEP de cobrança deve ter no mínimo 8 caracteres.',
+            'cep_cobranca.max' => 'O CEP de cobrança deve ter no máximo 9 caracteres.',
+            'cep_cobranca.string' => 'O CEP de cobrança deve ser um texto válido.',
+
+            'rua_cobranca.min' => 'A rua de cobrança deve ter no mínimo 4 caracteres.',
+            'rua_cobranca.max' => 'A rua de cobrança deve ter no máximo 255 caracteres.',
+            'rua_cobranca.string' => 'A rua de cobrança deve ser um texto válido.',
+
+            'numero_cobranca.numeric' => 'O número de cobrança deve conter apenas números.',
+            'numero_cobranca.min' => 'O número de cobrança deve ser no mínimo 1.',
+
+            'bairro_cobranca.min' => 'O bairro de cobrança deve ter no mínimo 4 caracteres.',
+            'bairro_cobranca.max' => 'O bairro de cobrança deve ter no máximo 255 caracteres.',
+            'bairro_cobranca.string' => 'O bairro de cobrança deve ser um texto válido.',
+
+            'complemento_cobranca.min' => 'O complemento de cobrança deve ter no mínimo 3 caracteres.',
+            'complemento_cobranca.max' => 'O complemento de cobrança deve ter no máximo 255 caracteres.',
+            'complemento_cobranca.string' => 'O complemento de cobrança deve ser um texto válido.',
+
+            'cidade_cobranca.min' => 'A cidade de cobrança deve ter no mínimo 4 caracteres.',
+            'cidade_cobranca.max' => 'A cidade de cobrança deve ter no máximo 255 caracteres.',
+            'cidade_cobranca.string' => 'A cidade de cobrança deve ser um texto válido.',
+
+            'uf_cobranca.size' => 'O UF de cobrança deve conter exatamente 2 letras.',
+            'uf_cobranca.string' => 'O UF de cobrança deve ser um texto válido.',
+
+            'email_cobranca.min' => 'O e-mail de cobrança deve ter no mínimo 5 caracteres.',
+            'email_cobranca.max' => 'O e-mail de cobrança deve ter no máximo 255 caracteres.',
+            'email_cobranca.string' => 'O e-mail de cobrança deve ser um texto válido.',
+
+            'telefone_cobranca.min' => 'O telefone de cobrança deve ter no mínimo 6 caracteres.',
+            'telefone_cobranca.string' => 'O telefone de cobrança deve ser um texto válido.',
+
         ];
     }
 }

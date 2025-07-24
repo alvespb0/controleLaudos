@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Endereco_Cliente extends Model
+class Dados_Cobranca extends Model
 {
-    protected $table = 'endereco_cliente';
+    protected $table = 'dados_cobranca';
 
     use HasFactory;
 
@@ -19,7 +19,9 @@ class Endereco_Cliente extends Model
         'numero',
         'complemento',
         'cidade',
-        'uf'
+        'uf',
+        'email_cobranca',
+        'telefone_cobranca'
     ];
 
     public function cliente(){

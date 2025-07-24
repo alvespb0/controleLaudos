@@ -26,4 +26,8 @@ class Cliente extends Model
     public function endereco(){
         return $this->hasOne(Endereco_Cliente::class);
     }
+
+    public function dadosCobranca(){
+        return $this->hasOne(Dados_Cobranca::class);
+    }
 }

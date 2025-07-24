@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\Telefone;
 use App\Models\Endereco_Cliente;
+use App\Models\Dados_Cobranca;
 use App\Http\Requests\ClienteRequest;
 
 class ClienteController extends Controller
@@ -52,6 +53,19 @@ class ClienteController extends Controller
             'uf' => $request->uf
         ]);
 
+        Dados_Cobranca::create([
+            'cliente_id' => $cliente->id,
+            'cep' => $request->cep_cobranca,
+            'bairro' => $request->bairro_cobranca,
+            'rua' => $request->rua_cobranca,
+            'numero' => $request->numero_cobranca,
+            'complemento' => $request->complemento_cobranca,
+            'cidade' => $request->cidade_cobranca,
+            'uf' => $request->uf_cobranca,
+            'email_cobranca' => $request->email_cobranca,
+            'telefone_cobranca' => $request->telefone_cobranca,
+        ]);
+
        session()->flash('mensagem', 'Cliente registrado com sucesso');
 
        return redirect()->route('readCliente');
@@ -77,12 +91,12 @@ class ClienteController extends Controller
        return view('Cliente/Cliente_edit', ['cliente' => $cliente]);
    }
 
-  /**
-    * Recebe uma request faz a validação dos dados e faz o update dado o id
-    * @param Request
-    * @param int $id
-    * @return Redirect
-    */
+    /**
+        * Recebe uma request faz a validação dos dados e faz o update dado o id
+        * @param Request
+        * @param int $id
+        * @return Redirect
+        */
     public function updateCliente(ClienteRequest $request, $id){
         $request->validated();
  
@@ -116,7 +130,22 @@ class ClienteController extends Controller
             'cidade' => $request->cidade,
             'uf' => $request->uf
         ]);
-        
+
+        $cliente->dadosCobranca()->delete();
+
+        Dados_Cobranca::create([
+            'cliente_id' => $cliente->id,
+            'cep' => $request->cep_cobranca,
+            'bairro' => $request->bairro_cobranca,
+            'rua' => $request->rua_cobranca,
+            'numero' => $request->numero_cobranca,
+            'complemento' => $request->complemento_cobranca,
+            'cidade' => $request->cidade_cobranca,
+            'uf' => $request->uf_cobranca,
+            'email_cobranca' => $request->email_cobranca,
+            'telefone_cobranca' => $request->telefone_cobranca,
+        ]);
+
         session()->flash('mensagem', 'Cliente Alterado com sucesso');
  
         return redirect()->route('readCliente');
