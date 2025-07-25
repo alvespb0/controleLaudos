@@ -12,6 +12,7 @@ use App\Http\Controllers\ZappyController;
 use App\Http\Controllers\Documentos_TecnicosController;
 use App\Http\Controllers\CRMController;
 use App\Http\Controllers\AutentiqueController;
+use App\Http\Controllers\FaixaPrecoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,4 +189,18 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::
     Route::get('/CRM/gerar-orcamento/{lead_id}', 'formularioOrcamento')->name('gerar.orcamentoLead'); # retorna view de formulario de gerar orçamento
     Route::post('/CRM/editar-lead', 'updateLead')->name('update.lead'); # da update no lead
     Route::get('/CRM/deletar-lead/{id}', 'deleteLead')->name('delete.lead');
+});
+
+/** --------------------------------------------- */
+/**             Rotas Classe FaixaPreco           */
+Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::class)->group(function (){
+    Route::get('/variaveis-preco', 'readVariavelPrecificacao')->name('read.variavel');
+
+    Route::get('/variaveis-preco/cadastro', 'cadastroVariavelPrecificacao')->name('cadastro.variavel');
+    Route::post('/variaveis-preco/cadastro', 'createVariavelPrecificacao')->name('create.variavel');
+
+    Route::get('/variaveis-preco/alterar/{id}', 'alterarVariavelPrecificacao')->name('alteracao.variavel');
+    Route::post('/variaveis/alterar/{id}', 'editVariavelPrecificacao')->name('edit.variavel');
+
+    Route::get('/variaveis-preco/excluir/{id}', 'deleteVariavelPrecificacao')->name('delete.variavel');
 });
