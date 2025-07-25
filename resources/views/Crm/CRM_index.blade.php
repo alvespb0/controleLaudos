@@ -364,7 +364,8 @@
                        $lead->cliente->endereco->bairro . ', ' .
                        $lead->cliente->endereco->cidade . ' - ' .
                        $lead->cliente->endereco->uf . ' | CEP: ' .
-                       $lead->cliente->endereco->cep
+                       $lead->cliente->endereco->cep .
+                       ($lead->cliente->endereco->distancia ? ' | Distância: ' . $lead->cliente->endereco->distancia . ' km' : '')
                        : '-' }}
                    </span>
                  </div>

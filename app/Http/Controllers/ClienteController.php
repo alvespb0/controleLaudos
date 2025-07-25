@@ -56,6 +56,7 @@ class ClienteController extends Controller
             
             if($distancia == null){
                 $distancia = $this->calcularDistanciaHaversine(env('LAT_ORIGEM'), env('LON_ORIGEM'), $coordenadas['lat'], $coordenadas['lon']); # fallback para haversine
+                $distancia *= 1.30; # aplica uma margem de 30% de erro em haversine
                 Log::info("Fallback Haversine usado para calcular distância do cliente ID {$cliente->id} no endereço: {$endereco}");
             }
         }else{
@@ -309,6 +310,7 @@ class ClienteController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json();
+                $distanciaMetros = $data['routes'][0]['summary']['distance'] ?? null;
                 return $distanciaMetros !== null ? $distanciaMetros / 1000 : null; // distância em km
             } else {
                 Log::error('Erro na resposta da ORS calcularDistanciaORS', [
