@@ -353,6 +353,13 @@
                         <a href="/user/register" class="list-group-item list-group-item-action ps-5">Novo Operador</a>
                         <a href="/user" class="list-group-item list-group-item-action ps-5">Operadores Cadastrados</a>
                     </div>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#variaveisMenu" role="button" aria-expanded="false" aria-controls="variaveisMenu">
+                        <i class="bi bi-currency-dollar"></i><span>Variáveis de Preço</span>
+                    </a>
+                    <div class="collapse" id="variaveisMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/variaveis-preco/cadastro" class="list-group-item list-group-item-action ps-5">Nova Variável</a>
+                        <a href="/variaveis-preco" class="list-group-item list-group-item-action ps-5">Variáveis Cadastradas</a>
+                    </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#documentosMenu" role="button" aria-expanded="false" aria-controls="documentosMenu">

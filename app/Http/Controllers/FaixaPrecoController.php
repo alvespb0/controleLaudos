@@ -7,6 +7,7 @@ use App\Models\Variaveis_Precificacao;
 use App\Models\Faixa_Precificacao;
 
 use App\Http\Requests\VariavelRequest;
+use App\Http\Requests\FaixasPrecificacaoRequest;
 
 class FaixaPrecoController extends Controller
 {
@@ -85,5 +86,100 @@ class FaixaPrecoController extends Controller
         session()->flash('mensagem', 'Variável excluída com sucesso');
 
         return redirect()->route('read.variavel');
+    }
+
+    /**
+     * Exibe todas as faixas de precificação relacionadas a uma variável específica.
+     *
+     * @param $id ID da variável associada às faixas de precificação.
+     */
+    public function faixasPrecos($id){
+        $faixas = Faixa_Precificacao::where('variavel_id', $id)
+                    ->orderBy('valor_min')->get();
+
+        $variavel = Variaveis_Precificacao::findOrFail($id);
+
+        return view('FaixaPreco/Faixas_show', ['faixas' => $faixas, 'variavel' => $variavel]);
+    }
+
+    /**
+     * Armazena uma nova faixa de precificação, após validar e verificar sobreposição com faixas existentes.
+     *
+     * @param \App\Http\Requests\FaixasPrecificacaoRequest $request Request validado contendo os dados da nova faixa.
+     * @return \Illuminate\Http\RedirectResponse Redireciona de volta para a tela de faixas com mensagem de sucesso ou erro.
+     *
+     * @throws \Illuminate\Validation\ValidationException Se os dados do request forem inválidos.
+     */
+    public function createFaixaPreco(FaixasPrecificacaoRequest $request){
+        $request->validated();
+
+        $faixas = Faixa_Precificacao::where('variavel_id', $request->variavel_id)->get();
+
+        foreach ($faixas as $faixa) {
+            if ($request->valor_min <= $faixa->valor_max && $request->valor_max >= $faixa->valor_min) {
+                session()->flash('error', 'Faixa sobrepõe a existente de ' . $faixa->valor_min . ' até ' . $faixa->valor_max);
+                return redirect()->route('faixa.preco', $request->variavel_id);
+            }
+        }
+
+        Faixa_Precificacao::create([
+            'variavel_id' => $request->variavel_id,
+            'valor_min' => $request->valor_min,
+            'valor_max' => $request->valor_max,
+            'percentual_reajuste' => $request->percentual_reajuste,
+            'preco' => $request->preco
+        ]);
+
+        session()->flash('mensagem', 'Faixa criada com sucesso');
+
+        return redirect()->route('faixa.preco', $request->variavel_id);
+    }
+
+    /**
+     * Altera faixa de precificação, após validar e verificar sobreposição com faixas existentes.
+     *
+     * @param \App\Http\Requests\FaixasPrecificacaoRequest $request Request validado contendo os dados da nova faixa.
+     * @param $id Id da faixa
+     * @return \Illuminate\Http\RedirectResponse Redireciona de volta para a tela de faixas com mensagem de sucesso ou erro.
+     *
+     * @throws \Illuminate\Validation\ValidationException Se os dados do request forem inválidos.
+     */
+    public function editFaixaPreco(FaixasPrecificacaoRequest $request, $id){
+        $request->validated();
+
+        $faixas = Faixa_Precificacao::where('variavel_id', $request->variavel_id)->get();
+
+        foreach ($faixas as $faixa) {
+            if ($faixa->id != $id && $request->valor_min <= $faixa->valor_max && $request->valor_max >= $faixa->valor_min) {
+                session()->flash('error', 'Faixa sobrepõe a existente de ' . $faixa->valor_min . ' até ' . $faixa->valor_max);
+                return redirect()->route('faixa.preco', $request->variavel_id);
+            }
+        }
+
+        $faixa = Faixa_Precificacao::findOrFail($id);
+
+        $faixa->update([
+            'valor_min' => $request->valor_min,
+            'valor_max' => $request->valor_max,
+            'percentual_reajuste' => $request->percentual_reajuste,
+            'preco' => $request->preco
+        ]);
+
+        session()->flash('mensagem', 'Faixa alterada com sucesso');
+
+        return redirect()->route('faixa.preco', $request->variavel_id);
+    }
+
+    public function deleteFaixa($id){
+        $faixa = Faixa_Precificacao::findOrFail($id);
+
+        $variavel_id = $faixa->variavel->id;
+
+        #dd($variavel_id);
+        $faixa->delete();
+
+        session()->flash('mensagem', 'Faixa excluída com sucesso');
+
+        return redirect()->route('faixa.preco', $variavel_id);
     }
 }

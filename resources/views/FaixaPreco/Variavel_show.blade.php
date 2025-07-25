@@ -1,8 +1,27 @@
 @extends('templateMain')
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="container py-4">
-    <h3 class="mb-4 text-center">Variáveis</h3>
+    <div class="mb-4 text-center">
+        <span style="font-size:2rem; font-weight:700; color:var(--primary-color); letter-spacing:1px;">
+            <i class="bi bi-sliders"></i> Variáveis
+        </span>
+    </div>
+        <div class="d-flex justify-content-end mb-3">
+        <a href="{{ route('cadastro.variavel') }}" class="btn" style="background-color: var(--primary-color); color: white; font-weight: 500;">
+            <i class="bi bi-plus-circle"></i> Incluir variável
+        </a>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover align-middle shadow-sm bg-white rounded">
             <thead class="table-light">
@@ -14,7 +33,7 @@
             </thead>
             <tbody>
                 @forelse($variaveis as $variavel)
-                <tr class="variavel-row" style="cursor:pointer;" onclick="window.location='#';">
+                <tr class="variavel-row" style="cursor:pointer;" onclick="window.location='{{ route('faixa.preco', $variavel->id) }}';">
                     <td class="text-center">
                         {{ $variavel->nome }}
                         @if($variavel->ativo == 0)

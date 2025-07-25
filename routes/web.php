@@ -203,4 +203,11 @@ Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::cla
     Route::post('/variaveis/alterar/{id}', 'editVariavelPrecificacao')->name('edit.variavel');
 
     Route::get('/variaveis-preco/excluir/{id}', 'deleteVariavelPrecificacao')->name('delete.variavel');
+    
+    Route::get('/faixa-preco/{id}', 'faixasPrecos')->name('faixa.preco');
+
+    Route::post('/faixa-preco/cadastro', 'createFaixaPreco')->name('create.faixa');
+    Route::post('/faixa-preco/alterar/{id}', 'editFaixaPreco')->name('edit.faixa');
+
+    Route::get('/faixa-preco/excluir/{id}', 'deleteFaixa')->name('delete.faixa');
 });
