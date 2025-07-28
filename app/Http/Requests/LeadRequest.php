@@ -26,7 +26,7 @@ class LeadRequest extends FormRequest
             'status_id' => 'required|exists:status_crm,id',
             'observacoes' => 'nullable|string',
             'nome_contato' => 'nullable|string|min:4|max:255',
-            'investimento' => 'nullable|numeric',
+            'num_funcionarios' => 'nullable|numeric|min:1',
             'proximo_contato' => 'nullable|date',
         ];
     }
@@ -45,8 +45,9 @@ class LeadRequest extends FormRequest
             'nome_contato.min'        => 'O nome do contato deve ter no mínimo 4 caracteres',
             'nome_contato.max'        => 'O nome do contato deve ter no máximo 255 caracteres',
 
-            'investimento.numeric'      => 'O numero de investimento deve ser decimal',
-            
+            'num_funcionarios.numeric'      => 'O numero de investimento deve ser decimal',
+            'num_funcionarios.min'          => 'O numero de funcionários deve ser pelo menos 1',
+
             'proximo_contato.date'    => 'A data de próximo contato deve ser uma data válida.',
         ];
     }

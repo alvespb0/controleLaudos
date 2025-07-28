@@ -28,12 +28,14 @@
                 <tr>
                     <th class="text-center">Nome</th>
                     <th class="text-center">Campo Alvo</th>
+                    <th class="text-center">Tipo</th>
+                    <th class="text-center">Valor</th>
                     <th class="text-end">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($variaveis as $variavel)
-                <tr class="variavel-row" style="cursor:pointer;" onclick="window.location='{{ route('faixa.preco', $variavel->id) }}';">
+                <tr class="variavel-row" style="cursor:pointer;" onclick="handleRowClick(event, '{{ route('faixa.preco', $variavel->id) }}', '{{ $variavel->tipo }}');">
                     <td class="text-center">
                         {{ $variavel->nome }}
                         @if($variavel->ativo == 0)
@@ -41,6 +43,16 @@
                         @endif
                     </td>
                     <td class="text-center">{{ $variavel->campo_alvo }}</td>
+                    <td class="text-center">
+                        <span class="badge bg-primary">{{ ucfirst($variavel->tipo) }}</span>
+                    </td>
+                    <td class="text-center">
+                        @if($variavel->tipo == 'faixa')
+                            <span class="text-muted fst-italic">Valor definido por faixa</span>
+                        @else
+                            {{ $variavel->valor ? 'R$ ' . number_format($variavel->valor, 2, ',', '.') : '-' }}
+                        @endif
+                    </td>
                     <td class="text-end">
                         <a href="{{ route('alteracao.variavel', $variavel->id )}}" class="btn btn-sm btn-outline-primary me-2" title="Editar"><i class="bi bi-pencil"></i></a>
                         <a href="{{ route('delete.variavel', $variavel->id) }}" class="btn btn-sm btn-outline-danger" title="excluir" onclick="return confirm('Tem certeza que deseja excluir esta variável?')"><i class="bi bi-trash"></i></a>
@@ -48,11 +60,28 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="3" class="text-center text-muted">Nenhuma variável cadastrada.</td>
+                    <td colspan="5" class="text-center text-muted">Nenhuma variável cadastrada.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+function handleRowClick(event, url, tipo) {
+    // Se o clique foi em um botão de ação, não redireciona
+    if (event.target.closest('a') || event.target.closest('button')) {
+        return;
+    }
+    
+    // Só redireciona se for do tipo 'faixa'
+    if (tipo === 'faixa') {
+        window.location.href = url;
+    } else {
+        // Para outros tipos, mostra um alert
+        alert('Só é possível configurar faixa de preço para variáveis do tipo "faixa"');
+    }
+}
+</script>
 @endsection

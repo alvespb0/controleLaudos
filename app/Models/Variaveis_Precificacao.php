@@ -15,10 +15,11 @@ class Variaveis_Precificacao extends Model
         'nome',
         'campo_alvo',
         'tipo',
+        'valor',
         'ativo'
     ];
 
     public function faixas(){
-        return $this->hasMany(Faixa_Precificacao::class);
+        return $this->hasMany(Faixa_Precificacao::class, 'variavel_id');
     }
 }

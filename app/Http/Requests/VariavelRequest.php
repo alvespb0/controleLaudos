@@ -24,7 +24,8 @@ class VariavelRequest extends FormRequest
         return [
             'nome_variavel' => 'required|string|min:2|max:255',
             'campo_alvo' => 'required|string|min:5|max:255',
-            'tipo' => 'required|in:numerico,booleano,string'
+            'tipo' => 'required|in:bool,valor,faixa',
+            'valor' => 'nullable|numeric|min:0'
         ];
     }
 
@@ -42,7 +43,9 @@ class VariavelRequest extends FormRequest
             'campo_alvo.max' => 'O campo "campo alvo" deve ter no máximo :max caracteres.',
 
             'tipo.required' => 'O campo "tipo" é obrigatório.',
-            'tipo.in' => 'O campo "tipo" deve ser um dos seguintes valores: numérico, booleano ou string.',
+            'tipo.in' => 'O campo "tipo" deve ser um dos seguintes valores: numérico, booleano ou faixa.',
+
+            'valor.numeric' => 'O campo valor deve ser numérico'
         ];
     }
 }

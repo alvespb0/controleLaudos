@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\StatusSeeder;
 use Database\Seeders\StatusCRMSeeder;
+use Database\Seeders\VariavelPadraoSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminUserSeeder::class);
         $this->call(StatusSeeder::class);
         $this->call(StatusCRMSeeder::class);
+        $this->call(VariavelPadraoSeeder::class);
     }
 }

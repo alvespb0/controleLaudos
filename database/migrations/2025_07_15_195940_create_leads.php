@@ -18,7 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('status_id')->nullable();
             $table->text('observacoes')->nullable();
             $table->string('nome_contato')->nullable();
-            $table->float('investimento')->nullable();
+            $table->integer('num_funcionarios')->nullable();
+            $table->decimal('valor_min_sugerido')->nullable();
+            $table->decimal('valor_max_sugerido')->nullable();
+            $table->decimal('valor_definido')->nullable();
             $table->boolean('orcamento_gerado')->default(false);
             $table->boolean('contrato_assinado')->default(false);
             $table->date('proximo_contato')->nullable();

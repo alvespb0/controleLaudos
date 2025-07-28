@@ -441,7 +441,7 @@
         <li class="d-flex align-items-center mb-2">
           <i class="bi bi-cash-coin me-2 text-success" style="font-size:1.1rem;"></i>
           <span class="fw-semibold">Investimento:</span>
-          <span class="ms-1 text-dark">R$ {{ $lead->investimento ?? '-' }}</span>
+          <span class="ms-1 text-dark">R$ ATUALIZAR </span>
         </li>
         <li class="d-flex align-items-center mb-2">
           <i class="bi bi-person-lines-fill me-2 text-secondary" style="font-size:1.1rem;"></i>
@@ -553,8 +553,8 @@
           <input type="hidden" name="cliente_id" value="{{$lead->cliente->id}}">
           <input type="hidden" name="lead_id" value="{{$lead->id}}">
           <div class="mb-3">
-              <label for="investimento" class="form-label">Investimento</label>
-              <input type="number" name="investimento" id="" class="form-control" step="0.01" min="0" value="{{$lead->investimento ? $lead->investimento : ''}}">
+              <label for="num_funcionarios" class="form-label">Numero Funcionarios</label>
+              <input type="number" name="num_funcionarios" id="" class="form-control" step="0.01" min="0" value="{{$lead->num_funcionarios ? $lead->num_funcionarios : ''}}">
           </div>
           <div class="mb-3">
               <label for="contato" class="form-label">Nome do Contato</label>
@@ -621,8 +621,8 @@
               </select>          
           </div>
           <div class="mb-3">
-              <label for="investimento" class="form-label">Investimento</label>
-              <input type="number" name="investimento" id="" class="form-control" step="0.01" min="0">
+              <label for="num_funcionarios" class="form-label">Numero de funcionarios</label>
+              <input type="number" name="num_funcionarios" id="" class="form-control" step="0.01" min="0">
           </div>
           <div class="mb-3">
               <label for="contato" class="form-label">Nome do Contato</label>

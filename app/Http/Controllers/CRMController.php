@@ -16,6 +16,7 @@ use App\Models\Cliente;
 use App\Models\Op_Comercial;
 use App\Models\Status_Crm;
 use App\Models\Lead;
+use App\Models\Variaveis_Precificacao;
 
 class CRMController extends Controller
 {
@@ -71,19 +72,85 @@ class CRMController extends Controller
         $request->validated();
         $user = Auth::user();
 
+        $cliente = Cliente::findOrFail($request->cliente_id);
+        $valores = $this->precificaLead($cliente, $request->num_funcionarios);
+  
         Lead::create([
             'cliente_id' => $request->cliente_id,
             'vendedor_id' => $user->comercial->id ?? null,
             'status_id' => $request->status_id,
             'observacoes' => $request->observacoes,
             'nome_contato' => $request->nome_contato,
-            'investimento' => $request->investimento,
+            'valor_min_sugerido' => $valores['valor_min_sugerido'] ?? null,
+            'valor_max_sugerido' => $valores['valor_max_sugerido'] ?? null,
+            'num_funcionarios' => $request->num_funcionarios,
             'proximo_contato' => $request->proximo_contato
         ]);
 
-       session()->flash('mensagem', 'Lead criado com sucesso');
+        session()->flash('mensagem', 'Lead criado com sucesso');
 
         return redirect()->route('show.CRM');
+    }
+
+    public function precificaLead($cliente, $num_funcionarios){
+        $precoDist = $this->precificaDistancia($cliente); # retorna array, percentual e preço
+        $precoFunc = $this->precificaNumFuncionarios($num_funcionarios); # retorna array, percentual e preco
+        
+        $precoFinal = 0;
+
+        if ($precoDist != null) {
+            $precoFinal += $precoDist;
+        }
+
+        if ($precoFunc != null) {
+            $reajusteFunc = $precoFunc['percentual_reajuste'] > 0
+                ? $precoFunc['percentual_reajuste'] / 100
+                : 1;
+
+            $precoFinal += $precoFunc['preco'] * $reajusteFunc;
+        }
+        $retorno = [
+            'valor_min_sugerido' => $precoFinal * 0.95,
+            'valor_max_sugerido' => $precoFinal * 1.05,
+        ];
+
+        return $retorno;
+    }
+
+    public function precificaDistancia($cliente){
+        $precificacao = Variaveis_Precificacao::where('nome', 'Distancia')->get();
+
+        if($precificacao->isEmpty() || !$cliente->endereco || !$cliente->endereco->distancia){
+            return null;
+        }
+
+        #dd($precificacao);
+        $distancia = $cliente->endereco->distancia;
+        #$valor = $precificacao->valor;
+
+        foreach ($precificacao as $p) {
+            return $distancia * $p->valor; 
+        }
+    }
+
+    public function precificaNumFuncionarios($num_funcionarios){
+        $precificacao = Variaveis_Precificacao::where('nome', 'Numero de Funcionarios')->get();
+
+        $retorno = [];
+
+        foreach($precificacao as $p){
+            foreach($p->faixas as $faixa){
+                if($faixa->valor_min <= $num_funcionarios && $num_funcionarios <= $faixa->valor_max){
+                    $retorno = [
+                        'percentual_reajuste' => $faixa->percentual_reajuste,
+                        'preco' => $faixa->preco
+                    ];
+                    return $retorno;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

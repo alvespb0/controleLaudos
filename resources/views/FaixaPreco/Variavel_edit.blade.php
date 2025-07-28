@@ -17,20 +17,25 @@
             <form action="{{route('edit.variavel', $variavel->id)}}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <i class="bi bi-type"></i><label for="Nome" class="form-label">&nbspNome</label>
-                    <input type="text" class="form-control" id="Nome" name="nome_variavel" required placeholder="Nome da variável" value="{{$variavel->nome}}">
-                </div>
-                <div class="mb-3">
-                    <i class="bi bi-ticket-detailed"></i><label for="campo_alvo">&nbspCampo Alvo</label>
-                    <input type="text" name="campo_alvo" class="form-control" id="campo_alvo" required placeholder="Descrição do campo" value="{{$variavel->campo_alvo}}">
-                </div>
-                <div class="mb-3">
-                    <i class="bi bi-text-indent-left"></i><label for="campo_alvo" value="{{$variavel->nome}}">&nbspTipo</label>
-                    <select name="tipo" id="" class="form-control" required>
-                        <option value="numerico" {{$variavel->tipo == 'numerico' ? 'selected' : ''}}>numerico</option>
-                        <option value="booleano" {{$variavel->tipo == 'booleano' ? 'selected' : ''}}>booleano (verdadeiro ou falso)</option>
-                        <option value="string" {{$variavel->tipo == 'string' ? 'selected' : ''}}>texto</option>
+                    <i class="bi bi-text-indent-left"></i><label for="tipo" class="form-label">&nbspTipo</label>
+                    <select name="tipo" id="tipo" class="form-control" required onchange="toggleFields()">
+                        <option value="">Selecione o tipo</option>
+                        <option value="bool" {{$variavel->tipo == 'bool' ? 'selected' : ''}}>Bool</option>
+                        <option value="valor" {{$variavel->tipo == 'valor' ? 'selected' : ''}}>Valor</option>
+                        <option value="faixa" {{$variavel->tipo == 'faixa' ? 'selected' : ''}}>Faixa</option>
                     </select>
+                </div>
+                <div class="mb-3" id="div_nome_variavel">
+                    <i class="bi bi-type"></i><label for="nome_variavel" class="form-label">&nbspNome</label>
+                    <input type="text" class="form-control" id="nome_variavel" name="nome_variavel" placeholder="Nome da variável" value="{{$variavel->nome}}">
+                </div>
+                <div class="mb-3" id="div_campo_alvo">
+                    <i class="bi bi-ticket-detailed"></i><label for="campo_alvo">&nbspCampo Alvo</label>
+                    <input type="text" name="campo_alvo" class="form-control" id="campo_alvo" placeholder="Descrição do campo" value="{{$variavel->campo_alvo}}">
+                </div>
+                <div class="mb-3" id="div_valor">
+                    <i class="bi bi-currency-dollar"></i><label for="valor">&nbspValor</label>
+                    <input type="number" step="0.01" name="valor" class="form-control" id="valor" placeholder="0.00" value="{{$variavel->valor ?? ''}}">
                 </div>
                 <div class="mb-3">
                     <label for="Status">Status</label>
@@ -55,4 +60,20 @@
         </div>
     </div>
 </div>
+
+<script>
+function toggleFields() {
+    const tipo = document.getElementById('tipo').value;
+    document.getElementById('div_nome_variavel').style.display = 'block';
+    document.getElementById('div_campo_alvo').style.display = 'block';
+    document.getElementById('div_valor').style.display = 'block';
+    if (tipo === 'faixa') {
+        document.getElementById('div_valor').style.display = 'none';
+    }
+}
+// Executar na carga da página para mostrar os campos corretos baseado no tipo atual
+document.addEventListener('DOMContentLoaded', function() {
+    toggleFields();
+});
+</script>
 @endsection

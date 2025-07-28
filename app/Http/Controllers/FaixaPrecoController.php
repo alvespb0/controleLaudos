@@ -29,6 +29,7 @@ class FaixaPrecoController extends Controller
             'nome' => $request->nome_variavel,
             'campo_alvo' => $request->campo_alvo,
             'tipo' => $request->tipo,
+            'valor' => $request->valor
         ]);
 
         session()->flash('mensagem','Variável criada com sucesso');
@@ -66,6 +67,7 @@ class FaixaPrecoController extends Controller
             'nome' => $request->nome_variavel,
             'campo_alvo' => $request->campo_alvo,
             'tipo' => $request->tipo,
+            'valor' => $request->valor,
             'ativo' => $request->status
         ]);
 
