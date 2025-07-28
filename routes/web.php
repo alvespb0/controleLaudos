@@ -189,6 +189,7 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::
     Route::get('/CRM/gerar-orcamento/{lead_id}', 'formularioOrcamento')->name('gerar.orcamentoLead'); # retorna view de formulario de gerar orçamento
     Route::post('/CRM/editar-lead', 'updateLead')->name('update.lead'); # da update no lead
     Route::get('/CRM/deletar-lead/{id}', 'deleteLead')->name('delete.lead');
+    Route::post('/CRM/atualiza-investimento', 'updateInvestimentoLead')->name('update.investimento-lead');
 });
 
 /** --------------------------------------------- */

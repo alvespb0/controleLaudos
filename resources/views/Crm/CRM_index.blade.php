@@ -279,10 +279,10 @@
                     </span>
                     <span class="crm-kanban-col-desc">{{ $etapa->descricao }}</span>
                 </div>
-                <div class="crm-kanban-col-body sortable-col" data-coluna="{{ $etapa->id }}">
+                <div class="crm-kanban-col-body sortable-col" data-etapa-id="{{ $etapa->id }}">
                     @foreach($leads as $lead)
                         @if($lead->status_id == $etapa->id)
-                        <div class="crm-kanban-card">
+                        <div class="crm-kanban-card" data-lead-id="{{ $lead->id }}">
                             <div class="crm-card-title">
                                 <i class="bi bi-person-circle"></i> {{ $lead->cliente->nome }}
                             </div>
@@ -334,10 +334,13 @@
                       {{ $lead->orcamento_gerado ? 'Gerar outro orçamento' : 'Gerar Orçamento' }}
                     </button>
                   </form>
+                  <button type="button" class="btn btn-orcamento align-middle ms-2" data-bs-toggle="modal" data-bs-target="#modalEnviarContrato{{ $lead->id }}">
+                    <i class="bi bi-file-earmark-text"></i> Enviar Contrato
+                  </button>
                 </div>
                 <div class="row mb-1">
                   <div class="col-md-6">
-                    <strong>CNPJ:</strong> <span class="crm-value">{{ $lead->cliente->cnpj ?? '-' }}</span>
+                    <strong>CPF/CNPJ:</strong> <span class="crm-value">{{ $lead->cliente->cnpj ?? '-' }}</span>
                   </div>
                   <div class="col-md-6">
                     <strong>E-mail:</strong> <span class="crm-value">{{ $lead->cliente->email ?? '-' }}</span>
@@ -441,7 +444,40 @@
         <li class="d-flex align-items-center mb-2">
           <i class="bi bi-cash-coin me-2 text-success" style="font-size:1.1rem;"></i>
           <span class="fw-semibold">Investimento:</span>
-          <span class="ms-1 text-dark">R$ ATUALIZAR </span>
+          <form method="POST" action="{{ route('update.investimento-lead') }}" class="ms-1 d-flex align-items-center" style="display: inline-flex !important; font-size: 0.9rem;">
+            @csrf
+            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+            <span class="me-1">R$</span>
+            <input type="number" 
+                   name="investimento"
+                   class="form-control form-control-sm investimento-input" 
+                   style="width: 90px; display: inline-block; font-size: 0.85rem; padding: 0.2rem 0.4rem;" 
+                   value="{{ $lead->valor_definido ?? '' }}" 
+                   step="0.01" 
+                   min="0"
+                   data-valor-min="{{ $lead->valor_min_sugerido ?? 0 }}"
+                   data-valor-max="{{ $lead->valor_max_sugerido ?? 0 }}"
+                   onblur="validateInvestimento(this)">
+            <button type="submit" class="btn btn-sm btn-outline-primary ms-1" title="Salvar investimento" style="padding: 0.15rem 0.3rem; font-size: 0.75rem;">
+              <i class="bi bi-check"></i>
+            </button>
+            <span class="ms-1 feedback-text" style="font-size: 0.8rem; font-style: italic;"></span>
+          </form>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-currency-dollar me-2 text-info" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Valor Sugerido:</span>
+          <span class="ms-1 text-dark" style="font-size: 0.9rem;">
+            @if($lead->valor_min_sugerido && $lead->valor_max_sugerido)
+              R$ {{ number_format($lead->valor_min_sugerido, 2, ',', '.') }} - R$ {{ number_format($lead->valor_max_sugerido, 2, ',', '.') }}
+            @elseif($lead->valor_min_sugerido)
+              R$ {{ number_format($lead->valor_min_sugerido, 2, ',', '.') }}
+            @elseif($lead->valor_max_sugerido)
+              R$ {{ number_format($lead->valor_max_sugerido, 2, ',', '.') }}
+            @else
+              -
+            @endif
+          </span>
         </li>
         <li class="d-flex align-items-center mb-2">
           <i class="bi bi-person-lines-fill me-2 text-secondary" style="font-size:1.1rem;"></i>
@@ -469,7 +505,7 @@
   </div>
   <div class="modal-footer flex-column align-items-stretch">
     <div class="mb-2 w-100">
-      <label class="form-label">Trocar de etapa:</label>
+      <label class="form-label"><b>Trocar de etapa:</b></label>
       <div class="d-flex flex-wrap gap-2 w-100 justify-content-end">
         @foreach($etapas as $idx => $etapaTroca)
           <form method="GET" action="{{ route('alterStatus.lead', ['lead_id' => $lead->id, 'etapa_id' => $etapaTroca->id]) }}" style="display:inline;">
@@ -483,9 +519,6 @@
         @endforeach
       </div>
     </div>
-    <button type="button" class="btn btn-outline-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalEnviarContrato{{ $lead->id }}">
-      <i class="bi bi-file-earmark-text"></i> Enviar Contrato para assinatura
-    </button>
   </div>
   </div>
   </div>
@@ -714,6 +747,45 @@
       atualizarBotoesRemover(document.getElementById('signatariosList{{ $lead->id }}'));
     @endforeach
   });
+  
+  // Função para validar e alterar a cor do input baseado no valor mínimo
+  function validateInvestimento(input) {
+    const valorMin = parseFloat(input.getAttribute('data-valor-min')) || 0;
+    const valorMax = parseFloat(input.getAttribute('data-valor-max')) || Infinity;
+    const valorAtual = parseFloat(input.value) || 0;
+    
+    const form = input.closest('form');
+    const feedbackText = form.querySelector('.feedback-text');
+
+    if (valorAtual > 0 && valorAtual < valorMin) {
+      input.style.color = 'red';
+      input.style.fontWeight = 'bold';
+      feedbackText.textContent = '';
+      feedbackText.style.color = 'red';
+    } else if (valorAtual >= valorMin && valorAtual <= valorMax) {
+      input.style.color = 'green';
+      input.style.fontWeight = 'bold';
+      feedbackText.textContent = '';
+      feedbackText.style.color = 'green';
+    } else if (valorAtual > valorMax) {
+      input.style.color = 'green';
+      input.style.fontWeight = 'bold';
+      feedbackText.textContent = 'ótimo';
+      feedbackText.style.color = 'green';
+    } else {
+      input.style.color = '';
+      input.style.fontWeight = '';
+      feedbackText.textContent = '';
+      feedbackText.style.color = '';
+    }
+  }
+  
+  // Aplicar validação inicial para todos os inputs de investimento
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.investimento-input').forEach(function(input) {
+      validateInvestimento(input);
+    });
+  });
 </script>
 
 <!-- SortableJS CDN -->
@@ -727,6 +799,17 @@ window.addEventListener('DOMContentLoaded', function() {
             ghostClass: 'dragging',
             dragClass: 'drag-active',
             chosenClass: 'drag-chosen',
+            onEnd: function(evt) {
+                const leadId = evt.item.getAttribute('data-lead-id');
+                const newEtapaId = evt.to.getAttribute('data-etapa-id');
+                
+                if (leadId && newEtapaId) {
+                    // Redirecionar para a rota correta com os parâmetros
+                    window.location.href = '{{ route("alterStatus.lead", ["lead_id" => ":lead_id", "etapa_id" => ":etapa_id"]) }}'
+                        .replace(':lead_id', leadId)
+                        .replace(':etapa_id', newEtapaId);
+                }
+            }
         });
     });
 });

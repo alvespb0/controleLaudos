@@ -63,13 +63,21 @@ class FaixaPrecoController extends Controller
 
         $variavel = Variaveis_Precificacao::findOrFail($id);
 
-        $variavel->update([
-            'nome' => $request->nome_variavel,
-            'campo_alvo' => $request->campo_alvo,
-            'tipo' => $request->tipo,
-            'valor' => $request->valor,
-            'ativo' => $request->status
-        ]);
+        if($variavel->id == 1 || $variavel->id == 2){
+            $variavel->update([
+                'campo_alvo' => $request->campo_alvo,
+                'valor' => $request->valor,
+                'ativo' => $request->status
+            ]);
+        }else{
+            $variavel->update([
+                'nome' => $request->nome_variavel,
+                'campo_alvo' => $request->campo_alvo,
+                'tipo' => $request->tipo,
+                'valor' => $request->valor,
+                'ativo' => $request->status
+            ]);            
+        }
 
         session()->flash('mensagem','Variável editada com sucesso');
 

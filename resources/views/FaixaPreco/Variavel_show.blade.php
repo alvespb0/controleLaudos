@@ -55,7 +55,9 @@
                     </td>
                     <td class="text-end">
                         <a href="{{ route('alteracao.variavel', $variavel->id )}}" class="btn btn-sm btn-outline-primary me-2" title="Editar"><i class="bi bi-pencil"></i></a>
-                        <a href="{{ route('delete.variavel', $variavel->id) }}" class="btn btn-sm btn-outline-danger" title="excluir" onclick="return confirm('Tem certeza que deseja excluir esta variável?')"><i class="bi bi-trash"></i></a>
+                        @if($variavel->id != 1 && $variavel->id != 2)
+                            <a href="{{ route('delete.variavel', $variavel->id) }}" class="btn btn-sm btn-outline-danger" title="excluir" onclick="return confirm('Tem certeza que deseja excluir esta variável?')"><i class="bi bi-trash"></i></a>
+                        @endif
                     </td>
                 </tr>
                 @empty

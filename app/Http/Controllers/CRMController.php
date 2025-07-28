@@ -92,6 +92,23 @@ class CRMController extends Controller
         return redirect()->route('show.CRM');
     }
 
+    /**
+     * Calcula o valor mínimo e máximo sugerido para um lead com base em precificação por distância e número de funcionários.
+     *
+     * Esta função utiliza duas outras funções auxiliares:
+     * - `precificaDistancia($cliente)`: retorna o valor fixo baseado na distância.
+     * - `precificaNumFuncionarios($num_funcionarios)`: retorna um array com 'preco' base e 'percentual_reajuste'.
+     *
+     * A fórmula do valor final considera a soma do valor da distância e do valor ajustado por número de funcionários.
+     * Com base no total, são calculadas sugestões de preço mínimo (−5%) e máximo (+5%).
+     *
+     * @param object $cliente           Objeto do cliente, que deve conter endereço e distância válidos.
+     * @param int    $num_funcionarios Quantidade de funcionários da empresa do lead.
+     *
+     * @return array Retorna um array com os valores sugeridos:
+     *               - 'valor_min_sugerido' (float): 5% abaixo do valor final.
+     *               - 'valor_max_sugerido' (float): 5% acima do valor final.
+     */
     public function precificaLead($cliente, $num_funcionarios){
         $precoDist = $this->precificaDistancia($cliente); # retorna array, percentual e preço
         $precoFunc = $this->precificaNumFuncionarios($num_funcionarios); # retorna array, percentual e preco
@@ -117,6 +134,19 @@ class CRMController extends Controller
         return $retorno;
     }
 
+    /**
+     * Calcula o valor de precificação com base na distância do cliente.
+     *
+     * Esta função busca a variável de precificação com o nome "Distancia".
+     * Se existir e o cliente possuir endereço com distância definida, calcula
+     * o valor multiplicando a distância pelo valor definido na variável.
+     *
+     * @param object $cliente Objeto do cliente que deve conter a propriedade 'endereco'
+     *                        e dentro dela a propriedade 'distancia' (float).
+     *
+     * @return float|null Retorna o valor calculado (distância × valor da variável de precificação),
+     *                    ou null se os dados forem insuficientes ou a variável não for encontrada.
+     */
     public function precificaDistancia($cliente){
         $precificacao = Variaveis_Precificacao::where('nome', 'Distancia')->get();
 
@@ -124,15 +154,28 @@ class CRMController extends Controller
             return null;
         }
 
-        #dd($precificacao);
         $distancia = $cliente->endereco->distancia;
-        #$valor = $precificacao->valor;
 
         foreach ($precificacao as $p) {
             return $distancia * $p->valor; 
         }
     }
 
+    /**
+     * Calcula o preço e o percentual de reajuste com base na quantidade de funcionários.
+     *
+     * Esta função busca as variáveis de precificação com o nome "Numero de Funcionarios",
+     * e percorre as faixas associadas para encontrar a faixa correspondente à quantidade
+     * informada de funcionários. Quando uma faixa compatível é encontrada (dentro do intervalo
+     * valor_min e valor_max), retorna um array contendo o percentual de reajuste e o preço.
+     *
+     * @param int $num_funcionarios A quantidade de funcionários para aplicar a precificação.
+     *
+     * @return array|null Retorna um array com as chaves:
+     *                    - 'percentual_reajuste' (float): O percentual aplicado.
+     *                    - 'preco' (float): O valor definido para a faixa.
+     *                    Ou null, se nenhuma faixa correspondente for encontrada.
+     */
     public function precificaNumFuncionarios($num_funcionarios){
         $precificacao = Variaveis_Precificacao::where('nome', 'Numero de Funcionarios')->get();
 
@@ -165,13 +208,17 @@ class CRMController extends Controller
         $lead = Lead::findOrFail($request->lead_id);
         $user = Auth::user();
 
+        $cliente = Cliente::findOrFail($request->cliente_id);
+        $valores = $this->precificaLead($cliente, $request->num_funcionarios);
+
         $lead->update([
-            'cliente_id' => $request->cliente_id,
             'vendedor_id' => $user->comercial->id ?? null,
-            'status_id' => $request->status_id,
             'observacoes' => $request->observacoes,
             'nome_contato' => $request->nome_contato,
             'investimento' => $request->investimento,
+            'valor_min_sugerido' => $valores['valor_min_sugerido'] ?? null,
+            'valor_max_sugerido' => $valores['valor_max_sugerido'] ?? null,
+            'num_funcionarios' => $request->num_funcionarios,
             'proximo_contato' => $request->proximo_contato
         ]);
 
@@ -284,5 +331,17 @@ class CRMController extends Controller
                 'notificado' => true
             ]);
         }
+    }
+
+    public function updateInvestimentoLead(Request $request){
+        $lead = Lead::findOrFail($request->lead_id);
+
+        $lead->update([
+            'valor_definido' => $request->investimento
+        ]);
+
+        session()->flash('mensagem', 'Investimento definido com sucesso');
+
+        return redirect()->route('show.CRM');
     }
 }
