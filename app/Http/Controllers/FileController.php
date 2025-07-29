@@ -44,7 +44,7 @@ class FileController extends Controller
      */
     public function formularioOrcamento(Request $request){
         $request->validate([
-            'tipo_orcamento' => 'required|in:1,2', // 1 = avulso, 2 = cliente cadastrado (exemplo)
+            'tipo_orcamento' => 'required|in:1,2', // 1 = avulso, 2 = cliente cadastrado
             'cliente' => 'nullable|required_if:tipo_orcamento,2|exists:cliente,id',
         ], [
             'tipo_orcamento.required' => 'o campo tipo de orçamento é obrigatório',
@@ -75,7 +75,7 @@ class FileController extends Controller
      */
     public function gerarOrcamento(GerarOrcamentoRequest $request){
         $request->validated();
-
+        
         $templatePath = storage_path('app/modelos/orcamento_modelo.docx');
         $template = new TemplateProcessor($templatePath);
 
@@ -127,6 +127,63 @@ class FileController extends Controller
         ]);
     }
 
+    public function gerarContrato(Request $request){
+        $dados = $request->input('dados');
+        $cliente = Cliente::findOrFail($dados['cliente_id']);
+
+        $templatePath = storage_path('app/modelos/contrato_modelo.docx');
+        $template = new TemplateProcessor($templatePath);
+
+        /* STRING DE TEXTO PARCELA */
+        $investimento = (float)$dados['investimento'];
+        $parcelas = (int)$dados['parcelasTexto'];
+        $valorParcela = $investimento/$parcelas;
+        $textoParcela = '';
+        $contador = 1;
+        $dataInicial = Carbon::now(); 
+        for ($i = 0; $i < $parcelas; $i++) {
+            $dataVencimento = $dataInicial->copy()->addMonthsNoOverflow($i)->day(5); // dia 5 de cada mês
+            $dataFormatada = $dataVencimento->format('d/m/Y');
+
+            $textoParcela .= $contador . 'ª parcela: R$' . number_format($valorParcela, 2, ',', '.') . " - Vencimento: {$dataFormatada}\n";
+            $contador++;
+        }
+        /* ----------------- */
+        $cnpjOuCpfFormatado = $this->formatarCpfCnpj($dados['cnpjCliente']);
+
+        $endereco = $cliente->endereco->rua . ' ' . 
+                    $cliente->endereco->numero . ', ' . 
+                    $cliente->endereco->bairro . ', ' . 
+                    $cliente->endereco->cidade . ' - ' . 
+                    $cliente->endereco->uf . ', ' . 
+                    $cliente->endereco->cep . ', Brasil';
+
+        $template->setValue('razaoSocialCliente',  $this->escapeForXml($dados['razaoSocialCliente']));
+        $template->setValue('cnpjCliente', $cnpjOuCpfFormatado);
+        $template->setValue('enderecoCliente', $endereco);
+        $template->setValue('telefoneCli', $dados['telefoneCliente']);
+        $template->setValue('numFuncionarios', $dados['numFuncionarios']);
+        $template->setValue('investimento', number_format($dados['investimento'], 2, ',', '.'));
+        $template->setValue('parcelasTexto', $textoParcela);        
+        $dataHoje = Carbon::now()->translatedFormat('d \d\e F \d\e Y');
+        $template->setValue('dataHoje', $dataHoje);
+
+        $fileName = $this->escapeForXml('contrato_'.$request->dados['razaoSocialCliente'].'.docx');
+        $fileName = preg_replace('/[\/:*?"<>|\\\\]/', '-', $fileName);
+        $tempPath = storage_path('app/temp/' . $fileName);
+
+        if (!Storage::exists('temp')) {
+            Storage::makeDirectory('temp');
+        }
+
+        $template->saveAs($tempPath);
+
+        return view('Orcamento/Contrato/Contrato_confirm',[
+            'fileName' => $fileName,
+            'tempPath' => $tempPath,
+            'dados' => $request->all(),
+        ]);
+    }
     /**
      * Recebe um valor, identifica se é CNPJ ou CPF e formata
      */
@@ -183,6 +240,37 @@ class FileController extends Controller
     }
 
     /**
+     * Salva no banco o registro de geração de um Contrato.
+     * O arquivo não é armazenado fisicamente, apenas é registrado seu metadado
+     * para fins de relatórios e indicadores.
+     * 
+     * @param string $nome_arquivo Nome fictício do arquivo gerado
+     * @return void
+     */
+    public function saveContrato($nome_arquivo, $lead_id = null){
+        $caminho = 'orcamento'.$nome_arquivo;
+        $data_referencia = date("Y-m-d");
+        $criado_por = Auth::user()->id;
+
+        File::create([
+            'nome_arquivo' => $nome_arquivo,
+            'tipo' => 'contrato',
+            'caminho' => $caminho,
+            'data_referencia' => $data_referencia,
+            'cliente_id' => null,
+            'laudo_id' => null,
+            'criado_por' => $criado_por
+        ]);
+
+        session()->flash('mensagem','Contrato aprovado com sucesso');
+
+        if($lead_id != null){
+            $this->validaContratoLead($lead_id);
+        }
+
+        return response()->json(['success'=>'contrato aprovado']);
+    }
+    /**
      * Faz o download do orçamento dado o file name, após isso, excluí o mesmo da pasta
      */
     public function downloadOrcamento($fileName){
@@ -222,6 +310,14 @@ class FileController extends Controller
 
         return $lead->update([
             'orcamento_gerado' => 1
+        ]);
+    }
+
+    public function validaContratoLead($lead_id){
+        $lead = Lead::findOrFail($lead_id);
+
+        return $lead->update([
+            'contrato_gerado' => 1
         ]);
     }
 }

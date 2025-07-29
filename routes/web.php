@@ -79,6 +79,11 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(FileController:
     Route::post('/orcamento/aprovar/{fileName}/{lead_id?}', 'saveOrcamento')->name('orcamento.aprovar');
     Route::post('/orcamento/retificar', 'retificarOrcamento')->name('orcamento.retificar');
     Route::get('/orcamento/download/{fileName}', 'downloadOrcamento')->name('orcamento.download');
+
+    Route::post('/contrato/gerar', 'gerarContrato')->name('gerar.contrato');
+    Route::get('/contrato/download/{fileName}', 'downloadOrcamento')->name('contrato.download');
+
+    Route::post('/contrato/aprovar/{fileName}/{lead_id?}', 'saveContrato')->name('contrato.aprovar');
 });
 
 /** --------------------------------------------- */

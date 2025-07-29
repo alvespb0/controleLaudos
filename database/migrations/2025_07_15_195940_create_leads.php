@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('valor_max_sugerido')->nullable();
             $table->decimal('valor_definido')->nullable();
             $table->boolean('orcamento_gerado')->default(false);
-            $table->boolean('contrato_assinado')->default(false);
+            $table->boolean('contrato_gerado')->default(false);
             $table->date('proximo_contato')->nullable();
             $table->boolean('notificado')->default(false);
             $table->timestamps();

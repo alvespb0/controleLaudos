@@ -59,6 +59,7 @@
                     <input type="number" min=1 class="form-control" name="parcelasTexto" id="parcelasTexto" placeholder = "Insira o número de parcelas do investimento">
                 </div>
                 <input type="hidden" name="lead_id" value="">
+                <input type="hidden" name="cliente_id" value="{{$cliente->id}}">
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary px-4">Gerar</button>
                     <button type="reset" class="btn btn-secondary px-4">Limpar</button>

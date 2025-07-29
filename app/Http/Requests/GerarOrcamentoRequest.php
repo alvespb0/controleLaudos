@@ -32,7 +32,8 @@ class GerarOrcamentoRequest extends FormRequest
             'numFuncionarios' => 'required|integer|min:1',
             'investimento' => 'required|numeric|min:0.01',
             'parcelasTexto' => 'required|integer|min:1',
-            'lead_id' => 'nullable|integer'
+            'lead_id' => 'nullable|integer',
+            'cliente_id' => 'nullable|integer',
         ];
     }
 

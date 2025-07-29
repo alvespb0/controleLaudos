@@ -22,7 +22,7 @@ class Lead extends Model
         'valor_definido',
         'num_funcionarios',
         'orcamento_gerado', # bool default false
-        'contrato_assinado', # bool default false
+        'contrato_gerado', # bool default false
         'notificado',
         'proximo_contato'
     ];

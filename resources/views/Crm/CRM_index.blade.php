@@ -329,6 +329,11 @@
                   @else
                     <span class="badge bg-warning text-dark ms-2">Sem Orçamento</span>
                   @endif
+                  @if($lead->contrato_gerado)
+                    <span class="badge bg-info ms-2">Contrato Gerado</span>
+                  @else
+                    <span class="badge bg-warning text-dark ms-2">Sem Contrato</span>
+                  @endif
                   <form method="GET" action="{{ route('gerar.orcamentoLead', $lead->id) }}" class="ms-2 d-inline">
                     <button type="submit" class="btn btn-orcamento align-middle">
                       {{ $lead->orcamento_gerado ? 'Gerar outro orçamento' : 'Gerar Orçamento' }}
