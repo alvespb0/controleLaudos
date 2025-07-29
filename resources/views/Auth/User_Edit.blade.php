@@ -41,6 +41,11 @@
                     </select>
                 </div>
 
+                <div class="mb-3" id="comissaoField" style="display: none;">
+                    <i class="bi bi-percent"></i><label for="percentual_comissao" class="form-label">&nbspPercentual de Comissão (%)</label>
+                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="percentual_comissao" name="percentual_comissao" placeholder="Ex: 5.50" value="{{ $user->comercial->percentual_comissao ?? '' }}">
+                </div>
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary col-sm-12">Editar</button>
                 </div>
@@ -48,4 +53,29 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tipoSelect = document.getElementById('tipo');
+    const comissaoField = document.getElementById('comissaoField');
+    const comissaoInput = document.getElementById('percentual_comissao');
+
+    // Verificar se o tipo atual é comercial para mostrar o campo
+    if (tipoSelect.value === 'comercial') {
+        comissaoField.style.display = 'block';
+        comissaoInput.required = true;
+    }
+
+    tipoSelect.addEventListener('change', function() {
+        if (this.value === 'comercial') {
+            comissaoField.style.display = 'block';
+            comissaoInput.required = true;
+        } else {
+            comissaoField.style.display = 'none';
+            comissaoInput.required = false;
+            comissaoInput.value = '';
+        }
+    });
+});
+</script>
 @endsection

@@ -76,7 +76,8 @@ class AuthController extends Controller
 
             Op_Comercial::create([
                 'usuario' => $request->usuario,
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'percentual_comissao' => $request->percentual_comissao
             ]);
 
             session()->flash('mensagem', 'Operador Comercial registrado com sucesso');
@@ -163,6 +164,7 @@ class AuthController extends Controller
             $opComercial = Op_Comercial::where('user_id', $user->id)->first();
             $opComercial->update([
                 'usuario' => $request->usuario,
+                'percentual_comissao' => $request->percentual_comissao
             ]);
         }else if($user->tipo == 'seguranca'){
             $opTecnico = Op_Tecnico::where('user_id', $user->id)->first();
