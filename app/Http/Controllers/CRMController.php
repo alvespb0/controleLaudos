@@ -17,6 +17,7 @@ use App\Models\Op_Comercial;
 use App\Models\Status_Crm;
 use App\Models\Lead;
 use App\Models\Variaveis_Precificacao;
+use App\Models\Comissoes;
 
 class CRMController extends Controller
 {
@@ -260,11 +261,23 @@ class CRMController extends Controller
             session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
 
             return redirect()->route('show.CRM');
+        }else if($etapa_id == 5 && (!$lead->vendedor || !$lead->vendedor->percentual_comissao)){
+            session()->flash('error', 'Esse lead não possui vendedor vinculado ou não tem percentual de comissão preenchido');
+
+            return redirect()->route('show.CRM');
+        }else if($etapa_id == 5 && !$lead->valor_definido){
+            session()->flash('error', 'Atualize o investimento definido nesse lead');
+
+            return redirect()->route('show.CRM');
         }
 
         $lead->update([
             'status_id' => $etapa_id
         ]);
+
+        if($lead->status_id == 5){
+            $this->createComissao($lead);
+        }
 
         session()->flash('mensagem', 'Etapa alterada com sucesso');
 
@@ -289,6 +302,93 @@ class CRMController extends Controller
 
         return true; # se nenhum campo cair na validação, retorna true
     }
+
+    /**
+     * Cria uma nova comissão para o lead informado.
+     *
+     * - Se o lead já possuir uma comissão registrada, ela será excluída antes da criação de uma nova.
+     * - A comissão é calculada com base no valor definido do lead e o percentual de comissão do vendedor.
+     * - O status inicial da comissão é definido como "pendente".
+     *
+     * @param \App\Models\Lead $lead O lead para o qual a comissão será criada. O objeto deve possuir as relações
+     *                                `vendedor` (com atributo `percentual_comissao`) e, opcionalmente, `comissao`.
+     *
+     * @return bool Retorna `true` após criar a comissão com sucesso.
+     *
+     * @throws \Exception Pode lançar exceções se os relacionamentos esperados não estiverem carregados
+     *                    ou se o modelo estiver malformado.
+     */
+    public function createComissao($lead){
+        if($lead->comissao){
+            $lead->comissao->delete();
+        }
+        Comissoes::create([
+            'lead_id' => $lead->id,
+            'vendedor_id' => $lead->vendedor->id,
+            'valor_comissao' => $lead->valor_definido * ($lead->vendedor->percentual_comissao/100),
+            'status' => 'pendente'
+        ]);
+        return true;
+    }
+
+    /**
+     * Exibe uma lista paginada de comissões com filtros opcionais.
+     *
+     * Filtros disponíveis via query string:
+     * - periodo (formato: "YYYY-MM"): filtra comissões pelo ano e mês de criação.
+     * - status: filtra comissões pelo status (ex: "pendente", "pago").
+     * - cliente: filtra comissões com base no nome do cliente relacionado ao lead.
+     *
+     * Aplica paginação com 10 resultados por página e mantém os filtros na URL com `appends`.
+     *
+     * @return \Illuminate\View\View A view 'Crm/CRM_comissoes' com as comissões filtradas.
+     */
+    public function readComissoes(){
+        $comissoes = Comissoes::query();
+
+        if(!empty(request('periodo'))){
+            $periodo = request('periodo');
+            [$year, $month] = explode('-', $periodo);
+            $comissoes->whereYear('created_at', $year)
+                                    ->whereMonth('created_at', $month);
+        }
+
+        if(!empty(request('status'))){
+            $status = request('status');
+            $comissoes->where('status', $status);
+        }
+
+        if(!empty(request('cliente'))){
+            $cliente = request('cliente');
+            $comissoes->whereHas('lead.cliente', function ($query) use ($cliente) {
+                $query->where('nome', 'like', "%{$cliente}%");
+            });
+        }
+
+        $comissoes = $comissoes->paginate(10)->appends(request()->query());
+        return view('Crm/CRM_comissoes', ['comissoes' => $comissoes]);
+    }
+
+    /**
+     * Atualiza o status de uma comissão específica.
+     *
+     * @param int $comissao_id O ID da comissão a ser atualizada.
+     * @param string $status O novo status a ser atribuído (ex: "pago", "pendente").
+     *
+     * @return \Illuminate\Http\RedirectResponse Redireciona de volta para a rota de listagem das comissões.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Se a comissão não for encontrada.
+     */
+    public function updateStatusComissao($comissao_id, $status){
+        $comissao = Comissoes::findOrFail($comissao_id);
+
+        $comissao->update([
+            'status' => $status
+        ]);
+
+        return redirect()->route('read.comissoes');
+    }
+
     /**
      * 
      * Exibe o formulário de orçamento para um lead específico.

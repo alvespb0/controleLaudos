@@ -195,6 +195,9 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::
     Route::post('/CRM/editar-lead', 'updateLead')->name('update.lead'); # da update no lead
     Route::get('/CRM/deletar-lead/{id}', 'deleteLead')->name('delete.lead');
     Route::post('/CRM/atualiza-investimento', 'updateInvestimentoLead')->name('update.investimento-lead');
+
+    Route::get('/CRM/comissoes', 'readComissoes')->name('read.comissoes');
+    Route::post('/CRM/comissoes/{comissao_id}/{status}', 'updateStatusComissao')->name('update-status.comissao');
 });
 
 /** --------------------------------------------- */

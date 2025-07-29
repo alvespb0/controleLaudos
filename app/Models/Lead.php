@@ -38,4 +38,8 @@ class Lead extends Model
     public function status(){
         return $this->belongsTo(Status_Crm::class, 'status_id');
     }
+
+    public function comissao(){
+        return $this->hasOne(Comissoes::class, 'lead_id');
+    }
 }
