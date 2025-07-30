@@ -611,15 +611,37 @@
             <label for="email" class="form-label">Observações</label>
             <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{$lead->observacoes ? $lead->observacoes : ''}}</textarea>
           </div>
-          <div class="modal-footer">
-            <a href="{{ route('delete.lead', ['id' => $lead->id]) }}" class="btn btn-danger" title="Excluir Lead">
-              <i class="bi bi-trash"></i>
-            </a>
-            <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar</button>
+          
+          <div class="mb-3">
+            <label class="form-label d-block">Houve indicação externa?</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="indicacao_externa" id="indicacao_sim_{{ $lead->id }}" value="1" {{ $lead->recomendador_id ? 'checked' : '' }}>
+              <label class="form-check-label" for="indicacao_sim_{{ $lead->id }}">Sim</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="indicacao_externa" id="indicacao_nao_{{ $lead->id }}" value="0" {{ !$lead->recomendador_id ? 'checked' : '' }}>
+              <label class="form-check-label" for="indicacao_nao_{{ $lead->id }}">Não</label>
+            </div>
           </div>
-        </form>
-      </div>
+          
+          <div class="mb-3" id="campoRecomendador_{{ $lead->id }}" style="display: {{ $lead->recomendador_id ? 'block' : 'none' }};">
+            <label for="recomendador_{{ $lead->id }}" class="form-label">Recomendador</label>
+            <select name="recomendador_id" id="recomendador_{{ $lead->id }}" class="form-control">
+              <option value="">Selecione um recomendador</option>
+              @foreach($recomendadores as $recomendador)
+                <option value="{{$recomendador->id}}" {{ $lead->recomendador_id == $recomendador->id ? 'selected' : '' }}>{{$recomendador->nome}}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="{{ route('delete.lead', ['id' => $lead->id]) }}" class="btn btn-danger" title="Excluir Lead">
+            <i class="bi bi-trash"></i>
+          </a>
+          <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -679,6 +701,28 @@
             <label for="email" class="form-label">Observações</label>
             <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
           </div>
+          
+          <div class="mb-3">
+            <label class="form-label d-block">Houve indicação externa?</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="indicacao_externa" id="indicacao_sim" value="1">
+              <label class="form-check-label" for="indicacao_sim">Sim</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="indicacao_externa" id="indicacao_nao" value="0" checked>
+              <label class="form-check-label" for="indicacao_nao">Não</label>
+            </div>
+          </div>
+          
+          <div class="mb-3" id="campoRecomendador" style="display: none;">
+            <label for="recomendador" class="form-label">Recomendador</label>
+            <select name="recomendador_id" id="recomendador" class="form-control">
+              <option value="">Selecione um recomendador</option>
+              @foreach($recomendadores as $recomendador)
+                <option value="{{$recomendador->id}}">{{$recomendador->nome}}</option>
+              @endforeach
+            </select>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -724,6 +768,47 @@
         // Habilita o hidden, desabilita o select
         inputEtapaId.disabled = false;
         if(selectEtapaId) selectEtapaId.disabled = true;
+      });
+    });
+    
+    // Controle do campo de recomendador
+    const campoRecomendador = document.getElementById('campoRecomendador');
+    const indicacaoSim = document.getElementById('indicacao_sim');
+    const indicacaoNao = document.getElementById('indicacao_nao');
+    
+    indicacaoSim.addEventListener('change', function() {
+      if (this.checked) {
+        campoRecomendador.style.display = 'block';
+      }
+    });
+    
+    indicacaoNao.addEventListener('change', function() {
+      if (this.checked) {
+        campoRecomendador.style.display = 'none';
+        document.getElementById('recomendador').value = '';
+      }
+    });
+    
+    // Controle do campo de recomendador para modais de edição
+    document.querySelectorAll('[id^="indicacao_sim_"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        if (this.checked) {
+          const leadId = this.id.split('_')[2];
+          const campoRecomendador = document.getElementById('campoRecomendador_' + leadId);
+          campoRecomendador.style.display = 'block';
+        }
+      });
+    });
+    
+    document.querySelectorAll('[id^="indicacao_nao_"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        if (this.checked) {
+          const leadId = this.id.split('_')[2];
+          const campoRecomendador = document.getElementById('campoRecomendador_' + leadId);
+          const selectRecomendador = document.getElementById('recomendador_' + leadId);
+          campoRecomendador.style.display = 'none';
+          selectRecomendador.value = '';
+        }
       });
     });
   });

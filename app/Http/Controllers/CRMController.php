@@ -19,6 +19,7 @@ use App\Models\Lead;
 use App\Models\Variaveis_Precificacao;
 use App\Models\Comissoes;
 use App\Models\Percentuais_Comissao;
+use App\Models\Recomendadores;
 
 class CRMController extends Controller
 {
@@ -36,6 +37,7 @@ class CRMController extends Controller
         $clientes = Cliente::all();
         $comercial = Op_Comercial::all();
         $status_crm = Status_Crm::orderBy('position', 'asc')->get();
+        $recomendadores = Recomendadores::all();
 
         $leads = Lead::query();
 
@@ -66,7 +68,7 @@ class CRMController extends Controller
 
         $this->notificaVendedor();
         return view('Crm/CRM_index', ['clientes' => $clientes, 'comercial' => $comercial,
-                                        'etapas' => $status_crm, 'leads' => $leads]);
+                                        'etapas' => $status_crm, 'leads' => $leads, 'recomendadores' => $recomendadores]);
     }
     
     /**
@@ -91,7 +93,8 @@ class CRMController extends Controller
             'valor_min_sugerido' => $valores['valor_min_sugerido'] ?? null,
             'valor_max_sugerido' => $valores['valor_max_sugerido'] ?? null,
             'num_funcionarios' => $request->num_funcionarios,
-            'proximo_contato' => $request->proximo_contato
+            'proximo_contato' => $request->proximo_contato,
+            'recomendador_id' => $request->recomendador_id
         ]);
 
         session()->flash('mensagem', 'Lead criado com sucesso');
@@ -226,7 +229,8 @@ class CRMController extends Controller
             'valor_min_sugerido' => $valores['valor_min_sugerido'] ?? null,
             'valor_max_sugerido' => $valores['valor_max_sugerido'] ?? null,
             'num_funcionarios' => $request->num_funcionarios,
-            'proximo_contato' => $request->proximo_contato
+            'proximo_contato' => $request->proximo_contato,
+            'recomendador_id' => $request->recomendador_id
         ]);
 
         session()->flash('mensagem', 'Lead alterado com sucesso');
@@ -267,8 +271,8 @@ class CRMController extends Controller
             session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
 
             return redirect()->route('show.CRM');
-        }else if($etapa_id == 5 && (!$lead->vendedor || !$lead->vendedor->percentual_comissao)){
-            session()->flash('error', 'Esse lead não possui vendedor vinculado ou não tem percentual de comissão preenchido');
+        }else if($etapa_id == 5 && (!$lead->vendedor)){
+            session()->flash('error', 'Esse lead não possui vendedor vinculado');
 
             return redirect()->route('show.CRM');
         }else if($etapa_id == 5 && !$lead->valor_definido){
@@ -338,15 +342,40 @@ class CRMController extends Controller
      *                    ou se o modelo estiver malformado.
      */
     public function createComissao($lead){
-        if($lead->comissao){
-            $lead->comissao->delete();
+        $percentuais = Percentuais_Comissao::all();
+        
+        foreach($percentuais as $value){
+            $porcentagemTotal = $value->percentual;
+            if($lead->cliente->tipo_cliente === $value->tipo_cliente){
+                if(!$lead->recomendador_id){
+                    Comissoes::create([
+                        'lead_id' => $lead->id,
+                        'vendedor_id' => $lead->vendedor->id,
+                        'valor_comissao' => $lead->valor_definido * ($porcentagemTotal/100),
+                        'percentual_aplicado' => $porcentagemTotal,
+                        'tipo_comissao' => 'vendedor',
+                        'status' => 'pendente'
+                    ]);
+                }else{ # SE HOUVE INDICAÇÃO, o vendedor recebe - 2 % da porcentagem total da comissão, 2% destinado ao indicador
+                    Comissoes::create([
+                        'lead_id' => $lead->id,
+                        'vendedor_id' => $lead->vendedor->id,
+                        'valor_comissao' => $lead->valor_definido * (($porcentagemTotal - 2)/100),
+                        'percentual_aplicado' => $porcentagemTotal,
+                        'tipo_comissao' => 'vendedor',
+                        'status' => 'pendente'
+                    ]);
+                    Comissoes::create([
+                        'lead_id' => $lead->id,
+                        'valor_comissao' => $lead->valor_definido * 0.02,
+                        'percentual_aplicado' => 2,
+                        'tipo_comissao' => 'indicador',
+                        'status' => 'pendente',
+                        'recomendador_id' => $lead->recomendador_id
+                    ]);
+                }
+            }
         }
-        Comissoes::create([
-            'lead_id' => $lead->id,
-            'vendedor_id' => $lead->vendedor->id,
-            'valor_comissao' => $lead->valor_definido * ($lead->vendedor->percentual_comissao/100),
-            'status' => 'pendente'
-        ]);
         return true;
     }
 

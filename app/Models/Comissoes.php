@@ -15,7 +15,10 @@ class Comissoes extends Model
         'lead_id',
         'vendedor_id',
         'valor_comissao',
-        'status' # enum paga, pendente, cancelada
+        'percentual_aplicado',
+        'tipo_comissao',
+        'status', # enum paga, pendente, cancelada
+        'recomendador_id'
     ];
 
     public function vendedor(){
@@ -24,5 +27,9 @@ class Comissoes extends Model
 
     public function lead(){
         return $this->belongsTo(Lead::class, 'lead_id');
+    }
+
+    public function recomendador(){
+        return $this->belongsTo(Recomendadores::class, 'recomendador_id');
     }
 }

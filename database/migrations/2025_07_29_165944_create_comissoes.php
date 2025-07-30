@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('comissoes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('lead_id')->unique();;
-            $table->unsignedBigInteger('vendedor_id');
+            $table->unsignedBigInteger('lead_id');
+            $table->unsignedBigInteger('vendedor_id')->nullable();
             $table->decimal('valor_comissao');
+            $table->decimal('percentual_aplicado', 5, 2);
+            $table->enum('tipo_comissao', ['vendedor', 'indicador']);
             $table->enum('status', ['paga', 'pendente', 'cancelada']);
             $table->timestamps();
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
-            $table->foreign('vendedor_id')->references('id')->on('op_comercial')->onDelete('cascade');
+            $table->foreign('vendedor_id')->references('id')->on('op_comercial')->nullOnDelete();
         });
     }
 

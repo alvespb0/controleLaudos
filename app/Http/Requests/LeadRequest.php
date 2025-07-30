@@ -28,6 +28,7 @@ class LeadRequest extends FormRequest
             'nome_contato' => 'nullable|string|min:4|max:255',
             'num_funcionarios' => 'nullable|numeric|min:1',
             'proximo_contato' => 'nullable|date',
+            'recomendador_id' => 'nullable|exists:recomendadores,id'
         ];
     }
 
@@ -49,6 +50,8 @@ class LeadRequest extends FormRequest
             'num_funcionarios.min'          => 'O numero de funcionários deve ser pelo menos 1',
 
             'proximo_contato.date'    => 'A data de próximo contato deve ser uma data válida.',
+
+            'recomendador_id.exists'  => 'O indicador externo não existe no sistema'
         ];
     }
 

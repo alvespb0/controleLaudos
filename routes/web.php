@@ -215,7 +215,7 @@ Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::cla
     Route::post('/variaveis-preco/cadastro', 'createVariavelPrecificacao')->name('create.variavel');
 
     Route::get('/variaveis-preco/alterar/{id}', 'alterarVariavelPrecificacao')->name('alteracao.variavel');
-    Route::post('/variaveis/alterar/{id}', 'editVariavelPrecificacao')->name('edit.variavel');
+    Route::post('/variaveis-preco/alterar/{id}', 'editVariavelPrecificacao')->name('edit.variavel');
 
     Route::get('/variaveis-preco/excluir/{id}', 'deleteVariavelPrecificacao')->name('delete.variavel');
     
@@ -229,7 +229,7 @@ Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::cla
 
 /** --------------------------------------------- */
 /**            Rotas Classe Recomendador          */
-Route::middleware(['checkUserType:admin'])->controller(RecomendadoresController::class)->group(function (){
+Route::middleware(['checkUserType:admin,comercial'])->controller(RecomendadoresController::class)->group(function (){
     Route::get('/Recomendadores', 'readRecomendador')->name('read.recomendador');
 
     Route::get('/Recomendadores/cadastro', 'cadastroRecomendador')->name('cadastro.recomendador');

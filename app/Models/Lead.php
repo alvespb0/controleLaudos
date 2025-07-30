@@ -24,7 +24,8 @@ class Lead extends Model
         'orcamento_gerado', # bool default false
         'contrato_gerado', # bool default false
         'notificado',
-        'proximo_contato'
+        'proximo_contato',
+        'recomendador_id'
     ];
 
     public function cliente(){
@@ -41,5 +42,9 @@ class Lead extends Model
 
     public function comissao(){
         return $this->hasOne(Comissoes::class, 'lead_id');
+    }
+
+    public function indicadoPor(){
+        return $this->hasOne(Recomendadores::class, 'recomendador_id');
     }
 }

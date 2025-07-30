@@ -74,7 +74,12 @@
                         <small class="text-muted">Lead #{{ $comissao->lead_id ?? 'N/A' }}</small>
                     </td>
                     <td class="text-center">
-                        <strong>{{ $comissao->vendedor->usuario ?? 'N/A' }}</strong>
+                        <strong>{{ $comissao->vendedor && $comissao->vendedor->usuario 
+                                    ? $comissao->vendedor->usuario 
+                                    : ($comissao->recomendador && $comissao->recomendador->nome 
+                                        ? $comissao->recomendador->nome . ' (indicador)' 
+                                        : 'N/A') }}
+                        </strong>
                         <br>
                         <small class="text-muted">{{ $comissao->vendedor->user->email ?? 'N/A' }}</small>
                     </td>
@@ -82,7 +87,7 @@
                         <strong class="text-success">R$ {{ number_format($comissao->valor_comissao ?? 0, 2, ',', '.') }}</strong>
                     </td>
                     <td class="text-center">
-                        <span class="badge bg-info">{{ number_format($comissao->vendedor->percentual_comissao ?? 0, 2) }}%</span>
+                        <span class="badge bg-info">{{ number_format($comissao->percentual_aplicado ?? 0, 2) }}%</span>
                     </td>
                     <td class="text-center">
                         @if($comissao->status == 'pendente')
@@ -92,7 +97,7 @@
                         @elseif($comissao->status == 'cancelada')
                             <span class="badge bg-danger">Cancelada</span>
                         @else
-                            <span class="badge bg-secondary">{{ ucfirst($comissao->status ?? 'N/A') }}</span>
+                            <span class="badge bg-secondary">{{ $comissao->status ?? 'N/A' }}</span>
                         @endif
                     </td>
                     <td class="text-center">
