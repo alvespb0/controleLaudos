@@ -36,7 +36,7 @@ class ClienteController extends Controller
             'nome'=> $request->nome,
             'cnpj' => $request->cnpj,
             'email' => $request->email,
-            'cliente_novo' => $request->cliente_novo
+            'tipo_cliente' => $request->tipo_cliente
        ]);
 
         foreach($request->telefone as $telefone){
@@ -130,7 +130,7 @@ class ClienteController extends Controller
             'nome'=> $request->nome,
             'cnpj' => $request->cnpj,
             'email' => $request->email,
-            'cliente_novo' => $request->cliente_novo
+            'tipo_cliente' => $request->tipo_cliente
         ]);
  
         $cliente->telefone()->delete();

@@ -29,12 +29,16 @@
                 <div class="mb-3">
                     <label class="form-label d-block"><i class="bi bi-arrow-repeat"></i>&nbspCliente novo ou Renovação?</label>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_novo" value="1" required>
-                        <label class="form-check-label" for="cliente_novo">Cliente Novo</label>
+                        <input class="form-check-input" type="radio" name="tipo_cliente" id="novo" value="novo" required>
+                        <label class="form-check-label" for="novo">Novo</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_renovacao" value="0" required>
-                        <label class="form-check-label" for="cliente_renovacao">Cliente Renovado</label>
+                        <input class="form-check-input" type="radio" name="tipo_cliente" id="renovacao" value="renovacao" required>
+                        <label class="form-check-label" for="renovacao">Renovação</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="tipo_cliente" id="cliente_renovacao" value="resgatado" required>
+                        <label class="form-check-label" for="resgatado">Resgatado</label>
                     </div>
                 </div>
 

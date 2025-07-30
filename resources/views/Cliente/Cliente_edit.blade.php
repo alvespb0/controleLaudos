@@ -25,19 +25,21 @@
                     <i class="bi bi-card-text"></i><label for="cnpj">&nbspCNPJ/CPF</label>
                     <input type="text" name="cnpj" id="cnpj" class="form-control" value = "{{$cliente->cnpj}}" placeholder="CNPJ do cliente" required>
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label d-block"><i class="bi bi-arrow-repeat"></i>&nbspCliente novo ou Renovação?</label>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_novo" value="1" {{$cliente->cliente_novo ? 'checked' : ''}} required>
-                        <label class="form-check-label" for="cliente_novo">Cliente Novo</label>
+                        <input class="form-check-input" type="radio" name="tipo_cliente" id="novo" value="novo" {{$cliente->tipo_cliente == 'novo' ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="novo">Novo</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="cliente_novo" id="cliente_renovacao" value="0" {{!$cliente->cliente_novo ? 'checked' : ''}} required>
-                        <label class="form-check-label" for="cliente_renovacao">Cliente Renovado</label>
+                        <input class="form-check-input" type="radio" name="tipo_cliente" id="renovacao" value="renovacao" {{$cliente->tipo_cliente == 'renovacao' ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="renovacao">Renovação</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="tipo_cliente" id="cliente_renovacao" value="resgatado" {{$cliente->tipo_cliente == 'resgatado' ? 'checked' : ''}} required>
+                        <label class="form-check-label" for="resgatado">Resgatado</label>
                     </div>
                 </div>
-
                 <div class="mb-3">
                     <i class="bi bi-envelope"></i><label for="email">&nbspE-mail</label>
                     <input type="email" name="email" id="email" class="form-control" placeholder="Email do Cliente" value ="{{$cliente->email}}">

@@ -421,10 +421,12 @@
                             @if($laudo->esocial)
                                 <span class="badge bg-primary rounded-pill">Esocial</span>
                             @endif 
-                            @if($laudo->cliente->cliente_novo)
+                            @if($laudo->cliente->tipo_cliente == 'novo')
                                 <span class="badge bg-success rounded-pill">Cliente Novo</span>
-                            @else
+                            @elseif($laudo->cliente->tipo_cliente == 'renovacao')
                                 <span class="badge bg-warning rounded-pill">Cliente Renovação</span>
+                            @elseif($laudo->cliente->tipo_cliente == 'resgatado')
+                                <span class="badge bg-warning rounded-pill">Cliente Resgatado</span>
                             @endif
                             <br>
                             <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>

@@ -322,8 +322,12 @@
                 <div class="d-flex align-items-center mb-2">
                   <i class="bi bi-person-circle me-2" style="font-size:2rem;color:var(--primary-color)"></i>
                   <h4 class="mb-0">{{ $lead->cliente->nome ?? '' }}</h4>
-                  @if($lead->cliente->cliente_novo)
-                    <span class="badge bg-success ms-3">Novo Cliente</span>
+                  @if($lead->cliente->tipo_cliente == 'novo')
+                      <span class="badge bg-success ms-2 text-dark">Cliente Novo</span>
+                  @elseif($lead->cliente->tipo_cliente == 'renovacao')
+                      <span class="badge bg-warning ms-2 text-dark">Cliente Renovação</span>
+                  @elseif($lead->cliente->tipo_cliente == 'resgatado')
+                      <span class="badge bg-warning ms-2 text-dark">Cliente Resgatado</span>
                   @endif
                   @if($lead->orcamento_gerado)
                     <span class="badge bg-info ms-2">Orçamento Gerado</span>

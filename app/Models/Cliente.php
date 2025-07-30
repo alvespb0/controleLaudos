@@ -16,7 +16,7 @@ class Cliente extends Model
         'nome',
         'cnpj',
         'email',
-        'cliente_novo'
+        'tipo_cliente'
     ];
 
     public function telefone(){

@@ -116,8 +116,8 @@ class IndicadoresController extends Controller
             $query->whereDate('updated_at', '<=', $dataFim);
         }
 
-        $clientes = $query->selectRaw("DATE_FORMAT(updated_at, '%m/%y') as mes, cliente_novo, COUNT(*) as total")
-                        ->groupBy('mes', 'cliente_novo')
+        $clientes = $query->selectRaw("DATE_FORMAT(updated_at, '%m/%y') as mes, tipo_cliente, COUNT(*) as total")
+                        ->groupBy('mes', 'tipo_cliente')
                         ->orderByRaw("STR_TO_DATE(mes, '%m/%y') ASC")
                         ->get();
 
@@ -129,20 +129,24 @@ class IndicadoresController extends Controller
 
         foreach ($mesesUnicos as $mes) {
             $labels[] = $mes;
-            $novos = $clientes->where('mes', $mes)->where('cliente_novo', 1)->first();
-            $renov = $clientes->where('mes', $mes)->where('cliente_novo', 0)->first();
 
+            $novos = $clientes->where('mes', $mes)->where('tipo_cliente', 'novo')->first();
+            $renov = $clientes->where('mes', $mes)->where('tipo_cliente', 'renovacao')->first();
+            $resgatado = $clientes->where('mes', $mes)->where('tipo_cliente', 'resgatado')->first();
+            $dadosResgatados[] = $resgatado ? $resgatado->total : 0;
             $dadosNovos[] = $novos ? $novos->total : 0;
             $dadosRenovados[] = $renov ? $renov->total : 0;
         }
         $chartClientes = new Chart;
         $chartClientes->labels($labels);
-        $chartClientes->dataset('Clientes Novos', 'bar', $dadosNovos)
+        $chartClientes->dataset('Novos', 'bar', $dadosNovos)
             ->backgroundColor('#79c5b6');
 
         $chartClientes->dataset('Renovações', 'bar', $dadosRenovados)
             ->backgroundColor('#5c9c90');
 
+        $chartClientes->dataset('Resgatados', 'bar', $dadosResgatados)
+                    ->backgroundColor('#5c9c90');
         return $chartClientes;
     }
 
