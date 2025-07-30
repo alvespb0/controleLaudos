@@ -18,6 +18,7 @@ use App\Models\Status_Crm;
 use App\Models\Lead;
 use App\Models\Variaveis_Precificacao;
 use App\Models\Comissoes;
+use App\Models\Percentuais_Comissao;
 
 class CRMController extends Controller
 {
@@ -306,6 +307,19 @@ class CRMController extends Controller
         }
 
         return true; # se nenhum campo cair na validação, retorna true
+    }
+
+    public function readPercentuaisComissao(){
+        $percentuais = Percentuais_Comissao::all();
+        return view('Crm/CRM_percentuais-comissao', ['percentuais' => $percentuais]);
+    }
+
+    public function updatePercentualComissao(Request $request){
+        $percentual = Percentuais_Comissao::findOrFail($request->percentual_id);
+        $percentual->update([
+            'percentual' => $request->percentual
+        ]);
+        return redirect()->route('read.percentuais-comissao');
     }
 
     /**

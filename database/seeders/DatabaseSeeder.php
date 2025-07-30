@@ -8,6 +8,7 @@ use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\StatusSeeder;
 use Database\Seeders\StatusCRMSeeder;
 use Database\Seeders\VariavelPadraoSeeder;
+use Database\Seeders\PercentuaisComissaoSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(StatusSeeder::class);
         $this->call(StatusCRMSeeder::class);
         $this->call(VariavelPadraoSeeder::class);
+        $this->call(PercentuaisComissaoSeeder::class);
     }
 }
