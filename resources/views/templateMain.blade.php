@@ -354,6 +354,8 @@
                         @if(Auth::user()->tipo === 'admin')
                         <a href="/CRM/comissoes" class="list-group-item list-group-item-action ps-5">Comissões</a>
                         @endif
+                        <a href="/Recomendadores/" class="list-group-item list-group-item-action ps-5">Indicador Externo</a>
+                        <a href="/Recomendadores/cadastro" class="list-group-item list-group-item-action ps-5">Novo Indicador Externo</a>
                     </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin')

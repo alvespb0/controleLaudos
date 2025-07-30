@@ -13,6 +13,7 @@ use App\Http\Controllers\Documentos_TecnicosController;
 use App\Http\Controllers\CRMController;
 use App\Http\Controllers\AutentiqueController;
 use App\Http\Controllers\FaixaPrecoController;
+use App\Http\Controllers\RecomendadoresController;
 
 /*
 |--------------------------------------------------------------------------
@@ -224,4 +225,18 @@ Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::cla
     Route::post('/faixa-preco/alterar/{id}', 'editFaixaPreco')->name('edit.faixa');
 
     Route::get('/faixa-preco/excluir/{id}', 'deleteFaixa')->name('delete.faixa');
+});
+
+/** --------------------------------------------- */
+/**            Rotas Classe Recomendador          */
+Route::middleware(['checkUserType:admin'])->controller(RecomendadoresController::class)->group(function (){
+    Route::get('/Recomendadores', 'readRecomendador')->name('read.recomendador');
+
+    Route::get('/Recomendadores/cadastro', 'cadastroRecomendador')->name('cadastro.recomendador');
+    Route::post('/Recomendadores/cadastro', 'createRecomendador')->name('create.recomendador');
+
+    Route::get('/Recomendadores/alterar/{id}', 'alteracaoRecomendador')->name('alteracao.recomendador');
+    Route::post('/variaveis/alterar/{id}', 'updateRecomendador')->name('edit.recomendador');
+
+    Route::get('/Recomendadores/excluir/{id}', 'deleteRecomendador')->name('delete.recomendador');
 });
