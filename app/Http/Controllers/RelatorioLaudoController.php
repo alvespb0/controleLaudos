@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Exports\LaudosExport;
 use App\Exports\ClientesExport;
 use App\Exports\DocumentoExport;
+use App\Exports\CrmExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Status;
+use App\Models\Status_Crm;
+use App\Models\Op_Comercial;
 use App\Models\Cliente;
 
 class RelatorioLaudoController extends Controller
@@ -19,7 +22,9 @@ class RelatorioLaudoController extends Controller
     public function tipoRelatorio(){
         $status = Status::all();
         $clientes = Cliente::all();
-        return view('Relatorios/Relatorios', ['clientes' => $clientes, 'status' => $status]);
+        $vendedor = Op_Comercial::all();
+        $status_crm = Status_Crm::all();
+        return view('Relatorios/Relatorios', ['clientes' => $clientes, 'status' => $status, 'etapa_crm' => $status_crm, 'vendedores' => $vendedor]);
     }
 
     /**
@@ -56,8 +61,15 @@ class RelatorioLaudoController extends Controller
                 'status' => $request->statusDocumento,
                 'cliente' => $request->clienteDocumento
             ];
-
             return Excel::download(new DocumentoExport($filtros), 'relatorio_documentos.xlsx');
+        }elseif($tipo === 'crm'){
+            $filtros = [
+                'dataInicio' => $request->dataInicioCRM,
+                'dataFim' => $request->dataFimCRM,
+                'vendedor' => $request->vendedorCRM, # ID
+                'etapa' => $request->etapaCRM #id
+            ];
+            return Excel::download(new CrmExport($filtros), 'relatorio_CRM.xlsx');
         }
     }
 
