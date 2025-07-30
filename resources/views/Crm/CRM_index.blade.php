@@ -237,10 +237,11 @@
 <div class="crm-kanban-toolbar">
     <form method="GET" action="" class="d-flex align-items-center gap-2 mb-0 w-100">
         <input type="text" name="busca" class="form-control" placeholder="Busca global..." value="{{ request('busca') }}" style="max-width: 260px;" onchange="this.form.submit()">
-        <select name="funil" class="form-select">
-            <option value="">Funil Vendas</option>
-            <option value="1">Funil 1</option>
-            <option value="2">Funil 2</option>
+        <select name="etapa" class="form-select" onchange="this.form.submit()">
+            <option value="">Etapa</option>
+            @foreach($etapas as $etapaFiltro)
+                <option value="{{$etapaFiltro->id}}" {{ request('etapa') == $etapaFiltro->id ? 'selected' : '' }} >{{$etapaFiltro->nome}}</option>
+            @endforeach
         </select>
         <select name="vendedor" class="form-select" onchange="this.form.submit()">
             <option value="">Todos Vendedores</option>
@@ -249,8 +250,8 @@
             @endforeach
         </select>
         <select name="periodo" class="form-select" onchange="this.form.submit()">
-            <option value="15" {{ request('periodo') == 15 ? 'selected' : '' }}>Últimos 15 dias</option>
-            <option value="30" {{ request('periodo') == 30 || request('periodo') === null ? 'selected' : '' }}>Últimos 30 dias</option>
+            <option value="15" {{ request('periodo') == 15 || request('periodo') === null ? 'selected' : '' }}>Últimos 15 dias</option>
+            <option value="30" {{ request('periodo') == 30 ? 'selected' : '' }}>Últimos 30 dias</option>
             <option value="45" {{ request('periodo') == 45 ? 'selected' : '' }}>Últimos 45 dias</option>
             <option value="60" {{ request('periodo') == 60 ? 'selected' : '' }}>Últimos 60 dias</option>
             <option value="all" {{ request('periodo') == 'all' ? 'selected' : '' }}>Todos</option>

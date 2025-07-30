@@ -345,6 +345,17 @@
                         <a href="/graphs" class="list-group-item list-group-item-action ps-5">Dashboard Gerencial</a>
                         @endif
                     </div>
+                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#crmMenu" role="button" aria-expanded="false" aria-controls="crmMenu">
+                        <i class="bi-person-lines-fill me-2"></i><span>CRM</span>
+                    </a>
+                    <div class="collapse" id="crmMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/CRM" class="list-group-item list-group-item-action ps-5">Controle de Leads</a>
+                        @if(Auth::user()->tipo === 'admin')
+                        <a href="/CRM/comissoes" class="list-group-item list-group-item-action ps-5">Comissões</a>
+                        @endif
+                    </div>
+                    @endif
                     @if(Auth::user()->tipo === 'admin')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#operadoresMenu" role="button" aria-expanded="false" aria-controls="operadoresMenu">
                         <i class="bi bi-person-circle me-2"></i><span>Operadores</span>

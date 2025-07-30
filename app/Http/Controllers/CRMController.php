@@ -37,10 +37,10 @@ class CRMController extends Controller
         $status_crm = Status_Crm::orderBy('position', 'asc')->get();
 
         $leads = Lead::query();
-        $periodo = request('periodo');
 
-        if(!empty(request('periodo')) && request('periodo') !== 'all'){
-            $periodo = request('periodo');
+        $periodo = request('periodo') ?? 15;
+
+        if ($periodo !== 'all') {
             $leads->where('created_at', '>=', now()->subDays($periodo));
         }
 
@@ -54,6 +54,11 @@ class CRMController extends Controller
             $leads->whereHas('cliente', function ($query) use ($busca) {
                 $query->where('nome', 'like', "%{$busca}%");
             });
+        }
+
+        if(!empty(request('etapa'))){
+            $etapa = request('etapa');
+            $leads->where('status_id', $etapa);
         }
 
         $leads = $leads->get();
