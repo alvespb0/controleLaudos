@@ -15,7 +15,6 @@ class Op_Comercial extends Model
     protected $fillable = [
         'usuario',
         'user_id',
-        'percentual_comissao'
     ];
 
     public function user(){

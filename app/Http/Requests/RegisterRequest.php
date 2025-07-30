@@ -26,7 +26,6 @@ class RegisterRequest extends FormRequest
             'email' => 'required|string|email|min:5|max:255',
             'password'=> 'required|string|min:8|max:32',
             'tipo' => 'required|string',
-            'percentual_comissao' => 'nullable|numeric'
         ];
     }
 

@@ -41,11 +41,6 @@
                     </select>
                 </div>
 
-                <div class="mb-3" id="comissaoField" style="display: none;">
-                    <i class="bi bi-percent"></i><label for="percentual_comissao" class="form-label">&nbspPercentual de Comissão (%)</label>
-                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="percentual_comissao" name="percentual_comissao" placeholder="Ex: 5.50">
-                </div>
-
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
                     <button type="reset" class="btn btn-secondary px-4">Limpar</button>
@@ -55,22 +50,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tipoSelect = document.getElementById('tipo');
-    const comissaoField = document.getElementById('comissaoField');
-    const comissaoInput = document.getElementById('percentual_comissao');
-
-    tipoSelect.addEventListener('change', function() {
-        if (this.value === 'comercial') {
-            comissaoField.style.display = 'block';
-            comissaoInput.required = true;
-        } else {
-            comissaoField.style.display = 'none';
-            comissaoInput.required = false;
-            comissaoInput.value = '';
-        }
-    });
-});
-</script>
 @endsection

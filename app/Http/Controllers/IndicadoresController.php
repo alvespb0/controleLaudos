@@ -146,7 +146,7 @@ class IndicadoresController extends Controller
             ->backgroundColor('#5c9c90');
 
         $chartClientes->dataset('Resgatados', 'bar', $dadosResgatados)
-                    ->backgroundColor('#5c9c90');
+                    ->backgroundColor('#00ffd0ff');
         return $chartClientes;
     }
 
