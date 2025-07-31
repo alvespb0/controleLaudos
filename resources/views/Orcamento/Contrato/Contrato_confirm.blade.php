@@ -110,11 +110,10 @@
         </div>
         <div class="d-flex flex-column gap-2 align-items-center">
             <button id="downloadBtn" class="btn btn-primary btn-custom me-2" onclick="handleDownload(event)">Download</button>
-            
-            <form id="aprovarForm" method="post" action="{{route('contrato.aprovar', [$fileName, $dados['dados']['lead_id'] ?? null])}}" style="display:inline-block;">
+            <form id="aprovarForm" method="post" action="{{route('contrato.aprovar', [$fileName, $lead_id ?? null])}}" style="display:inline-block;">
                 @csrf
-                <input type="hidden" name="lead_id" value="{{isset($dados['dados']['lead_id']) ? $dados['dados']['lead_id'] : ''}}">
-                <input type="hidden" name="cliente_id" value="{{isset($dados['dados']['cliente_id']) ? $dados['dados']['cliente_id'] : ''}}">
+                <input type="hidden" name="lead_id" value="{{$lead_id ? $lead_id : ''}}">
+                <input type="hidden" name="cliente_id" value="{{$cliente_id ? $cliente_id : ''}}">
                 <button type="button" id="aprovarBtn" class="btn btn-success btn-custom me-2" disabled>Aprovar Contrato</button>
             </form>
             
@@ -124,7 +123,7 @@
                 <i class="bi bi-send"></i> Encaminhar para Assinatura
             </button>
             
-            <a href="/" id="linkHome" class="btn btn-secondary btn-custom mt-2" style="display:none;">Página Inicial</a>
+            <a href="/CRM" id="linkHome" class="btn btn-secondary btn-custom mt-2" style="display:none;">Página Inicial</a>
         </div>
         <div id="downloadAlert" class="mt-3 text-danger fw-bold text-center" style="display:none;">
             O download só pode ser realizado uma vez. Caso precise novamente, gere um novo contrato.
@@ -143,7 +142,7 @@
                 <div class="modal-body">
                     <form action="{{route('teste.autentique')}}" enctype="multipart/form-data" method="POST" class="p-3 rounded shadow-sm border bg-light">
                         @csrf
-                        <input type="hidden" name="lead_id" value="{{isset($dados['dados']['lead_id']) ? $dados['dados']['lead_id'] : ''}}">
+                        <input type="hidden" name="lead_id" value="{{$lead_id ? $lead_id : ''}}">
                         <div class="mb-3">
                             <label for="Nome_Documento" class="form-label fw-semibold">Nome do Documento</label>
                             <input type="text" name="nome_documento" class="form-control" id="Nome_Documento" value="Contrato - {{$dados['dados']['razaoSocialCliente'] ?? 'Cliente'}}" placeholder="Ex: Contrato de Prestação de Serviços">
@@ -204,7 +203,7 @@
             btnAprovar.innerText = 'Aprovando...';
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
-            fetch("{{ route('contrato.aprovar', [$fileName, $dados['dados']['lead_id'] ?? null]) }}", {
+            fetch("{{ route('contrato.aprovar', [$fileName, $lead_id ?? null]) }}", {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',

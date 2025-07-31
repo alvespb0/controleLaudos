@@ -267,18 +267,25 @@ class CRMController extends Controller
     public function alterStatusLead($lead_id, $etapa_id){
         $lead = Lead::findOrFail($lead_id);
 
-        if($etapa_id == 5 && !$this->validaDadosCobranca($lead)){ # etapa = 5 representa a etapa Oportunidade Ganha é um valor imutável no banco também marcada como padrao_sistema
-            session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
+        if ($etapa_id == 5) {
+            if (!$this->validaDadosCobranca($lead)) {
+                session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
+                return redirect()->route('show.CRM');
+            }
 
-            return redirect()->route('show.CRM');
-        }else if($etapa_id == 5 && (!$lead->vendedor)){
-            session()->flash('error', 'Esse lead não possui vendedor vinculado');
+            if (!$lead->vendedor) {
+                session()->flash('error', 'Esse lead não possui vendedor vinculado');
+                return redirect()->route('show.CRM');
+            }
 
-            return redirect()->route('show.CRM');
-        }else if($etapa_id == 5 && !$lead->valor_definido){
-            session()->flash('error', 'Atualize o investimento definido nesse lead');
+            if (!$lead->valor_definido) {
+                session()->flash('error', 'Atualize o investimento definido nesse lead');
+                return redirect()->route('show.CRM');
+            }
+        }
 
-            return redirect()->route('show.CRM');
+        if($lead->status_id == 5 && $etapa_id != 5 && $lead->comissao){
+            $lead->comissao()->delete();
         }
 
         $lead->update([
@@ -313,11 +320,18 @@ class CRMController extends Controller
         return true; # se nenhum campo cair na validação, retorna true
     }
 
+    /**
+     * Retorna a view de percentuais de comissão
+     */
     public function readPercentuaisComissao(){
         $percentuais = Percentuais_Comissao::all();
         return view('Crm/CRM_percentuais-comissao', ['percentuais' => $percentuais]);
     }
 
+    /**
+     * Dá update no percentual de comissão dado o percentual_id
+     * @param Request $request
+     */
     public function updatePercentualComissao(Request $request){
         $percentual = Percentuais_Comissao::findOrFail($request->percentual_id);
         $percentual->update([
@@ -361,7 +375,7 @@ class CRMController extends Controller
                         'lead_id' => $lead->id,
                         'vendedor_id' => $lead->vendedor->id,
                         'valor_comissao' => $lead->valor_definido * (($porcentagemTotal - 2)/100),
-                        'percentual_aplicado' => $porcentagemTotal,
+                        'percentual_aplicado' => $porcentagemTotal - 2,
                         'tipo_comissao' => 'vendedor',
                         'status' => 'pendente'
                     ]);

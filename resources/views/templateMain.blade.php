@@ -372,6 +372,7 @@
                     <div class="collapse" id="variaveisMenu" data-bs-parent="#sidebarMenu">
                         <a href="/variaveis-preco/cadastro" class="list-group-item list-group-item-action ps-5">Nova Variável</a>
                         <a href="/variaveis-preco" class="list-group-item list-group-item-action ps-5">Variáveis Cadastradas</a>
+                        <a href="/CRM/percentuais-comissao" class="list-group-item list-group-item-action ps-5">Percentuais de comissão</a>
                     </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
@@ -438,7 +439,13 @@
         // Sidebar collapse/expand
         const sidebar = document.getElementById('sidebarMenu');
         const toggleBtn = document.getElementById('sidebarToggle');
-        let collapsed = false;
+        let collapsed = true; // Começa recolhida por padrão
+        
+        // Aplicar estado inicial recolhido
+        sidebar.classList.add('collapsed');
+        toggleBtn.querySelector('i').classList.remove('bi-chevron-double-left');
+        toggleBtn.querySelector('i').classList.add('bi-chevron-double-right');
+        
         toggleBtn.addEventListener('click', function() {
             collapsed = !collapsed;
             sidebar.classList.toggle('collapsed');

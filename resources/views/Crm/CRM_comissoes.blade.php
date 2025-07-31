@@ -70,6 +70,13 @@
                 <tr>
                     <td class="text-center">
                         <strong>{{ $comissao->lead->cliente->nome ?? 'N/A' }}</strong>
+                        @if($comissao->lead->cliente->tipo_cliente == 'novo')
+                            <span class="badge bg-success ms-2">Cliente Novo</span>
+                        @elseif($comissao->lead->cliente->tipo_cliente == 'renovacao')
+                            <span class="badge bg-info ms-2">Cliente Renovação</span>
+                        @elseif($comissao->lead->cliente->tipo_cliente == 'resgatado')
+                            <span class="badge bg-warning ms-2">Cliente Resgatado</span>
+                        @endif
                         <br>
                         <small class="text-muted">Lead #{{ $comissao->lead_id ?? 'N/A' }}</small>
                     </td>
@@ -101,7 +108,7 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        {{ $comissao->created_at ? $comissao->created_at->format('d/m/Y H:i') : 'N/A' }}
+                        {{ $comissao->created_at ? $comissao->created_at->format('d/m/Y') : 'N/A' }}
                     </td>
                     <td class="text-center">
                         <select class="form-select form-select-sm" onchange="alterarStatus({{ $comissao->id }}, this.value)">

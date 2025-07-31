@@ -82,6 +82,8 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(FileController:
     Route::get('/orcamento/download/{fileName}', 'downloadOrcamento')->name('orcamento.download');
 
     Route::post('/contrato/gerar', 'gerarContrato')->name('gerar.contrato');
+    Route::post('/CRM/gerar-contrato', 'gerarContratoByIndex')->name('gerar.contrato-index');
+
     Route::get('/contrato/download/{fileName}', 'downloadOrcamento')->name('contrato.download');
 
     Route::post('/contrato/aprovar/{fileName}/{lead_id?}', 'saveContrato')->name('contrato.aprovar');

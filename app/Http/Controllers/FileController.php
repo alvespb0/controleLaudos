@@ -127,6 +127,15 @@ class FileController extends Controller
         ]);
     }
 
+    /**
+     * Recebe os do orcamento_confirm contendo os dados para o CoONTRATO
+     * Os dados recebidos, podem vir ou de um cliente já cadastrado ou de um lançamento avulso pelo operador
+     * Controller processa esses dados e passa à TemplateProcessor para usar no modelo (storage/modelo/contrato_modelo)
+     * Retorna o download do arquivo
+     * 
+     * @param \Illuminate\Http\GerarOrcamentoRequest $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function gerarContrato(Request $request){
         $dados = $request->input('dados');
         $cliente = Cliente::findOrFail($dados['cliente_id']);
@@ -176,11 +185,86 @@ class FileController extends Controller
             Storage::makeDirectory('temp');
         }
 
+        return view('Orcamento/Contrato/Contrato_confirm',[
+            'fileName' => $fileName,
+            'lead_id' => $dados['lead_id'],
+            'cliente_id' => $dados['cliente_id'],
+            'tempPath' => $tempPath,
+            'dados' => $request->all(),
+        ]);
+    }
+
+    public function gerarContratoByIndex(Request $request){
+        $lead = Lead::findOrFail($request->lead_id);
+
+        if(!$lead->valor_definido){
+            session()->flash('error','Defina o valor do investimento do lead antes de continuar');
+            
+            return redirect()->route('show.CRM');
+        }
+        if(!$lead->num_funcionarios){
+            session()->flash('error','Defina o número de funcionários do lead antes de continuar');
+
+            return redirect()->route('show.CRM');
+        }
+        if(!$lead->cliente || !$lead->cliente->endereco){
+            session()->flash('error','Defina o endereço do cliente antes de continuar');
+
+            return redirect()->route('show.CRM');
+        }
+
+        /* STRING DE PARCELAS */
+        $templatePath = storage_path('app/modelos/contrato_modelo.docx');
+        $template = new TemplateProcessor($templatePath);
+        
+        $investimento = (float)$lead->valor_definido;
+        $parcelas = (int)$request->num_parcelas;
+        $valorParcela = $investimento/$parcelas;
+        $textoParcela = '';
+        $contador = 1;
+        $dataInicial = Carbon::now(); 
+        for ($i = 0; $i < $parcelas; $i++) {
+            $dataVencimento = $dataInicial->copy()->addMonthsNoOverflow($i)->day(5); // dia 5 de cada mês
+            $dataFormatada = $dataVencimento->format('d/m/Y');
+
+            $textoParcela .= $contador . 'ª parcela: R$' . number_format($valorParcela, 2, ',', '.') . " - Vencimento: {$dataFormatada}\n";
+            $contador++;
+        }
+        /* FIM DA STRING */
+        $cnpjOuCpfFormatado = $this->formatarCpfCnpj($lead->cliente->cnpj);
+
+        $endereco = $lead->cliente->endereco->rua . ' ' . 
+                    $lead->cliente->endereco->numero . ', ' . 
+                    $lead->cliente->endereco->bairro . ', ' . 
+                    $lead->cliente->endereco->cidade . ' - ' . 
+                    $lead->cliente->endereco->uf . ', ' . 
+                    $lead->cliente->endereco->cep . ', Brasil';
+        
+        $template->setValue('razaoSocialCliente',  $this->escapeForXml($lead->cliente->nome));
+        $template->setValue('cnpjCliente', $cnpjOuCpfFormatado);
+        $template->setValue('enderecoCliente', $endereco);
+        $template->setValue('telefoneCli', $lead->cliente->telefone->first()->telefone);
+        $template->setValue('numFuncionarios', $lead->num_funcionarios);
+        $template->setValue('investimento', number_format($lead->valor_definido, 2, ',', '.'));
+        $template->setValue('parcelasTexto', $textoParcela);        
+        $dataHoje = Carbon::now()->translatedFormat('d \d\e F \d\e Y');
+        $template->setValue('dataHoje', $dataHoje);
+
+        $fileName = $this->escapeForXml('contrato_'.$lead->cliente->nome.'.docx');
+        $fileName = preg_replace('/[\/:*?"<>|\\\\]/', '-', $fileName);
+        $tempPath = storage_path('app/temp/' . $fileName);
+
+        if (!Storage::exists('temp')) {
+            Storage::makeDirectory('temp');
+        }
+
         $template->saveAs($tempPath);
 
         return view('Orcamento/Contrato/Contrato_confirm',[
             'fileName' => $fileName,
             'tempPath' => $tempPath,
+            'lead_id' => $request->lead_id,
+            'cliente_id' => $lead->cliente->id,
             'dados' => $request->all(),
         ]);
     }

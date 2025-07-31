@@ -344,6 +344,9 @@
                       {{ $lead->orcamento_gerado ? 'Gerar outro orçamento' : 'Gerar Orçamento' }}
                     </button>
                   </form>
+                  <button type="button" class="btn btn-orcamento align-middle ms-2" data-bs-toggle="modal" data-bs-target="#modalGerarContrato{{ $lead->id }}">
+                    <i class="bi bi-file-earmark-text"></i> Gerar Contrato
+                  </button>
                   <button type="button" class="btn btn-orcamento align-middle ms-2" data-bs-toggle="modal" data-bs-target="#modalEnviarContrato{{ $lead->id }}">
                     <i class="bi bi-file-earmark-text"></i> Enviar Contrato
                   </button>
@@ -382,6 +385,19 @@
                        : '-' }}
                    </span>
                  </div>
+                </div>
+                <div class="row mb-1">
+                  <div class="col-md-6">
+                    <strong>Número de Funcionários:</strong> <span class="crm-value">{{ $lead->num_funcionarios ?? '-' }}</span>
+                  </div>
+                  <div class="col-md-6">
+                    <strong>Indicado por:</strong> 
+                    @if($lead->indicadoPor)
+                      <span class="crm-value">{{ $lead->indicadoPor->nome }}</span>
+                    @else
+                      <span class="crm-value">Sem indicação externa</span>
+                    @endif
+                  </div>
                 </div>
               </div>
             </div>
@@ -531,6 +547,34 @@
     </div>
   </div>
   </div>
+  </div>
+</div>
+
+<!-- Modal Gerar Contrato -->
+<div class="modal fade" id="modalGerarContrato{{ $lead->id }}" tabindex="-1" aria-labelledby="modalGerarContratoLabel{{ $lead->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalGerarContratoLabel{{ $lead->id }}">Gerar Contrato (ID: {{ $lead->id }})</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ route('gerar.contrato-index') }}" method="POST">
+          @csrf
+          <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+          <div class="mb-3">
+            <label for="num_parcelas" class="form-label">Quantas parcelas acertadas com o cliente?</label>
+            <input type="number" name="num_parcelas" id="num_parcelas" class="form-control" min="1" required>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Gerar Contrato</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
   </div>
 </div>
 

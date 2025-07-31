@@ -41,10 +41,10 @@ class Lead extends Model
     }
 
     public function comissao(){
-        return $this->hasOne(Comissoes::class, 'lead_id');
+        return $this->hasMany(Comissoes::class, 'lead_id');
     }
 
     public function indicadoPor(){
-        return $this->hasOne(Recomendadores::class, 'recomendador_id');
+        return $this->belongsTo(Recomendadores::class, 'recomendador_id');
     }
 }
