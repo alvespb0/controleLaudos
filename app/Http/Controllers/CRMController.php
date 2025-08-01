@@ -18,6 +18,7 @@ use App\Models\Status_Crm;
 use App\Models\Lead;
 use App\Models\Variaveis_Precificacao;
 use App\Models\Comissoes;
+use App\Models\Parcelas_Comissao;
 use App\Models\Percentuais_Comissao;
 use App\Models\Recomendadores;
 
@@ -320,6 +321,8 @@ class CRMController extends Controller
         return true; # se nenhum campo cair na validação, retorna true
     }
 
+    /* PARTE DE COMISSÕES */
+    /* ================== */
     /**
      * Retorna a view de percentuais de comissão
      */
@@ -362,7 +365,7 @@ class CRMController extends Controller
             $porcentagemTotal = $value->percentual;
             if($lead->cliente->tipo_cliente === $value->tipo_cliente){
                 if(!$lead->recomendador_id){
-                    Comissoes::create([
+                    $comissao = Comissoes::create([
                         'lead_id' => $lead->id,
                         'vendedor_id' => $lead->vendedor->id,
                         'valor_comissao' => $lead->valor_definido * ($porcentagemTotal/100),
@@ -370,8 +373,9 @@ class CRMController extends Controller
                         'tipo_comissao' => 'vendedor',
                         'status' => 'pendente'
                     ]);
+                    $this->createParcelasComissao($comissao);                   
                 }else{ # SE HOUVE INDICAÇÃO, o vendedor recebe - 2 % da porcentagem total da comissão, 2% destinado ao indicador
-                    Comissoes::create([
+                    $comissao = Comissoes::create([
                         'lead_id' => $lead->id,
                         'vendedor_id' => $lead->vendedor->id,
                         'valor_comissao' => $lead->valor_definido * (($porcentagemTotal - 2)/100),
@@ -387,10 +391,43 @@ class CRMController extends Controller
                         'status' => 'pendente',
                         'recomendador_id' => $lead->recomendador_id
                     ]);
+                    $this->createParcelasComissao($comissao);
                 }
             }
         }
         return true;
+    }
+
+    private function createParcelasComissao($comissao){
+        $num_parcelas = $comissao->lead->num_parcelas;
+        $dataBase = Carbon::now()->addMonth()->day(10);
+
+        for($i = 1; $i <= $num_parcelas; $i++){
+            Parcelas_Comissao::create([
+                'comissao_id' => $comissao->id,
+                'numero_parcela' => $i,
+                'valor_parcela' => ($comissao->valor_comissao/$num_parcelas),
+                'data_prevista' => $dataBase->copy()->addMonthsNoOverflow($i - 1),
+                'status' => 'pendente'
+            ]);
+        }
+
+        return true;
+    }
+
+    public function showParcelasComissao($comissao_id){
+        $comissao = Comissoes::findOrFail($comissao_id);
+        return view('/Crm/CRM_parcelas-comissao', ['comissao' => $comissao]);
+    }
+
+    public function updateParcelaComissao(Request $request, $id){
+        $parcela = Parcelas_Comissao::findOrFail($id);
+
+        $parcela->update([
+            'status' => $request->status
+        ]);
+
+        return redirect()->route('read.parcelas', $parcela->comissao->id);
     }
 
     /**
@@ -450,6 +487,8 @@ class CRMController extends Controller
 
         return redirect()->route('read.comissoes');
     }
+    /* FIM DE COMISSÕES */
+    /* ================== */
 
     /**
      * 
@@ -499,7 +538,8 @@ class CRMController extends Controller
         $lead = Lead::findOrFail($request->lead_id);
 
         $lead->update([
-            'valor_definido' => $request->investimento
+            'valor_definido' => $request->investimento,
+            'num_parcelas' => $request->num_parcelas
         ]);
 
         session()->flash('mensagem', 'Investimento definido com sucesso');

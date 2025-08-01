@@ -32,4 +32,8 @@ class Comissoes extends Model
     public function recomendador(){
         return $this->belongsTo(Recomendadores::class, 'recomendador_id');
     }
+
+    public function parcelas(){
+        return $this->hasMany(Parcelas_Comissao::class, 'comissao_id');
+    }
 }

@@ -20,6 +20,7 @@ class Lead extends Model
         'valor_min_sugerido',
         'valor_max_sugerido',
         'valor_definido',
+        'num_parcelas',
         'num_funcionarios',
         'orcamento_gerado', # bool default false
         'contrato_gerado', # bool default false

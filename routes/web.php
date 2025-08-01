@@ -203,6 +203,8 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::
 Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->group(function (){
     Route::get('/CRM/comissoes', 'readComissoes')->name('read.comissoes');
     Route::post('/CRM/comissoes/{comissao_id}/{status}', 'updateStatusComissao')->name('update-status.comissao');
+    Route::get('/CRM/parcelas-comissao/{comissao_id}', 'showParcelasComissao')->name('read.parcelas');
+    Route::post('/CRM/parcelas-comissao/{id}', 'updateParcelaComissao')->name('update.parcela-comissao');
 
     Route::get('/CRM/percentuais-comissao', 'readPercentuaisComissao')->name('read.percentuais-comissao');
     Route::post('/CRM/percentuais-comissao', 'updatePercentualComissao')->name('update.percentuais-comissao');

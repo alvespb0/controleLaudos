@@ -484,6 +484,14 @@
                    data-valor-min="{{ $lead->valor_min_sugerido ?? 0 }}"
                    data-valor-max="{{ $lead->valor_max_sugerido ?? 0 }}"
                    onblur="validateInvestimento(this)">
+            <span class="ms-2 fw-semibold">Parcelas:</span>
+            <input type="number" 
+                   name="num_parcelas"
+                   class="form-control form-control-sm ms-1" 
+                   style="width: 60px; display: inline-block; font-size: 0.85rem; padding: 0.2rem 0.4rem;" 
+                   value="{{ $lead->num_parcelas ?? '' }}" 
+                   min="1"
+                   max="60">
             <button type="submit" class="btn btn-sm btn-outline-primary ms-1" title="Salvar investimento" style="padding: 0.15rem 0.3rem; font-size: 0.75rem;">
               <i class="bi bi-check"></i>
             </button>

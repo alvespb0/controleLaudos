@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('valor_min_sugerido')->nullable();
             $table->decimal('valor_max_sugerido')->nullable();
             $table->decimal('valor_definido')->nullable();
+            $table->integer('num_parcelas')->default(1);
             $table->boolean('orcamento_gerado')->default(false);
             $table->boolean('contrato_gerado')->default(false);
             $table->date('proximo_contato')->nullable();

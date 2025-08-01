@@ -91,7 +91,15 @@
                         <small class="text-muted">{{ $comissao->vendedor->user->email ?? 'N/A' }}</small>
                     </td>
                     <td class="text-center">
-                        <strong class="text-success">R$ {{ number_format($comissao->valor_comissao ?? 0, 2, ',', '.') }}</strong>
+                        @if($comissao->tipo_comissao == 'vendedor')
+                            <a href="{{ route('read.parcelas', $comissao->id) }}" class="text-decoration-none">
+                                <strong class="text-success" style="cursor: pointer;">R$ {{ number_format($comissao->valor_comissao ?? 0, 2, ',', '.') }}</strong>
+                                <br>
+                                <small class="text-muted">Clique para ver parcelas</small>
+                            </a>
+                        @else
+                            <strong class="text-success">R$ {{ number_format($comissao->valor_comissao ?? 0, 2, ',', '.') }}</strong>
+                        @endif
                     </td>
                     <td class="text-center">
                         <span class="badge bg-info">{{ number_format($comissao->percentual_aplicado ?? 0, 2) }}%</span>
