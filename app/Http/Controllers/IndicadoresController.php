@@ -14,6 +14,8 @@ use App\Models\Op_Comercial;
 use App\Models\Op_Tecnico;
 use App\Models\Status;
 use App\Models\File;
+use App\Models\Lead;
+use App\Models\Parcelas_Comissao;
 
 class IndicadoresController extends Controller
 {
@@ -36,8 +38,13 @@ class IndicadoresController extends Controller
 
         $chartDocsTecnico = $this->indicadorDocsPorTecnico($request->dataInicial, $request->dataFinal);
 
+        $chartLeadsGanhosMes = $this->leadsGanhosMes($request->dataInicial, $request->dataFinal);
+        
+        $chartValorTotalMes = $this->lucroPresumidoMesLead($request->dataInicial, $request->dataFinal);
+
         return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
-                    'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos, 'chartDocsStatus' => $chartDocsStatus, 'chartDocsTecnico' => $chartDocsTecnico]);
+                    'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos, 'chartDocsStatus' => $chartDocsStatus, 'chartDocsTecnico' => $chartDocsTecnico,
+                    'chartLeadsGanhosMes' => $chartLeadsGanhosMes, 'chartValorTotalMes' => $chartValorTotalMes]);
     }
 
 
@@ -222,5 +229,93 @@ class IndicadoresController extends Controller
         $chartTecnico->dataset('Documentos por técnico', 'bar', $dataTecnico);
 
         return $chartTecnico;
+    }
+
+    private function leadsGanhosMes($dataInicio = null, $dataFim = null){
+        /* LEADS GANHOS POR MÊS */
+        $query = Lead::query();
+
+        if ($dataInicio) {
+            $query->whereDate('created_at', '>=', $dataInicio);
+        }
+        if ($dataFim) {
+            $query->whereDate('created_at', '<=', $dataFim);
+        }
+
+        $query->where('status_id', 5);
+
+        $leads = $query->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as mes, COUNT(*) as total")
+                        ->groupByRaw("DATE_FORMAT(created_at, '%Y-%m')")
+                        ->orderByRaw("DATE_FORMAT(created_at, '%Y-%m') ASC")
+                        ->get();
+
+        $labelsLeadsGanhos = [];
+        $valoresLeadsGanhos = [];
+
+        foreach ($leads as $registro) {
+            $labelsLeadsGanhos[] = Carbon::createFromFormat('Y-m', $registro->mes)->translatedFormat('F Y');
+            $valoresLeadsGanhos[] = $registro->total;
+        }
+
+        $chartLeadsGanhos = new Chart;
+        $chartLeadsGanhos->labels($labelsLeadsGanhos);
+        $chartLeadsGanhos->dataset('Leads ganhos por Mês', 'bar', $valoresLeadsGanhos)
+            ->backgroundColor('rgba(54, 162, 235, 0.7)');
+        
+        return $chartLeadsGanhos;
+    }
+
+    private function lucroPresumidoMesLead($dataInicio = null, $dataFim = null){
+        $query = Lead::query();
+
+        if ($dataInicio) {
+            $query->whereDate('created_at', '>=', $dataInicio);
+        }
+        if ($dataFim) {
+            $query->whereDate('created_at', '<=', $dataFim);
+        }
+
+        $query->where('status_id', 5);
+
+        $leads = $query->get();
+
+        $parcelasPorMes = [];
+
+        foreach ($leads as $lead) {
+            $valorTotal = $lead->valor_definido;
+            $qtdParcelas = $lead->num_parcelas ?? 1;
+            $valorParcela = $valorTotal / $qtdParcelas;
+
+            // Simular data base como mês seguinte, dia 10
+            $dataBase = Carbon::parse($lead->created_at)->addMonth()->day(10);
+
+            for ($i = 0; $i < $qtdParcelas; $i++) {
+                $dataPrevista = $dataBase->copy()->addMonths($i)->format('Y-m');
+
+                if (!isset($parcelasPorMes[$dataPrevista])) {
+                    $parcelasPorMes[$dataPrevista] = 0;
+                }
+
+                $parcelasPorMes[$dataPrevista] += $valorParcela;
+            }
+        }
+
+        ksort($parcelasPorMes);
+
+        $labelsValorTotal = [];
+        $valoresTotal = [];
+
+        foreach ($parcelasPorMes as $mes => $valor) {
+            $labelsValorTotal[] = Carbon::createFromFormat('Y-m', $mes)->translatedFormat('F Y');
+            $valoresTotal[] = round($valor, 2);
+        }
+
+
+        $chartValorTotal = new Chart;
+        $chartValorTotal->labels($labelsValorTotal);
+        $chartValorTotal->dataset('Total de Leads Ganhos (R$)', 'line', $valoresTotal)
+            ->backgroundColor('rgba(75, 192, 192, 0.7)');
+
+        return $chartValorTotal;
     }
 }
