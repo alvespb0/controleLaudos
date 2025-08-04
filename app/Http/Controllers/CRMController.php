@@ -7,8 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 
-use App\Mail\LeadNotifyMail;
-
 use Illuminate\Http\Request;
 use App\Http\Requests\LeadRequest; 
 
@@ -67,7 +65,6 @@ class CRMController extends Controller
 
         $leads = $leads->get();
 
-        $this->notificaVendedor();
         return view('Crm/CRM_index', ['clientes' => $clientes, 'comercial' => $comercial,
                                         'etapas' => $status_crm, 'leads' => $leads, 'recomendadores' => $recomendadores]);
     }
@@ -503,35 +500,6 @@ class CRMController extends Controller
     public function formularioOrcamento($lead_id){
         $lead = Lead::findOrFail($lead_id);
         return view('/Crm/CRM_orcamento_lead', ['lead' => $lead]);
-    }
-
-    /**
-     * Notifica os vendedores sobre leads que precisam de contato no próximo dia.
-     *
-     * Esta função realiza a busca por leads que possuem um vendedor associado, 
-     * com a data de "próximo_contato" marcada para o próximo dia e que ainda não foram notificados.
-     * Para cada lead encontrado, envia um e-mail ao vendedor associado com a notificação,
-     * e marca o lead como notificado.
-     *
-     * @return void
-     * 
-     * @throws \Illuminate\Mail\MailException Se houver algum erro ao enviar o e-mail.
-     */
-    public function notificaVendedor(){
-        $leads = Lead::whereNotNull('vendedor_id')
-            ->whereNotNull('proximo_contato')
-            ->whereDate('proximo_contato', '=', now()->addDay()->toDateString())
-            ->where('notificado', false)
-            ->get();
-
-        #dd($leads);
-        foreach ($leads as $lead) {
-            Mail::mailer('default')->to($lead->vendedor->user->email)->send(new LeadNotifyMail($lead));
-
-            $lead->update([
-                'notificado' => true
-            ]);
-        }
     }
 
     public function updateInvestimentoLead(Request $request){

@@ -657,7 +657,7 @@
           </div>
           <div class="mb-3">
             <label for="observacoes" class="form-label">Próximo contato</label>
-            <input type="date" name="proximo_contato" class="form-control" id="" value="{{$lead->proximo_contato ? $lead->proximo_contato : ''}}">
+            <input type="datetime-local" name="proximo_contato" class="form-control" id="" value="{{$lead->proximo_contato ? date('Y-m-d\TH:i', strtotime($lead->proximo_contato)) : ''}}">
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Observações</label>
@@ -747,7 +747,7 @@
           </div>
           <div class="mb-3">
             <label for="observacoes" class="form-label">Próximo contato</label>
-            <input type="date" name="proximo_contato" class="form-control" id="">
+            <input type="datetime-local" name="proximo_contato" class="form-control" id="">
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Observações</label>

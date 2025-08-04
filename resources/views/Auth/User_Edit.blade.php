@@ -40,12 +40,6 @@
                         <option value="seguranca" {{$user->tipo == 'seguranca' ? 'selected' : ''}}>seguranca</option>
                     </select>
                 </div>
-
-                <div class="mb-3" id="comissaoField" style="display: none;">
-                    <i class="bi bi-percent"></i><label for="percentual_comissao" class="form-label">&nbspPercentual de Comissão (%)</label>
-                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="percentual_comissao" name="percentual_comissao" placeholder="Ex: 5.50" value="{{ $user->comercial->percentual_comissao ?? '' }}">
-                </div>
-
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary col-sm-12">Editar</button>
                 </div>
