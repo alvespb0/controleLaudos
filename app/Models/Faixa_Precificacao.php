@@ -16,7 +16,8 @@ class Faixa_Precificacao extends Model
         'valor_min',
         'valor_max',
         'percentual_reajuste',
-        'preco'
+        'preco_min',
+        'preco_max'
     ];
 
     public function variavel(){

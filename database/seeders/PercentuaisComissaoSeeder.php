@@ -25,7 +25,7 @@ class PercentuaisComissaoSeeder extends Seeder
         
         Percentuais_Comissao::create([
             'tipo_cliente' => 'resgatado',
-            'percentual' => 4
+            'percentual' => 3
         ]);
     }
 }

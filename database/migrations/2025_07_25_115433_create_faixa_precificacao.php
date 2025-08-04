@@ -17,7 +17,8 @@ return new class extends Migration
             $table->decimal('valor_min');
             $table->decimal('valor_max');
             $table->decimal('percentual_reajuste')->nullable();
-            $table->decimal('preco', 10,2)->nullable();
+            $table->decimal('preco_min', 10,2)->nullable();
+            $table->decimal('preco_max', 10,2)->nullable();
             $table->timestamps();
             $table->foreign('variavel_id')->references('id')->on('variaveis_precificacao')->onDelete('cascade');
         });

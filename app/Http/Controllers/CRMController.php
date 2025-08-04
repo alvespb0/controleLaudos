@@ -121,10 +121,12 @@ class CRMController extends Controller
         $precoDist = $this->precificaDistancia($cliente); # retorna array, percentual e preço
         $precoFunc = $this->precificaNumFuncionarios($num_funcionarios); # retorna array, percentual e preco
         
-        $precoFinal = 0;
+        $precoFinalMin = 0;
+        $precoFinalMax = 0;
 
         if ($precoDist != null) {
-            $precoFinal += $precoDist;
+            $precoFinalMin += $precoDist;
+            $precoFinalMax += $precoDist;
         }
 
         if ($precoFunc != null) {
@@ -132,11 +134,12 @@ class CRMController extends Controller
                 ? $precoFunc['percentual_reajuste'] / 100
                 : 1;
 
-            $precoFinal += $precoFunc['preco'] * $reajusteFunc;
+            $precoFinalMin += $precoFunc['preco_min'] * $reajusteFunc;
+            $precoFinalMax += $precoFunc['preco_max'] * $reajusteFunc;
         }
         $retorno = [
-            'valor_min_sugerido' => $precoFinal * 0.95,
-            'valor_max_sugerido' => $precoFinal * 1.05,
+            'valor_min_sugerido' => $precoFinalMin,
+            'valor_max_sugerido' => $precoFinalMax,
         ];
 
         return $retorno;
@@ -165,7 +168,7 @@ class CRMController extends Controller
         $distancia = $cliente->endereco->distancia;
 
         foreach ($precificacao as $p) {
-            return $distancia * $p->valor; 
+            return $distancia * $p->valor * 2; 
         }
     }
 
@@ -194,7 +197,8 @@ class CRMController extends Controller
                 if($faixa->valor_min <= $num_funcionarios && $num_funcionarios <= $faixa->valor_max){
                     $retorno = [
                         'percentual_reajuste' => $faixa->percentual_reajuste,
-                        'preco' => $faixa->preco
+                        'preco_min' => $faixa->preco_min,
+                        'preco_max' => $faixa->preco_max
                     ];
                     return $retorno;
                 }

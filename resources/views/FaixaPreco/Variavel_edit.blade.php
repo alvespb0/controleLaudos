@@ -23,6 +23,7 @@
                         <option value="bool" {{$variavel->tipo == 'bool' ? 'selected' : ''}}>Bool</option>
                         <option value="valor" {{$variavel->tipo == 'valor' ? 'selected' : ''}}>Valor</option>
                         <option value="faixa" {{$variavel->tipo == 'faixa' ? 'selected' : ''}}>Faixa</option>
+                        <option value="percentual" {{$variavel->tipo == 'percentual' ? 'selected' : ''}}>Percentual</option>
                     </select>
                 </div>
                 <div class="mb-3" id="div_nome_variavel">

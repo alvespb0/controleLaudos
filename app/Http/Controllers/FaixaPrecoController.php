@@ -130,6 +130,11 @@ class FaixaPrecoController extends Controller
                 session()->flash('error', 'Faixa sobrepõe a existente de ' . $faixa->valor_min . ' até ' . $faixa->valor_max);
                 return redirect()->route('faixa.preco', $request->variavel_id);
             }
+
+            if ($request->preco_min <= $faixa->preco_max && $request->preco_max >= $faixa->preco_min) {
+                session()->flash('error', 'Faixa sobrepõe a existente de ' . $faixa->valor_min . ' até ' . $faixa->valor_max);
+                return redirect()->route('faixa.preco', $request->variavel_id);
+            }
         }
 
         Faixa_Precificacao::create([
@@ -137,7 +142,8 @@ class FaixaPrecoController extends Controller
             'valor_min' => $request->valor_min,
             'valor_max' => $request->valor_max,
             'percentual_reajuste' => $request->percentual_reajuste,
-            'preco' => $request->preco
+            'preco_min' => $request->preco_min,
+            'preco_max' => $request->preco_max
         ]);
 
         session()->flash('mensagem', 'Faixa criada com sucesso');
@@ -172,7 +178,8 @@ class FaixaPrecoController extends Controller
             'valor_min' => $request->valor_min,
             'valor_max' => $request->valor_max,
             'percentual_reajuste' => $request->percentual_reajuste,
-            'preco' => $request->preco
+            'preco_min' => $request->preco_min,
+            'preco_max' => $request->preco_max
         ]);
 
         session()->flash('mensagem', 'Faixa alterada com sucesso');

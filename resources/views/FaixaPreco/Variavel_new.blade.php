@@ -23,6 +23,7 @@
                         <option value="bool">Bool</option>
                         <option value="valor">Valor</option>
                         <option value="faixa">Faixa</option>
+                        <option value="percentual">percentual</option>
                     </select>
                 </div>
                 <div class="mb-3" id="div_nome_variavel">

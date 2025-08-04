@@ -26,7 +26,8 @@ class FaixasPrecificacaoRequest extends FormRequest
             'valor_min' => 'required|numeric|min:0',
             'valor_max' => 'required|numeric|min:0|gte:valor_min',
             'percentual_reajuste' => 'nullable|numeric|min:0',
-            'preco' => 'nullable|numeric|min:0'
+            'preco_min' => 'nullable|numeric|min:0',
+            'preco_max' => 'nullable|numeric|min:0|gte:preco_min'
         ];
     }
 
@@ -45,8 +46,12 @@ class FaixasPrecificacaoRequest extends FormRequest
             'percentual_reajuste.numeric' => 'O percentual de reajuste deve ser um número.',
             'percentual_reajuste.min' => 'O percentual de reajuste deve ser no mínimo 0.',
 
-            'preco.numeric' => 'O preço deve ser um número.',
-            'preco.min' => 'O preço deve ser no mínimo 0.',
+            'preco_min.numeric' => 'O preço deve ser um número.',
+            'preco_min.min' => 'O preço deve ser no mínimo 0.',
+
+            'preco_max.numeric' => 'O preço máximo deve ser um número.',
+            'preco_max.min' => 'O preço máximo deve ser no mínimo 0.',
+            'preco_max.gte' => 'O preço máximo deve ser maior que o preço minimo.',
         ];
     }
 

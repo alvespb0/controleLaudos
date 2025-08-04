@@ -49,13 +49,15 @@
                     <td class="text-center">
                         @if($variavel->tipo == 'faixa')
                             <span class="text-muted fst-italic">Valor definido por faixa</span>
+                        @elseif($variavel->tipo == 'percentual')
+                            {{ $variavel->valor ? '% ' . number_format($variavel->valor, 2, ',', '.') : '-' }}
                         @else
                             {{ $variavel->valor ? 'R$ ' . number_format($variavel->valor, 2, ',', '.') : '-' }}
                         @endif
                     </td>
                     <td class="text-end">
                         <a href="{{ route('alteracao.variavel', $variavel->id )}}" class="btn btn-sm btn-outline-primary me-2" title="Editar"><i class="bi bi-pencil"></i></a>
-                        @if($variavel->id != 1 && $variavel->id != 2)
+                        @if($variavel->id != 1 && $variavel->id != 2 && $variavel->id != 3)
                             <a href="{{ route('delete.variavel', $variavel->id) }}" class="btn btn-sm btn-outline-danger" title="excluir" onclick="return confirm('Tem certeza que deseja excluir esta variável?')"><i class="bi bi-trash"></i></a>
                         @endif
                     </td>

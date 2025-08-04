@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('variaveis_precificacao', function (Blueprint $table) {
             $table->id();
             $table->string('nome')->unique();
-            $table->enum('tipo', ['faixa', 'valor', 'bool']);
+            $table->enum('tipo', ['faixa', 'valor', 'bool', 'percentual']);
             $table->string('campo_alvo');
             $table->decimal('valor', 10, 2)->nullable(); # Para os tipos valor e bool
             $table->boolean('ativo')->default(1);

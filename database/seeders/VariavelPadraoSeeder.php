@@ -25,5 +25,11 @@ class VariavelPadraoSeeder extends Seeder
             'tipo' => 'valor',
         ]);
 
+        Variaveis_Precificacao::Create([
+            'nome' => 'Imposto',
+            'campo_alvo' => 'Imposto em cima do valor bruto',
+            'tipo' => 'percentual',
+            'valor' => 22
+        ]);
     }
 }
