@@ -105,7 +105,7 @@ class CRMController extends Controller
      *
      * Esta função utiliza duas outras funções auxiliares:
      * - `precificaDistancia($cliente)`: retorna o valor fixo baseado na distância.
-     * - `precificaNumFuncionarios($num_funcionarios)`: retorna um array com 'preco' base e 'percentual_reajuste'.
+     * - `precificaNumFuncionarios($num_funcionarios)`: retorna um array com 'preco_min' 'preco_max' e 'percentual_reajuste'.
      *
      * A fórmula do valor final considera a soma do valor da distância e do valor ajustado por número de funcionários.
      * Com base no total, são calculadas sugestões de preço mínimo (−5%) e máximo (+5%).
@@ -114,8 +114,8 @@ class CRMController extends Controller
      * @param int    $num_funcionarios Quantidade de funcionários da empresa do lead.
      *
      * @return array Retorna um array com os valores sugeridos:
-     *               - 'valor_min_sugerido' (float): 5% abaixo do valor final.
-     *               - 'valor_max_sugerido' (float): 5% acima do valor final.
+     *               - 'valor_min_sugerido' (float): Valor baseado nas faixas de precificação
+     *               - 'valor_max_sugerido' (float): Valor baseado nas faixas de precificação
      */
     public function precificaLead($cliente, $num_funcionarios){
         $precoDist = $this->precificaDistancia($cliente); # retorna array, percentual e preço
@@ -514,8 +514,37 @@ class CRMController extends Controller
             'num_parcelas' => $request->num_parcelas
         ]);
 
+
+        $this->setComissaoEstipulada($lead);
+        $this->setRetornoEmpresa($lead);
+
         session()->flash('mensagem', 'Investimento definido com sucesso');
 
         return redirect()->route('show.CRM');
+    }
+
+    private function setComissaoEstipulada($lead){
+        $percentuais = Percentuais_Comissao::all();
+        
+        foreach($percentuais as $value){
+            $porcentagemTotal = $value->percentual;
+            if($lead->cliente->tipo_cliente === $value->tipo_cliente){
+                return $lead->update([
+                    'comissao_estipulada' => $lead->valor_definido * ($porcentagemTotal/100),
+                ]);
+            }
+        }
+    }
+    
+    private function setRetornoEmpresa($lead){
+        $precificacao = Variaveis_Precificacao::where('nome', 'Imposto')->first();
+
+        if(!$precificacao){
+            return null;
+        }
+
+        $total = ($lead->valor_definido ?? 0) * ((100 - $precificacao->valor) / 100) - ($lead->comissao_estipulada ?? 0);
+
+        return $lead->update(['retorno_empresa' => $total]);
     }
 }

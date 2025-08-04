@@ -514,6 +514,35 @@
           </span>
         </li>
         <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-calculator me-2 text-primary" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Comissão Estipulada:</span>
+          @if($lead->valor_definido)
+            <span class="ms-1 text-dark" style="font-size: 0.9rem;">
+              R$ {{ number_format($lead->comissao_estipulada ?? 0, 2, ',', '.') }}
+            </span>
+          @else
+            <span class="ms-1 text-muted" style="font-size: 0.9rem; font-style: italic;">
+              <i class="bi bi-info-circle me-1"></i>Defina um valor de investimento para calcular a comissão
+            </span>
+          @endif
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-graph-up me-2 text-success" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Retorno da Empresa:</span>
+          @if($lead->valor_definido)
+            <span class="ms-1 text-dark" style="font-size: 0.9rem;">
+              R$ {{ number_format($lead->retorno_empresa ?? 0, 2, ',', '.') }}
+            </span>
+            <span class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Cálculo estimado: valor bruto menos impostos e comissão. Não inclui custos administrativos, operacionais ou estruturais da empresa.">
+              <i class="bi bi-exclamation-circle text-warning" style="font-size: 0.8rem;"></i>
+            </span>
+          @else
+            <span class="ms-1 text-muted" style="font-size: 0.9rem; font-style: italic;">
+              <i class="bi bi-info-circle me-1"></i>Defina um valor de investimento para calcular o retorno
+            </span>
+          @endif
+        </li>
+        <li class="d-flex align-items-center mb-2">
           <i class="bi bi-person-lines-fill me-2 text-secondary" style="font-size:1.1rem;"></i>
           <span class="fw-semibold">Nome do Contato:</span>
           <span class="ms-1 text-dark">{{ $lead->nome_contato ?? '-' }}</span>
@@ -966,4 +995,19 @@ window.addEventListener('DOMContentLoaded', function() {
 @push('head')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
+
+<!-- Inicializar tooltips do Bootstrap -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar todos os tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            trigger: 'hover',
+            placement: 'top',
+            html: true
+        });
+    });
+});
+</script>
 @endsection

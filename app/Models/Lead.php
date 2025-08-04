@@ -21,10 +21,11 @@ class Lead extends Model
         'valor_max_sugerido',
         'valor_definido',
         'num_parcelas',
+        'comissao_estipulada',
+        'retorno_empresa',
         'num_funcionarios',
         'orcamento_gerado', # bool default false
         'contrato_gerado', # bool default false
-        'notificado',
         'proximo_contato',
         'recomendador_id'
     ];
