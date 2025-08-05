@@ -232,6 +232,21 @@
         box-shadow: 0 2px 8px rgba(44,100,92,0.13);
         transition: background 0.18s, color 0.18s;
     }
+    
+    /* Estilos simples para modais */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .btn-close-white {
+        filter: brightness(0) invert(1);
+    }
+    
+    .crm-value {
+        color: var(--secondary-color);
+        font-weight: 500;
+    }
 </style>
 
 <div class="crm-kanban-toolbar">
@@ -310,9 +325,11 @@
 <div class="modal fade" id="modalDetalhesLead{{ $lead->id }}" tabindex="-1" aria-labelledby="modalDetalhesLeadLabel{{ $lead->id }}" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="min-height: 70vh;">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalDetalhesLeadLabel{{ $lead->id }}">Detalhes do Lead</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;">
+        <h5 class="modal-title" id="modalDetalhesLeadLabel{{ $lead->id }}">
+          <i class="bi bi-person-circle me-2"></i>Detalhes do Lead
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
       <div class="modal-body">
         <div class="row mb-3">
@@ -323,21 +340,35 @@
                   <i class="bi bi-person-circle me-2" style="font-size:2rem;color:var(--primary-color)"></i>
                   <h4 class="mb-0">{{ $lead->cliente->nome ?? '' }}</h4>
                   @if($lead->cliente->tipo_cliente == 'novo')
-                      <span class="badge bg-success ms-2 text-dark">Cliente Novo</span>
+                      <span class="badge rounded-pill bg-success ms-2 text-white" style="font-size: 0.85rem;">
+                        <i class="bi bi-star-fill me-1"></i>Cliente Novo
+                      </span>
                   @elseif($lead->cliente->tipo_cliente == 'renovacao')
-                      <span class="badge bg-warning ms-2 text-dark">Cliente Renovação</span>
+                      <span class="badge rounded-pill bg-warning ms-2 text-dark" style="font-size: 0.85rem;">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Renovação
+                      </span>
                   @elseif($lead->cliente->tipo_cliente == 'resgatado')
-                      <span class="badge bg-warning ms-2 text-dark">Cliente Resgatado</span>
+                      <span class="badge rounded-pill bg-info ms-2 text-white" style="font-size: 0.85rem;">
+                        <i class="bi bi-recycle me-1"></i>Resgatado
+                      </span>
                   @endif
                   @if($lead->orcamento_gerado)
-                    <span class="badge bg-info ms-2">Orçamento Gerado</span>
+                    <span class="badge rounded-pill bg-primary ms-2 text-white" style="font-size: 0.85rem;">
+                      <i class="bi bi-file-earmark-check me-1"></i>Orçamento OK
+                    </span>
                   @else
-                    <span class="badge bg-warning text-dark ms-2">Sem Orçamento</span>
+                    <span class="badge rounded-pill bg-warning ms-2 text-dark" style="font-size: 0.85rem;">
+                      <i class="bi bi-file-earmark-x me-1"></i>Sem Orçamento
+                    </span>
                   @endif
                   @if($lead->contrato_gerado)
-                    <span class="badge bg-info ms-2">Contrato Gerado</span>
+                    <span class="badge rounded-pill bg-success ms-2 text-white" style="font-size: 0.85rem;">
+                      <i class="bi bi-file-earmark-text me-1"></i>Contrato OK
+                    </span>
                   @else
-                    <span class="badge bg-warning text-dark ms-2">Sem Contrato</span>
+                    <span class="badge rounded-pill bg-warning ms-2 text-dark" style="font-size: 0.85rem;">
+                      <i class="bi bi-file-earmark-x me-1"></i>Sem Contrato
+                    </span>
                   @endif
                   <form method="GET" action="{{ route('gerar.orcamentoLead', $lead->id) }}" class="ms-2 d-inline">
                     <button type="submit" class="btn btn-orcamento align-middle">
@@ -542,6 +573,33 @@
             </span>
           @endif
         </li>
+        @if(Auth::user()->tipo == 'admin')
+        <li class="d-flex align-items-center mb-2">
+          <i class="bi bi-cash-stack me-2 text-warning" style="font-size:1.1rem;"></i>
+          <span class="fw-semibold">Comissão Personalizada:</span>
+          <form method="POST" action="{{ route('update.comissao-personalizada') }}" class="ms-1 d-flex align-items-center" style="display: inline-flex !important; font-size: 0.9rem;">
+            @csrf
+            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+            <span class="me-1">R$</span>
+            <input type="number" 
+                   name="comissao_personalizada"
+                   class="form-control form-control-sm comissao-personalizada-input" 
+                   style="width: 120px; display: inline-block; font-size: 0.85rem; padding: 0.2rem 0.4rem;" 
+                   value="{{ $lead->comissao_personalizada ?? '' }}" 
+                   step="0.01" 
+                   min="0"
+                   placeholder="0,00">
+            <button type="submit" class="btn btn-sm btn-outline-warning ms-1" title="Salvar comissão personalizada" style="padding: 0.15rem 0.3rem; font-size: 0.75rem;">
+              <i class="bi bi-check"></i>
+            </button>
+            @if($lead->comissao_personalizada)
+              <span class="ms-1 badge bg-warning text-dark" style="font-size: 0.7rem;">
+                <i class="bi bi-star-fill me-1"></i>Personalizada
+              </span>
+            @endif
+          </form>
+        </li>
+        @endif
         <li class="d-flex align-items-center mb-2">
           <i class="bi bi-person-lines-fill me-2 text-secondary" style="font-size:1.1rem;"></i>
           <span class="fw-semibold">Nome do Contato:</span>
@@ -601,7 +659,7 @@
           <input type="hidden" name="lead_id" value="{{ $lead->id }}">
           <div class="mb-3">
             <label for="num_parcelas" class="form-label">Quantas parcelas acertadas com o cliente?</label>
-            <input type="number" name="num_parcelas" id="num_parcelas" class="form-control" min="1" required>
+            <input type="number" name="num_parcelas" id="num_parcelas" class="form-control" min="1" value="{{$lead->num_parcelas ?? ''}}" required>
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary">Gerar Contrato</button>
@@ -664,9 +722,11 @@
 <div class="modal fade" id="modalEditarLead{{ $lead->id }}" tabindex="-1" aria-labelledby="modalEditarLeadLabel{{ $lead->id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalEditarLeadLabel{{ $lead->id }}">Editar Lead (ID: {{ $lead->id }})</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;">
+        <h5 class="modal-title" id="modalEditarLeadLabel{{ $lead->id }}">
+          <i class="bi bi-pencil-square me-2"></i>Editar Lead
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
       <div class="modal-body">
         <p>ID do Lead: <strong>{{ $lead->id }}</strong></p>
@@ -740,9 +800,11 @@
     <div class="modal-content">
       <form action="{{route('create.lead')}}" method="POST">
         @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalCadastroLeadLabel">Cadastrar Lead</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;">
+          <h5 class="modal-title" id="modalCadastroLeadLabel">
+            <i class="bi bi-plus-circle me-2"></i>Cadastrar Nova Oportunidade
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
           <!-- Campo de etapa dinâmico -->

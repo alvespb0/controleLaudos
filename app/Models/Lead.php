@@ -22,6 +22,7 @@ class Lead extends Model
         'valor_definido',
         'num_parcelas',
         'comissao_estipulada',
+        'comissao_personalizada',
         'retorno_empresa',
         'num_funcionarios',
         'orcamento_gerado', # bool default false

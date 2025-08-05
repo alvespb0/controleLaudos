@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('valor_definido')->nullable();
             $table->integer('num_parcelas')->default(1);
             $table->decimal('comissao_estipulada')->nullable();
+            $table->decimal('comissao_personalizada')->nullable();
             $table->decimal('retorno_empresa')->nullable();
             $table->boolean('orcamento_gerado')->default(false);
             $table->boolean('contrato_gerado')->default(false);

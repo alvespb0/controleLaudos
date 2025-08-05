@@ -332,6 +332,21 @@ class CRMController extends Controller
         return view('Crm/CRM_percentuais-comissao', ['percentuais' => $percentuais]);
     }
 
+    public function updateComissaoPersonalizada(Request $request){
+        $lead = Lead::findOrFail($request->lead_id);
+
+        $lead->update([
+            'comissao_personalizada' => $request->comissao_personalizada
+        ]);
+
+        if($lead->valor_definido !== null){
+            $this->setComissaoEstipulada($lead);
+            $this->setRetornoEmpresa($lead);
+        }
+
+        return redirect()->route('show.CRM');
+    }
+
     /**
      * Dá update no percentual de comissão dado o percentual_id
      * @param Request $request
@@ -362,6 +377,40 @@ class CRMController extends Controller
     public function createComissao($lead){
         $percentuais = Percentuais_Comissao::all();
         
+        if($lead->comissao_personalizada !== null){
+            $porcentagemTotal = $lead->comissao_personalizada;
+            if(!$lead->recomendador_id){
+                $comissao = Comissoes::create([
+                    'lead_id' => $lead->id,
+                    'vendedor_id' => $lead->vendedor->id,
+                    'valor_comissao' => $lead->valor_definido * ($porcentagemTotal/100),
+                    'percentual_aplicado' => $porcentagemTotal,
+                    'tipo_comissao' => 'vendedor',
+                    'status' => 'pendente'
+                ]);
+                $this->createParcelasComissao($comissao);                   
+            }else{
+                $comissao = Comissoes::create([
+                    'lead_id' => $lead->id,
+                    'vendedor_id' => $lead->vendedor->id,
+                    'valor_comissao' => max(0, $lead->valor_definido * (($porcentagemTotal - 2) / 100)),
+                    'percentual_aplicado' => $porcentagemTotal - 2,
+                    'tipo_comissao' => 'vendedor',
+                    'status' => 'pendente'
+                ]);
+                Comissoes::create([
+                    'lead_id' => $lead->id,
+                    'valor_comissao' => $lead->valor_definido * 0.02,
+                    'percentual_aplicado' => 2,
+                    'tipo_comissao' => 'indicador',
+                    'status' => 'pendente',
+                    'recomendador_id' => $lead->recomendador_id
+                ]);
+                $this->createParcelasComissao($comissao);
+            }
+            return true;
+        }
+
         foreach($percentuais as $value){
             $porcentagemTotal = $value->percentual;
             if($lead->cliente->tipo_cliente === $value->tipo_cliente){
@@ -526,6 +575,13 @@ class CRMController extends Controller
     private function setComissaoEstipulada($lead){
         $percentuais = Percentuais_Comissao::all();
         
+        if($lead->comissao_personalizada !== null){
+            $porcentagemTotal = $lead->comissao_personalizada;
+            return $lead->update([
+                'comissao_estipulada' => $lead->valor_definido * ($porcentagemTotal/100),
+            ]);
+        }
+
         foreach($percentuais as $value){
             $porcentagemTotal = $value->percentual;
             if($lead->cliente->tipo_cliente === $value->tipo_cliente){
