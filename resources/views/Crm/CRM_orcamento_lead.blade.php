@@ -56,7 +56,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="parcelasTexto" class="form-label">Número de Parcelas</label>
-                    <input type="number" min=1 class="form-control" name="parcelasTexto" id="parcelasTexto" placeholder = "Insira o número de parcelas do investimento">
+                    <input type="number" min=1 class="form-control" name="parcelasTexto" id="parcelasTexto" value="{{ $lead->num_parcelas ? $lead->num_parcelas : ''}}" placeholder = "Insira o número de parcelas do investimento">
                 </div>
                 <input type="hidden" name="lead_id" value="{{$lead->id}}">
                 <input type="hidden" name="cliente_id" value="{{$lead->cliente->id}}">

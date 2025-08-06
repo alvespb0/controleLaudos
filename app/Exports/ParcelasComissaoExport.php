@@ -63,7 +63,7 @@ class ParcelasComissaoExport implements FromCollection,
         return [
             $parcelas->id,
             optional($parcelas->comissao)->vendedor->usuario ?? 'N/A',
-            optional($parcelas->comissao)->lead->nome ?? 'N/A',
+            optional($parcelas->comissao)->lead->cliente->nome ?? 'N/A',
             $parcelas->numero_parcela,
             $parcelas->valor_parcela ?? 'N/A',
             $parcelas->data_prevista ?? 'N/A',

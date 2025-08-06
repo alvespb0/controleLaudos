@@ -84,9 +84,12 @@ class FileController extends Controller
         $valorParcela = $investimento/$parcelas;
         $textoParcela = '';
         $contador = 1;
+        $dataInicial = Carbon::now(); 
+        for ($i = 1; $i <= $parcelas; $i++) {
+            $dataVencimento = $dataInicial->copy()->addMonthsNoOverflow($i)->day(5); // dia 5 de cada mês
+            $dataFormatada = $dataVencimento->format('d/m/Y');
 
-        for ($i = 0; $i < $parcelas; $i++) {
-            $textoParcela .= $contador . 'ª parcela: R$' . number_format($valorParcela, 2, ',', '.') . "\n";
+            $textoParcela .= $contador . 'ª parcela: R$' . number_format($valorParcela, 2, ',', '.') . " - Vencimento: {$dataFormatada}\n";
             $contador++;
         }
 
@@ -150,7 +153,7 @@ class FileController extends Controller
         $textoParcela = '';
         $contador = 1;
         $dataInicial = Carbon::now(); 
-        for ($i = 0; $i < $parcelas; $i++) {
+        for ($i = 1; $i <= $parcelas; $i++) {
             $dataVencimento = $dataInicial->copy()->addMonthsNoOverflow($i)->day(5); // dia 5 de cada mês
             $dataFormatada = $dataVencimento->format('d/m/Y');
 
@@ -223,7 +226,7 @@ class FileController extends Controller
         $textoParcela = '';
         $contador = 1;
         $dataInicial = Carbon::now(); 
-        for ($i = 0; $i < $parcelas; $i++) {
+        for ($i = 1; $i <= $parcelas; $i++) {
             $dataVencimento = $dataInicial->copy()->addMonthsNoOverflow($i)->day(5); // dia 5 de cada mês
             $dataFormatada = $dataVencimento->format('d/m/Y');
 
