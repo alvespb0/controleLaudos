@@ -7,6 +7,7 @@ use App\Exports\LaudosExport;
 use App\Exports\ClientesExport;
 use App\Exports\DocumentoExport;
 use App\Exports\CrmExport;
+use App\Exports\ComissaoMultiSheetExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Status;
@@ -70,6 +71,15 @@ class RelatorioLaudoController extends Controller
                 'etapa' => $request->etapaCRM #id
             ];
             return Excel::download(new CrmExport($filtros), 'relatorio_CRM.xlsx');
+        }elseif($tipo === 'comissoes'){
+            $filtros = [
+                'dataInicioComissoes' => $request->dataInicioComissoes,
+                'dataFimComissoes' => $request->dataFimComissao,
+                'statusComissao' => $request->statusComissao,
+                'vendedorComissoes' => $request->vendedorComissoes
+            ];
+            return Excel::download(new ComissaoMultiSheetExport($filtros),'Relatorio_Comissoes.xlsx');
+
         }
     }
 
