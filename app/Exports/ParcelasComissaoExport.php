@@ -65,7 +65,7 @@ class ParcelasComissaoExport implements FromCollection,
             optional($parcelas->comissao)->vendedor->usuario ?? 'N/A',
             optional($parcelas->comissao)->lead->cliente->nome ?? 'N/A',
             $parcelas->numero_parcela,
-            $parcelas->valor_parcela ?? 'N/A',
+            $parcelas->valor_parcela !== null ? 'R$' . number_format($parcelas->valor_parcela, 2, ',', '') : 'N\A',
             $parcelas->data_prevista ?? 'N/A',
             $parcelas->status ?? 'N/A',
         ];
