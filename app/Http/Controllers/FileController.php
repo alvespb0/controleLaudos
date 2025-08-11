@@ -395,6 +395,15 @@ class FileController extends Controller
     public function validaOrcamentoLead($lead_id){
         $lead = Lead::findOrFail($lead_id);
 
+        activity('lead_usuario')
+                ->performedOn($lead)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'de' => 'Sem orçamento',
+                    'para' => 'Orçamento gerado'
+                ])
+        ->log("Gerado orçamento para o lead");
+        
         return $lead->update([
             'orcamento_gerado' => 1
         ]);
@@ -402,6 +411,15 @@ class FileController extends Controller
 
     public function validaContratoLead($lead_id){
         $lead = Lead::findOrFail($lead_id);
+        
+        activity('lead_usuario')
+                ->performedOn($lead)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'de' => 'Sem contrato gerado',
+                    'para' => 'Contrato gerado'
+                ])
+        ->log("Gerado contrato para o lead");
 
         return $lead->update([
             'contrato_gerado' => 1

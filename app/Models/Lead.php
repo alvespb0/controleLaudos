@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Lead extends Model
 {
     protected $table = 'leads';
 
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'cliente_id',
@@ -30,6 +33,23 @@ class Lead extends Model
         'proximo_contato',
         'recomendador_id'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'vendedor_id',
+                'status_id',
+                'observacoes',
+                'nome_contato',
+                'valor_definido',
+                'orcamento_gerado',
+                'contrato_gerado'
+            ])
+            ->logOnlyDirty()
+            ->useLogName('auditoria')
+            ->setDescriptionForEvent(fn (string $eventName) => "Lead foi {$eventName}");
+    }
 
     public function cliente(){
         return $this->belongsTo(Cliente::class);

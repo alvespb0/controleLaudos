@@ -247,6 +247,36 @@
         color: var(--secondary-color);
         font-weight: 500;
     }
+    
+    /* Estilos para os logs de movimentação */
+    .timeline-logs {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .log-item {
+        transition: all 0.2s ease;
+        border-left: 3px solid var(--primary-color) !important;
+    }
+    
+    .log-item:hover {
+        background-color: #e3f2fd !important;
+        transform: translateX(2px);
+    }
+    
+    .log-description {
+        font-size: 0.9rem;
+        color: #374151;
+        line-height: 1.4;
+    }
+    
+    .btn-link:hover {
+        background-color: transparent !important;
+    }
+    
+    .btn-link:focus {
+        box-shadow: none !important;
+    }
 </style>
 
 <div class="crm-kanban-toolbar">
@@ -621,6 +651,56 @@
           <span class="ms-1 text-dark">{{ $lead->observacoes ?? '-' }}</span>
         </li>
       </ul>
+    </div>
+  </div>
+  
+  <!-- Campo colapsável para logs de movimentação -->
+  <div class="card border-0 shadow-sm mb-3" style="background: #fafdff;">
+    <div class="card-header bg-light border-0">
+      <button class="btn btn-link text-decoration-none p-0 w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#logsMovimentacao{{ $lead->id }}" aria-expanded="false" aria-controls="logsMovimentacao{{ $lead->id }}">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-clock-history me-2 text-primary" style="font-size:1.1rem;"></i>
+            <span class="fw-semibold">Histórico de Movimentações</span>
+          </div>
+          <i class="bi bi-chevron-down" id="iconLogs{{ $lead->id }}"></i>
+        </div>
+      </button>
+    </div>
+    <div class="collapse" id="logsMovimentacao{{ $lead->id }}">
+      <div class="card-body p-3">
+        @if($lead->activities()->where('log_name', 'lead_usuario')->count() > 0)
+          <div class="timeline-logs">
+            @foreach ($lead->activities()->where('log_name', 'lead_usuario')->latest()->get() as $log)
+              <div class="log-item d-flex align-items-start mb-3 p-2 border-start border-3 border-primary bg-light rounded">
+                <div class="flex-shrink-0 me-3">
+                  <i class="bi bi-circle-fill text-primary" style="font-size: 0.5rem;"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="d-flex align-items-center mb-1">
+                    <small class="text-muted me-2">
+                      <i class="bi bi-calendar3 me-1"></i>
+                      {{ $log->created_at->format('d/m/Y H:i') }}
+                    </small>
+                    <small class="text-primary fw-semibold">
+                      <i class="bi bi-person me-1"></i>
+                      {{ $log->causer?->name ?? 'Sistema' }}
+                    </small>
+                  </div>
+                  <div class="log-description">
+                    {{ $log->description }}
+                  </div>
+                </div>
+              </div>
+            @endforeach
+          </div>
+        @else
+          <div class="text-center text-muted py-3">
+            <i class="bi bi-info-circle me-2"></i>
+            Nenhuma movimentação registrada ainda
+          </div>
+        @endif
+      </div>
     </div>
   </div>
   </div>
@@ -1022,6 +1102,24 @@
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.investimento-input').forEach(function(input) {
       validateInvestimento(input);
+    });
+    
+    // Controle da rotação do ícone dos logs de movimentação
+    document.querySelectorAll('[id^="logsMovimentacao"]').forEach(function(collapseElement) {
+      const leadId = collapseElement.id.replace('logsMovimentacao', '');
+      const iconElement = document.getElementById('iconLogs' + leadId);
+      
+      if (iconElement) {
+        collapseElement.addEventListener('show.bs.collapse', function() {
+          iconElement.style.transform = 'rotate(180deg)';
+          iconElement.style.transition = 'transform 0.3s ease';
+        });
+        
+        collapseElement.addEventListener('hide.bs.collapse', function() {
+          iconElement.style.transform = 'rotate(0deg)';
+          iconElement.style.transition = 'transform 0.3s ease';
+        });
+      }
     });
   });
 </script>

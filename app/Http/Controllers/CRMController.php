@@ -222,7 +222,7 @@ class CRMController extends Controller
 
         $cliente = Cliente::findOrFail($request->cliente_id);
         $valores = $this->precificaLead($cliente, $request->num_funcionarios);
-
+        
         $lead->update([
             'vendedor_id' => $user->comercial->id ?? null,
             'observacoes' => $request->observacoes,
@@ -234,6 +234,11 @@ class CRMController extends Controller
             'proximo_contato' => $request->proximo_contato,
             'recomendador_id' => $request->recomendador_id
         ]);
+
+        activity('lead_usuario')
+            ->performedOn($lead)
+            ->causedBy(auth()->user())
+            ->log("Atualizou dados do lead");
 
         session()->flash('mensagem', 'Lead alterado com sucesso');
 
@@ -269,6 +274,9 @@ class CRMController extends Controller
     public function alterStatusLead($lead_id, $etapa_id){
         $lead = Lead::findOrFail($lead_id);
 
+        $oldEtapa_id = $lead->status->id;
+        $oldEtapa_nome = $lead->status->nome;
+
         if ($etapa_id == 5) {
             if (!$this->validaDadosCobranca($lead)) {
                 session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
@@ -293,6 +301,17 @@ class CRMController extends Controller
         $lead->update([
             'status_id' => $etapa_id
         ]);
+
+        $lead->refresh();
+        
+        activity('lead_usuario')
+                ->performedOn($lead)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'de' => Status_Crm::find($oldEtapa_id)->nome,
+                    'para' => $lead->status->nome
+                ])
+                ->log("Mudou o status do lead de '{$oldEtapa_nome}' para '{$lead->status->nome}'");
 
         if($lead->status_id == 5){
             $this->createComissao($lead);
@@ -558,11 +577,22 @@ class CRMController extends Controller
     public function updateInvestimentoLead(Request $request){
         $lead = Lead::findOrFail($request->lead_id);
 
+        $oldLeadInvestimento = $lead->valor_definido;
         $lead->update([
             'valor_definido' => $request->investimento,
             'num_parcelas' => $request->num_parcelas
         ]);
 
+        $lead->refresh();
+
+        activity('lead_usuario')
+                ->performedOn($lead)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'de' => $oldLeadInvestimento,
+                    'para' => $lead->valor_definido
+                ])
+        ->log("Alterado valor de investimento de R$ {$oldLeadInvestimento} para R$ {$lead->valor_definido}");
 
         $this->setComissaoEstipulada($lead);
         $this->setRetornoEmpresa($lead);
