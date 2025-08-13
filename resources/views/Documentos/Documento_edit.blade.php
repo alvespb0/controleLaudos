@@ -22,6 +22,9 @@
                         <option value="CAT" {{$documento->tipo_documento == 'CAT' ? 'selected' : ''}}>CAT</option>
                         <option value="ADENDO" {{$documento->tipo_documento == 'ADENDO' ? 'selected' : ''}}>ADENDO</option>
                         <option value="PPP" {{$documento->tipo_documento == 'PPP' ? 'selected' : ''}}>PPP</option>
+                        <option value="REAJUSTES LAUDOS" {{$documento->tipo_documento == 'REAJUSTES LAUDOS' ? 'selected' : ''}}>REAJUSTE DE LAUDO</option>
+                        <option value="ART" {{$documento->tipo_documento == 'ART' ? 'selected' : ''}}>ART</option>
+                        <option value="ASSESSORIA" {{$documento->tipo_documento == 'ASSESSORIA' ? 'selected' : ''}}>ASSESSORIA</option>
                     </select>
                 </div>
 

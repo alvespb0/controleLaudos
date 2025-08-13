@@ -23,6 +23,10 @@
                         <option value="ADENDO">ADENDO</option>
                         <option value="PPP">PPP</option>
                         <option value="OS">OS</option>
+                        <option value="REAJUSTES LAUDOS">REAJUSTE DE LAUDO</option>
+                        <option value="ART">ART</option>
+                        <option value="ASSESSORIA">ASSESSORIA</option>
+
                     </select>
                 </div>
 
