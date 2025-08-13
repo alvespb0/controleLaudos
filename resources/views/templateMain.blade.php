@@ -228,6 +228,10 @@
             height: auto !important;
             margin: 0 !important;
         }
+        .sidebar.collapsed:hover .collapse .list-group-item {
+            padding-left: 1.5rem !important;
+            padding-right: 1rem !important;
+        }
         .sidebar.collapsed:hover .list-group-item i {
             margin-right: 0.5rem !important;
         }
@@ -239,7 +243,7 @@
             display: block !important;
         }
         .sidebar.collapsed:hover ~ .flex-grow-1 .main-content {
-            margin-left: 250px !important;
+            margin-left: 200px !important;
         }
         .sidebar.collapsed:hover + .sidebar-toggle-btn {
             left: 260px !important;
@@ -262,6 +266,10 @@
             height: auto !important;
             margin: 0 !important;
         }
+        .sidebar.expanded .collapse .list-group-item {
+            padding-left: 1.5rem !important;
+            padding-right: 1rem !important;
+        }
         .sidebar.expanded .list-group-item i {
             margin-right: 0.5rem !important;
         }
@@ -277,7 +285,7 @@
             display: block !important;
         }
         .sidebar.expanded ~ .flex-grow-1 .main-content {
-            margin-left: 250px !important;
+            margin-left: 100px !important;
         }
         .sidebar.expanded + .sidebar-toggle-btn {
             left: 260px !important;
@@ -300,6 +308,10 @@
             height: auto !important;
             margin: 0 !important;
         }
+        .sidebar.fixed .collapse .list-group-item {
+            padding-left: 1.5rem !important;
+            padding-right: 1rem !important;
+        }
         .sidebar.fixed .list-group-item i {
             margin-right: 0.5rem !important;
         }
@@ -315,7 +327,7 @@
             display: block !important;
         }
         .sidebar.fixed ~ .flex-grow-1 .main-content {
-            margin-left: 250px !important;
+            margin-left: 100px !important;
         }
         .sidebar.fixed + .sidebar-toggle-btn {
             left: 260px !important;
@@ -335,6 +347,11 @@
         }
         .sidebar .list-group-item span {
             transition: opacity 0.3s, margin 0.3s;
+        }
+        /* Ajuste do espaçamento dos submenus */
+        .sidebar .collapse .list-group-item {
+            padding-left: 1.5rem !important;
+            padding-right: 1rem !important;
         }
         .sidebar.collapsed .list-group-item span {
             opacity: 0;
