@@ -22,7 +22,7 @@ class DocumentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tipo_documento' => 'required|in:CAT,PPP,ADENDO,OS',
+            'tipo_documento' => 'required|in:CAT,PPP,ADENDO,OS,ART,REAJUSTES LAUDOS,ASSESSORIA',
             'descricao' => 'required|string|max:255',
             'data_elaboracao' => 'required|date',
             'cliente_id' => 'required|exists:cliente,id',

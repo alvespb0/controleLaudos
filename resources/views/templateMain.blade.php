@@ -11,14 +11,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         :root {
-            --primary-color: #79c5b6;
-            --secondary-color: #2c645c;
-            --light-color: #dfeeec;
-            --gray-color: #74948c;
-            --accent-color: #5c9c90;
+            --primary-color: #437c90;
+            --secondary-color: #255957;
+            --light-color: #EEEBD3;
+            --gray-color: #A98743;
+            --accent-color: #F7C548;
             --hover-color: #4a7a72;
         }
-
+        
         body {
             background-color: var(--light-color);
             min-height: 100vh;
@@ -203,12 +203,122 @@
             max-width: 250px;
             min-height: 100vh;
             background: var(--secondary-color) !important;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             z-index: 1040;
         }
         .sidebar.collapsed {
             min-width: 70px;
             max-width: 70px;
+        }
+        .sidebar.collapsed:hover {
+            min-width: 250px;
+            max-width: 250px;
+        }
+        .sidebar.collapsed:hover .list-group-item span {
+            opacity: 1 !important;
+            margin-left: 0 !important;
+            display: inline !important;
+        }
+        .sidebar.collapsed:hover .list-group-item {
+            text-align: left !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            border-radius: 0.375rem !important;
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+        }
+        .sidebar.collapsed:hover .list-group-item i {
+            margin-right: 0.5rem !important;
+        }
+        .sidebar.collapsed:hover .collapse,
+        .sidebar.collapsed:hover .collapsing {
+            display: none !important;
+        }
+        .sidebar.collapsed:hover .list-group-item[data-bs-toggle="collapse"]:after {
+            display: block !important;
+        }
+        .sidebar.collapsed:hover ~ .flex-grow-1 .main-content {
+            margin-left: 250px !important;
+        }
+        .sidebar.collapsed:hover + .sidebar-toggle-btn {
+            left: 260px !important;
+        }
+        .sidebar.expanded {
+            min-width: 250px;
+            max-width: 250px;
+        }
+        .sidebar.expanded .list-group-item span {
+            opacity: 1 !important;
+            margin-left: 0 !important;
+            display: inline !important;
+        }
+        .sidebar.expanded .list-group-item {
+            text-align: left !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            border-radius: 0.375rem !important;
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+        }
+        .sidebar.expanded .list-group-item i {
+            margin-right: 0.5rem !important;
+        }
+        .sidebar.expanded .collapse,
+        .sidebar.expanded .collapsing {
+            display: none !important;
+        }
+        .sidebar.expanded .collapse.show,
+        .sidebar.expanded .collapsing.show {
+            display: block !important;
+        }
+        .sidebar.expanded .list-group-item[data-bs-toggle="collapse"]:after {
+            display: block !important;
+        }
+        .sidebar.expanded ~ .flex-grow-1 .main-content {
+            margin-left: 250px !important;
+        }
+        .sidebar.expanded + .sidebar-toggle-btn {
+            left: 260px !important;
+        }
+        .sidebar.fixed {
+            min-width: 250px !important;
+            max-width: 250px !important;
+        }
+        .sidebar.fixed .list-group-item span {
+            opacity: 1 !important;
+            margin-left: 0 !important;
+            display: inline !important;
+        }
+        .sidebar.fixed .list-group-item {
+            text-align: left !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            border-radius: 0.375rem !important;
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+        }
+        .sidebar.fixed .list-group-item i {
+            margin-right: 0.5rem !important;
+        }
+        .sidebar.fixed .collapse,
+        .sidebar.fixed .collapsing {
+            display: none !important;
+        }
+        .sidebar.fixed .collapse.show,
+        .sidebar.fixed .collapsing.show {
+            display: block !important;
+        }
+        .sidebar.fixed .list-group-item[data-bs-toggle="collapse"]:after {
+            display: block !important;
+        }
+        .sidebar.fixed ~ .flex-grow-1 .main-content {
+            margin-left: 250px !important;
+        }
+        .sidebar.fixed + .sidebar-toggle-btn {
+            left: 260px !important;
         }
         .sidebar .list-group-item {
             background: var(--secondary-color) !important;
@@ -236,6 +346,13 @@
         }
         .sidebar .collapse {
             transition: height 0.35s cubic-bezier(0.4,0,0.2,1);
+            overflow: hidden;
+        }
+        .sidebar .collapse:not(.show) {
+            display: none !important;
+        }
+        .sidebar .collapsing {
+            overflow: hidden;
         }
         .sidebar .list-group-item[data-bs-toggle="collapse"]:after {
             content: '\f282';
@@ -252,7 +369,7 @@
         .sidebar-toggle-btn {
             position: absolute;
             top: 10px;
-            left: 260px;
+            left: 80px;
             z-index: 1100;
             background: var(--primary-color);
             color: #fff;
@@ -263,10 +380,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: left 0.3s;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .sidebar.collapsed + .sidebar-toggle-btn {
-            left: 80px;
+        .sidebar.expanded + .sidebar-toggle-btn,
+        .sidebar.fixed + .sidebar-toggle-btn {
+            left: 260px;
+        }
+        .sidebar-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         @media (max-width: 991.98px) {
             .sidebar {
@@ -295,7 +418,7 @@
             }
         }
         .sidebar.collapsed .list-group-item {
-            text-align: center;
+            text-align: right;
             padding-left: 0 !important;
             padding-right: 0 !important;
         }
@@ -316,7 +439,7 @@
             margin: 8px auto;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
         }
     </style>
 </head>
@@ -357,6 +480,15 @@
                         <a href="/Recomendadores/" class="list-group-item list-group-item-action ps-5">Indicador Externo</a>
                         <a href="/Recomendadores/cadastro" class="list-group-item list-group-item-action ps-5">Novo Indicador Externo</a>
                     </div>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#clientesMenu" role="button" aria-expanded="false" aria-controls="clientesMenu">
+                        <i class="bi bi-person-badge me-2"></i><span>Clientes</span>
+                    </a>
+                    <div class="collapse" id="clientesMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/cliente/cadastro" class="list-group-item list-group-item-action ps-5">Novo Cliente</a>
+                        <a href="/cliente" class="list-group-item list-group-item-action ps-5">Clientes Cadastrados</a>
+                        <a href="/orcamento" class="list-group-item list-group-item-action ps-5">Gerar Orçamento</a>
+                    </div>
+
                     @endif
                     @if(Auth::user()->tipo === 'admin')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#operadoresMenu" role="button" aria-expanded="false" aria-controls="operadoresMenu">
@@ -394,14 +526,6 @@
                         <a href="/laudo" class="list-group-item list-group-item-action ps-5">Laudos Cadastrados</a>
                         <a href="/laudo/excluidos-anteriormente" class="list-group-item list-group-item-action ps-5">Laudos Excluídos</a>
                     </div>
-                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#clientesMenu" role="button" aria-expanded="false" aria-controls="clientesMenu">
-                        <i class="bi bi-person-badge me-2"></i><span>Clientes</span>
-                    </a>
-                    <div class="collapse" id="clientesMenu" data-bs-parent="#sidebarMenu">
-                        <a href="/cliente/cadastro" class="list-group-item list-group-item-action ps-5">Novo Cliente</a>
-                        <a href="/cliente" class="list-group-item list-group-item-action ps-5">Clientes Cadastrados</a>
-                        <a href="/orcamento" class="list-group-item list-group-item-action ps-5">Gerar Orçamento</a>
-                    </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#statusMenu" role="button" aria-expanded="false" aria-controls="statusMenu">
@@ -436,36 +560,92 @@
         </div>
     </div>
     <script>
-        // Sidebar collapse/expand
+        // Sidebar collapse/expand com hover e fixação
         const sidebar = document.getElementById('sidebarMenu');
         const toggleBtn = document.getElementById('sidebarToggle');
         let collapsed = true; // Começa recolhida por padrão
+        let isFixed = false; // Começa não fixada
         
         // Aplicar estado inicial recolhido
         sidebar.classList.add('collapsed');
         toggleBtn.querySelector('i').classList.remove('bi-chevron-double-left');
         toggleBtn.querySelector('i').classList.add('bi-chevron-double-right');
+        toggleBtn.title = 'Fixar Sidebar Expandida';
         
+        // Função para expandir sidebar
+        function expandSidebar() {
+            if (!isFixed) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded');
+            }
+        }
+        
+        // Função para recolher sidebar
+        function collapseSidebar() {
+            if (!isFixed) {
+                sidebar.classList.add('collapsed');
+                sidebar.classList.remove('expanded');
+            }
+        }
+        
+        // Eventos de hover
+        sidebar.addEventListener('mouseenter', expandSidebar);
+        sidebar.addEventListener('mouseleave', collapseSidebar);
+        
+        // Botão de fixar/desfixar
         toggleBtn.addEventListener('click', function() {
-            collapsed = !collapsed;
-            sidebar.classList.toggle('collapsed');
-            if (collapsed) {
-                toggleBtn.querySelector('i').classList.remove('bi-chevron-double-left');
-                toggleBtn.querySelector('i').classList.add('bi-chevron-double-right');
-            } else {
+            isFixed = !isFixed;
+            
+            if (isFixed) {
+                // Fixar expandida
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('fixed');
                 toggleBtn.querySelector('i').classList.remove('bi-chevron-double-right');
                 toggleBtn.querySelector('i').classList.add('bi-chevron-double-left');
+                toggleBtn.title = 'Desfixar Sidebar';
+                toggleBtn.style.backgroundColor = 'var(--accent-color)';
+            } else {
+                // Desfixar (volta ao comportamento de hover)
+                sidebar.classList.remove('fixed');
+                sidebar.classList.add('collapsed');
+                toggleBtn.querySelector('i').classList.remove('bi-chevron-double-left');
+                toggleBtn.querySelector('i').classList.add('bi-chevron-double-right');
+                toggleBtn.title = 'Fixar Sidebar Expandida';
+                toggleBtn.style.backgroundColor = 'var(--primary-color)';
             }
         });
+        
         // Dropdown fluido (abre/fecha suavemente)
         const collapseEls = document.querySelectorAll('#sidebarMenu .collapse');
         collapseEls.forEach(function(el) {
             el.addEventListener('show.bs.collapse', function (e) {
                 el.style.transition = 'height 0.35s cubic-bezier(0.4,0,0.2,1)';
+                // Adicionar classe show para controle CSS
+                el.classList.add('show');
             });
             el.addEventListener('hide.bs.collapse', function (e) {
                 el.style.transition = 'height 0.35s cubic-bezier(0.4,0,0.2,1)';
+                // Remover classe show para controle CSS
+                el.classList.remove('show');
             });
+        });
+        
+        // Garantir que dropdowns fechados não apareçam ao expandir sidebar
+        function resetDropdowns() {
+            collapseEls.forEach(function(el) {
+                if (!el.classList.contains('show')) {
+                    el.style.display = 'none';
+                }
+            });
+        }
+        
+        // Aplicar reset nos dropdowns quando necessário
+        sidebar.addEventListener('mouseenter', function() {
+            setTimeout(resetDropdowns, 50);
+        });
+        
+        sidebar.addEventListener('mouseleave', function() {
+            setTimeout(resetDropdowns, 50);
         });
     </script>
     <!-- Sidebar -->
