@@ -40,7 +40,6 @@
                         <option value="seguranca" {{$user->tipo == 'seguranca' ? 'selected' : ''}}>seguranca</option>
                     </select>
                 </div>
-
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary col-sm-12">Editar</button>
                 </div>
@@ -48,4 +47,29 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tipoSelect = document.getElementById('tipo');
+    const comissaoField = document.getElementById('comissaoField');
+    const comissaoInput = document.getElementById('percentual_comissao');
+
+    // Verificar se o tipo atual é comercial para mostrar o campo
+    if (tipoSelect.value === 'comercial') {
+        comissaoField.style.display = 'block';
+        comissaoInput.required = true;
+    }
+
+    tipoSelect.addEventListener('change', function() {
+        if (this.value === 'comercial') {
+            comissaoField.style.display = 'block';
+            comissaoInput.required = true;
+        } else {
+            comissaoField.style.display = 'none';
+            comissaoInput.required = false;
+            comissaoInput.value = '';
+        }
+    });
+});
+</script>
 @endsection

@@ -76,7 +76,7 @@ class AuthController extends Controller
 
             Op_Comercial::create([
                 'usuario' => $request->usuario,
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
 
             session()->flash('mensagem', 'Operador Comercial registrado com sucesso');

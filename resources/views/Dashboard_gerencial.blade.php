@@ -48,28 +48,7 @@
                 </div>
             </div>
         </div>
-
-
-        <div class="md-2"></div>
-        <div class="col-md-4 d-flex justify-content-center mb-4">
-            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
-                <h5 class="text-center mb-3">Clientes Novos X Renovações</h5>
-                <div style="height: 300px;">
-                    {!! $chartClientes->container() !!}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 d-flex justify-content-center mb-4">
-            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
-                <h5 class="text-center mb-3">Orçamentos por Mês</h5>
-                <div style="height: 300px;">
-                    {!! $chartOrcamentos->container() !!}
-                </div>
-            </div>
-        </div>
-        <div class="md-2"></div>
-
+        <div class="md2"></div>
         <div class="col-md-4 d-flex justify-content-center mb-4">
             <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
                 <h5 class="text-center mb-3">Documentos por status</h5>
@@ -87,7 +66,42 @@
                 </div>
             </div>
         </div>
+        <div class="md2"></div>
 
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Leads ganhos por mês</h5>
+                <div style="height: 300px;">
+                    {!! $chartLeadsGanhosMes->container() !!}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Clientes Novos X Renovações</h5>
+                <div style="height: 300px;">
+                    {!! $chartClientes->container() !!}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Orçamentos por Mês</h5>
+                <div style="height: 300px;">
+                    {!! $chartOrcamentos->container() !!}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Simulação de Receita Lead</h5>
+                <div style="height: 300px;">
+                    {!! $chartValorTotalMes->container() !!}
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Carrega Chart.js --}}
@@ -99,6 +113,8 @@
     {!! $chartOrcamentos->script() !!}
     {!! $chartDocsStatus->script() !!}
     {!! $chartDocsTecnico->script() !!}
+    {!! $chartLeadsGanhosMes->script() !!}
+    {!! $chartValorTotalMes->script() !!}
 
 </div>
 

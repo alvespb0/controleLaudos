@@ -1,0 +1,72 @@
+@extends('templateMain')
+
+@section('content')
+<div class="d-flex justify-content-center">
+    <div class="card shadow-lg w-100" style="max-width: 600px; border: none;">
+        <div class="card-body p-4">
+            <h3 class="card-title mb-4 text-center text-dark">Gerar orçamento</h3>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{route('baixar.orcamento')}}" id="gerar" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="numProposta" class="form-label">Número da Proposta</label>
+                    <input type="number" min=1 class="form-control" name="numProposta" id="numProposta" placeholder = "Insira o número da proposta">
+                </div>
+                <div class="mb-3">
+                    <label for="razaoSocialCliente" class="form-label">Razão Social</label>
+                    <input type="text" class="form-control" name="razaoSocialCliente" id="razaoSocialCliente" style="{{ $lead->cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$lead->cliente != null ? $lead->cliente->nome : ''}}" placeholder="Insira a razão social do cliente {{$lead->cliente != null ? 'readonly' : ''}} ">
+                </div>
+                <div class="mb-3">
+                    <label for="nomeUnidade" class="form-label">Nome da Unidade</label>
+                    <input type="text" class="form-control" name="nomeUnidade" id="nomeUnidade" placeholder="Insira o nome da unidade do cliente">
+                </div>
+
+                <div class="mb-3">
+                    <label for="cnpjCliente" class="form-label">CNPJ</label>
+                    <input type="text" class="form-control" name="cnpjCliente" id="cnpjCliente" style="{{ $lead->cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$lead->cliente != null ? $lead->cliente->cnpj : ''}}" placeholder="Insira o CNPJ do prospect (sem pontos e traços)" {{$lead->cliente != null ? 'readonly' : ''}} >
+                </div>
+                <div class="mb-3">
+                    <label for="telefoneCliente" class="form-label">Telefone Cliente</label>
+                    <input type="text" class="form-control" name="telefoneCliente" id="telefoneCliente" style="{{ $lead->cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$lead->cliente && $lead->cliente->telefone->first() ? $lead->cliente->telefone->first()->telefone : '' }}" placeholder="Insira o telefone de contato do cliente" {{$lead->cliente != null ? 'readonly' : ''}} >
+                </div>
+                <div class="mb-3">
+                    <label for="emailCliente" class="form-label">Email Cliente</label>
+                    <input type="text" class="form-control" name="emailCliente" id="emailCliente" style="{{ $lead->cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" style="{{ $lead->cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$lead->cliente != null ? $lead->cliente->email : ''}}" placeholder="Insira o email de contato do cliente {{$lead->cliente != null ? 'readonly' : ''}} ">
+                </div>
+                <div class="mb-3">
+                    <label for="nomeContato" class="form-label">Nome do Contato</label>
+                    <input type="text" name="nomeContato" id="nomeContato" class = "form-control" style="{{ $lead->cliente != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" style="{{ $lead->nome_contato != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$lead->nome_contato != null ? $lead->nome_contato : ''}}" placeholder="Insira o nome do contato responsável" {{$lead->nome_contato != null ? 'readonly' : ''}} >
+                </div>
+                <div class="mb-3">
+                    <label for="numFuncionarios" class="form-label">Numero de Funcionários</label>
+                    <input type="number" min=1 class="form-control" name="numFuncionarios" id="numFuncionarios" style="{{ $lead->num_funcionarios != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" placeholder="Insira o número de funcionários do cliente"  value="{{$lead->num_funcionarios ? $lead->num_funcionarios : ''}}" {{$lead->num_funcionarios ? 'readonly' : ''}} >
+                </div>
+                <div class="mb-3">
+                    <label for="investimento" class="form-label">Investimento</label>
+                    <input type="number" min=1 step="0.01" class="form-control" name="investimento" style="{{ $lead->valor_definido != null ? 'background-color: #f1f1f1; color: #6c757d;' : '' }}" value="{{$lead->valor_definido ? $lead->valor_definido : ''}}" id="investimento" placeholder="Insira o investimento total para o cliente (formato: 500.50)" {{$lead->valor_definido ? 'readonly' : ''}}>
+                </div>
+                <div class="mb-3">
+                    <label for="parcelasTexto" class="form-label">Número de Parcelas</label>
+                    <input type="number" min=1 class="form-control" name="parcelasTexto" id="parcelasTexto" value="{{ $lead->num_parcelas ? $lead->num_parcelas : ''}}" placeholder = "Insira o número de parcelas do investimento">
+                </div>
+                <input type="hidden" name="lead_id" value="{{$lead->id}}">
+                <input type="hidden" name="cliente_id" value="{{$lead->cliente->id}}">
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary px-4">Gerar</button>
+                    <button type="reset" class="btn btn-secondary px-4">Limpar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@endsection

@@ -16,10 +16,18 @@ class Cliente extends Model
         'nome',
         'cnpj',
         'email',
-        'cliente_novo'
+        'tipo_cliente'
     ];
 
     public function telefone(){
         return $this->hasMany(Telefone::class);
+    }
+
+    public function endereco(){
+        return $this->hasOne(Endereco_Cliente::class);
+    }
+
+    public function dadosCobranca(){
+        return $this->hasOne(Dados_Cobranca::class);
     }
 }

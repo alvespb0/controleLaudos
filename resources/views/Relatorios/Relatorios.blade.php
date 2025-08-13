@@ -12,6 +12,10 @@
                     <option value="laudos">Laudos</option>
                     <option value="clientes">Clientes</option>
                     <option value="documentos">Documentos</option>
+                    <option value="crm">CRM</option>
+                    @if(Auth::user()->tipo == 'admin')
+                        <option value="comissoes">Comissões</option>
+                    @endif
                 </select>
             </div>
         </div>
@@ -161,6 +165,90 @@
             </button>
         </div>
     </form>   
+    <form id="formCRM" action="{{route('gerar.relatorio')}}" method="POST" style="display:none;">
+        @csrf
+        <input type="hidden" name="tipoRelatorio" value="crm">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="dataInicioCRM" class="form-label">Data de Início</label>
+                <input type="date" class="form-control" id="dataInicioCRM" name="dataInicioCRM">
+            </div>
+            <div class="col-md-6">
+                <label for="dataFimCRM" class="form-label">Data de Fim</label>
+                <input type="date" class="form-control" id="dataFimCRM" name="dataFimCRM">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="vendedorCRM" class="form-label">Vendedor</label>
+                <select name="vendedorCRM" class="form-select" id="vendedorCRM">
+                    <option value="" selected disabled>Selecione um vendedor</option>
+                    @foreach($vendedores as $vendedor)
+                        <option value="{{$vendedor->id}}">{{$vendedor->usuario}}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="etapaCRM" class="form-label">Etapa CRM</label>
+                <select class="form-select" id="etapaCRM" name="etapaCRM">
+                    <option value="" selected disabled>Selecione uma etapa</option>
+                    @foreach($etapa_crm as $etapa)
+                        <option value="{{$etapa->id}}">{{$etapa->nome}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" onclick="limparCampos(this.form)">
+                <i class="bi bi-eraser"></i> Limpar
+            </button>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-printer"></i> Gerar Relatório
+            </button>
+        </div>
+    </form>
+    <form id="formComissoes" action="{{route('gerar.relatorio')}}" method="POST" style="display:none;">
+        @csrf
+        <input type="hidden" name="tipoRelatorio" value="comissoes">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="dataInicioComissoes" class="form-label">Período Inicial</label>
+                <input type="date" class="form-control" id="dataInicioComissoes" name="dataInicioComissoes">
+            </div>
+            <div class="col-md-6">
+                <label for="dataFimComissoes" class="form-label">Período Final</label>
+                <input type="date" class="form-control" id="dataFimComissoes" name="dataFimComissoes">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="statusComissao" class="form-label">Status da Comissão</label>
+                <select class="form-select" id="statusComissao" name="statusComissao">
+                    <option value="" selected disabled>Selecione um status</option>
+                    <option value="paga">Paga</option>
+                    <option value="cancelada">Cancelada</option>
+                    <option value="pendente">Pendente</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="vendedorComissoes" class="form-label">Vendedor</label>
+                <select name="vendedorComissoes" class="form-select" id="vendedorComissoes">
+                    <option value="" selected disabled>Selecione um vendedor</option>
+                    @foreach($vendedores as $vendedor)
+                        <option value="{{$vendedor->id}}">{{$vendedor->usuario}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" onclick="limparCampos(this.form)">
+                <i class="bi bi-eraser"></i> Limpar
+            </button>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-printer"></i> Gerar Relatório
+            </button>
+        </div>
+    </form>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -168,17 +256,25 @@
         const formLaudos = document.getElementById('formLaudos');
         const formClientes = document.getElementById('formClientes');
         const formDocumentos = document.getElementById('formDocumentos');
+        const formCRM = document.getElementById('formCRM');
+        const formComissoes = document.getElementById('formComissoes');
 
         select.addEventListener('change', function() {
             formLaudos.style.display = 'none';
             formClientes.style.display = 'none';
             formDocumentos.style.display = 'none';
+            formCRM.style.display = 'none';
+            formComissoes.style.display = 'none';
             if (this.value === 'laudos') {
                 formLaudos.style.display = 'block';
             } else if (this.value === 'clientes') {
                 formClientes.style.display = 'block';
             } else if (this.value === 'documentos') {
                 formDocumentos.style.display = 'block';
+            } else if (this.value === 'crm') {
+                formCRM.style.display = 'block';
+            } else if (this.value === 'comissoes') {
+                formComissoes.style.display = 'block';
             }
         });
     });

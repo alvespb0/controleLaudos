@@ -76,6 +76,20 @@
             opacity: 1;
             cursor: not-allowed;
         }
+        .btn-primary:disabled, .btn-primary.disabled {
+            background-color: #bdbdbd !important;
+            color: #fff !important;
+            border: none !important;
+            opacity: 1;
+            cursor: not-allowed;
+        }
+        .btn-success:disabled, .btn-success.disabled {
+            background-color: #bdbdbd !important;
+            color: #fff !important;
+            border: none !important;
+            opacity: 1;
+            cursor: not-allowed;
+        }
         .icon-success { color: #79c5b6; font-size: 2.5rem; }
         .title-success { font-size: 1.3rem; font-weight: 600; color: #2c645c; }
         #downloadAlert { font-size: 0.95rem; }
@@ -88,9 +102,10 @@
             <div class="title-success mt-2">{{$fileName}} gerado com sucesso!</div>
         </div>
         <div class="d-flex flex-column gap-2 align-items-center">
-            <form id="aprovarForm" method="GET" action="{{ route('orcamento.aprovar', $fileName) }}" style="display:inline-block;">
+            <form id="aprovarForm" method="post" action="{{ route('orcamento.aprovar', [$fileName, $dados['lead_id']]) }}" style="display:inline-block;">
                 @csrf
-                <button type="button" id="aprovarBtn" class="btn btn-success btn-custom me-2">Aprovar</button>
+                <input type="hidden" name="lead_id" value="{{$dados['lead_id'] ? $dados['lead_id'] : ''}}">
+                <button type="button" id="aprovarBtn" class="btn btn-success btn-custom me-2" disabled>Aprovar</button>
             </form>
             <form method="POST" action="{{ route('orcamento.retificar') }}" style="display:inline-block;">
                 @csrf
@@ -104,6 +119,15 @@
             <button id="whatsappBtn" class="btn btn-whatsapp btn-custom d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#whatsappModal" disabled>
                 <i class="bi bi-whatsapp"></i> Encaminhar pelo WhatsApp
             </button>
+            <form method="POST" action="{{route('gerar.contrato')}}" style="display:inline-block;">
+                @csrf
+                @foreach ($dados as $key => $value)
+                    <input type="hidden" name="dados[{{ $key }}]" value="{{ $value }}">
+                @endforeach
+                <button type="submit" id="gerarContratoBtn" class="btn btn-primary btn-custom d-flex align-items-center gap-2" disabled>
+                    <i class="bi bi-file-earmark-text"></i> Gerar Contrato
+                </button>
+            </form>
             <a href="/" id="linkHome" class="mt-2 small text-decoration-none text-secondary" style="display:none;">Página Inicial</a>
         </div>
         <div id="downloadAlert" class="mt-3 text-danger fw-bold text-center" style="display:none;">
@@ -152,10 +176,12 @@
         function handleDownload(e) {
             e.preventDefault();
             const btn = document.getElementById('downloadBtn');
+            const btnAprovar = document.getElementById('aprovarBtn');
             btn.disabled = true;
             btn.innerText = 'Download realizado';
             btn.classList.remove('btn-primary');
             btn.classList.add('btn-secondary');
+            btnAprovar.disabled = false;
             document.getElementById('downloadAlert').style.display = 'block';
             document.getElementById('downloadForm').submit();
         }
@@ -164,12 +190,13 @@
         document.getElementById('aprovarBtn').addEventListener('click', function() {
             const btnAprovar = document.getElementById('aprovarBtn');
             const btnWhatsapp = document.getElementById('whatsappBtn');
+            const btnGerarContrato = document.getElementById('gerarContratoBtn');
             btnAprovar.disabled = true;
             btnAprovar.innerText = 'Aprovando...';
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             console.log('Enviando requisição para aprovação...');
-            fetch("{{ route('orcamento.aprovar', $fileName) }}", {
-                method: 'GET',
+            fetch("{{ route('orcamento.aprovar', [$fileName, $dados['lead_id']]) }}", {
+                method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': csrfToken,
@@ -189,6 +216,7 @@
                     btnAprovar.classList.remove('btn-success');
                     btnAprovar.classList.add('btn-secondary');
                     btnWhatsapp.disabled = false;
+                    btnGerarContrato.disabled = false;
                     document.getElementById('linkHome').style.display = 'block';
                 } else {
                     btnAprovar.disabled = false;

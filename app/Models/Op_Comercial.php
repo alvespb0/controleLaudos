@@ -14,7 +14,7 @@ class Op_Comercial extends Model
 
     protected $fillable = [
         'usuario',
-        'user_id'
+        'user_id',
     ];
 
     public function user(){
@@ -25,4 +25,7 @@ class Op_Comercial extends Model
         return $this->hasMany(Laudo::class, 'comercial_id');
     }
 
+    public function leads(){
+        return $this->hasMany(Lead::class, 'vendedor_id');
+    }
 }

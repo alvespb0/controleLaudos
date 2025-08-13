@@ -21,9 +21,11 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('id');
+
         return [
             'usuario' => 'required|string|min:5|max:255',
-            'email' => 'required|string|email|min:5|max:255',
+            'email' => "required|string|email|min:5|max:255|unique:users,email,{$id}",
             'password'=> 'required|string|min:8|max:32',
             'tipo' => 'required|string',
         ];
@@ -42,6 +44,7 @@ class RegisterRequest extends FormRequest
             'email.email'    => 'Informe um e-mail válido.',
             'email.min'      => 'O campo e-mail deve ter no mínimo :min caracteres.',
             'email.max'      => 'O campo e-mail deve ter no máximo :max caracteres.',
+            'email.unique'   => 'Esse email já está cadastrado',
 
             'password.required'   => 'O campo senha é obrigatório.',
             'password.string'     => 'O campo senha deve ser um texto.',
