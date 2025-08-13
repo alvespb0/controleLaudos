@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         :root {
@@ -344,6 +345,19 @@
                         <a href="/graphs" class="list-group-item list-group-item-action ps-5">Dashboard Gerencial</a>
                         @endif
                     </div>
+                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#crmMenu" role="button" aria-expanded="false" aria-controls="crmMenu">
+                        <i class="bi-person-lines-fill me-2"></i><span>CRM</span>
+                    </a>
+                    <div class="collapse" id="crmMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/CRM" class="list-group-item list-group-item-action ps-5">Controle de Leads</a>
+                        @if(Auth::user()->tipo === 'admin')
+                        <a href="/CRM/comissoes" class="list-group-item list-group-item-action ps-5">Comissões</a>
+                        @endif
+                        <a href="/Recomendadores/" class="list-group-item list-group-item-action ps-5">Indicador Externo</a>
+                        <a href="/Recomendadores/cadastro" class="list-group-item list-group-item-action ps-5">Novo Indicador Externo</a>
+                    </div>
+                    @endif
                     @if(Auth::user()->tipo === 'admin')
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#operadoresMenu" role="button" aria-expanded="false" aria-controls="operadoresMenu">
                         <i class="bi bi-person-circle me-2"></i><span>Operadores</span>
@@ -351,6 +365,14 @@
                     <div class="collapse" id="operadoresMenu" data-bs-parent="#sidebarMenu">
                         <a href="/user/register" class="list-group-item list-group-item-action ps-5">Novo Operador</a>
                         <a href="/user" class="list-group-item list-group-item-action ps-5">Operadores Cadastrados</a>
+                    </div>
+                    <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#variaveisMenu" role="button" aria-expanded="false" aria-controls="variaveisMenu">
+                        <i class="bi bi-currency-dollar"></i><span>Variáveis de Preço</span>
+                    </a>
+                    <div class="collapse" id="variaveisMenu" data-bs-parent="#sidebarMenu">
+                        <a href="/variaveis-preco/cadastro" class="list-group-item list-group-item-action ps-5">Nova Variável</a>
+                        <a href="/variaveis-preco" class="list-group-item list-group-item-action ps-5">Variáveis Cadastradas</a>
+                        <a href="/CRM/percentuais-comissao" class="list-group-item list-group-item-action ps-5">Percentuais de comissão</a>
                     </div>
                     @endif
                     @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
@@ -417,7 +439,13 @@
         // Sidebar collapse/expand
         const sidebar = document.getElementById('sidebarMenu');
         const toggleBtn = document.getElementById('sidebarToggle');
-        let collapsed = false;
+        let collapsed = true; // Começa recolhida por padrão
+        
+        // Aplicar estado inicial recolhido
+        sidebar.classList.add('collapsed');
+        toggleBtn.querySelector('i').classList.remove('bi-chevron-double-left');
+        toggleBtn.querySelector('i').classList.add('bi-chevron-double-right');
+        
         toggleBtn.addEventListener('click', function() {
             collapsed = !collapsed;
             sidebar.classList.toggle('collapsed');

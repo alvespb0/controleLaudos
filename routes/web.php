@@ -10,6 +10,10 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\IndicadoresController;
 use App\Http\Controllers\ZappyController;
 use App\Http\Controllers\Documentos_TecnicosController;
+use App\Http\Controllers\CRMController;
+use App\Http\Controllers\AutentiqueController;
+use App\Http\Controllers\FaixaPrecoController;
+use App\Http\Controllers\RecomendadoresController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,9 +77,16 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(FileController:
 
     Route::post('/orcamento/gerar', 'gerarOrcamento')->name('baixar.orcamento'); # Faz o download do orçamento
 
-    Route::get('/orcamento/aprovar/{fileName}', 'saveOrcamento')->name('orcamento.aprovar');
+    Route::post('/orcamento/aprovar/{fileName}/{lead_id?}', 'saveOrcamento')->name('orcamento.aprovar');
     Route::post('/orcamento/retificar', 'retificarOrcamento')->name('orcamento.retificar');
     Route::get('/orcamento/download/{fileName}', 'downloadOrcamento')->name('orcamento.download');
+
+    Route::post('/contrato/gerar', 'gerarContrato')->name('gerar.contrato');
+    Route::post('/CRM/gerar-contrato', 'gerarContratoByIndex')->name('gerar.contrato-index');
+
+    Route::get('/contrato/download/{fileName}', 'downloadOrcamento')->name('contrato.download');
+
+    Route::post('/contrato/aprovar/{fileName}/{lead_id?}', 'saveContrato')->name('contrato.aprovar');
 });
 
 /** --------------------------------------------- */
@@ -174,4 +185,63 @@ Route::controller(AuthController::class)->group(function (){
 /**              Rotas Classe integracao          */
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
 Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('orcamento/enviar', [ZappyController::class, 'encaminhaOrcamentoCliente'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/atendimento', [ZappyController::class, 'encaminhaWhatsLead'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/testeAutentique', [AutentiqueController::class, 'createDocument'])->name('teste.autentique'); # rota para criação de atendimentos no zappy
 
+/** --------------------------------------------- */
+/**                  Rotas Classe CRM             */
+Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::class)->group(function (){
+    Route::get('/CRM', 'showCRM')->name('show.CRM'); # Retorna a view do CRM
+    Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead'); # Cria um LEAD baseado a etapa id
+    Route::get('/CRM/mudar-etapa/{lead_id}/{etapa_id}', 'alterStatusLead')->name('alterStatus.lead'); # altera a etapa do lead
+    Route::get('/CRM/gerar-orcamento/{lead_id}', 'formularioOrcamento')->name('gerar.orcamentoLead'); # retorna view de formulario de gerar orçamento
+    Route::post('/CRM/editar-lead', 'updateLead')->name('update.lead'); # da update no lead
+    Route::get('/CRM/deletar-lead/{id}', 'deleteLead')->name('delete.lead');
+    Route::post('/CRM/atualiza-investimento', 'updateInvestimentoLead')->name('update.investimento-lead');
+});
+
+Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->group(function (){
+    Route::get('/CRM/comissoes', 'readComissoes')->name('read.comissoes');
+    Route::post('/CRM/comissoes/{comissao_id}/{status}', 'updateStatusComissao')->name('update-status.comissao');
+    Route::post('/CRM/comissao-personalizada', 'updateComissaoPersonalizada')->name('update.comissao-personalizada');
+    Route::get('/CRM/parcelas-comissao/{comissao_id}', 'showParcelasComissao')->name('read.parcelas');
+    Route::post('/CRM/parcelas-comissao/{id}', 'updateParcelaComissao')->name('update.parcela-comissao');
+
+    Route::get('/CRM/percentuais-comissao', 'readPercentuaisComissao')->name('read.percentuais-comissao');
+    Route::post('/CRM/percentuais-comissao', 'updatePercentualComissao')->name('update.percentuais-comissao');
+});
+
+/** --------------------------------------------- */
+/**             Rotas Classe FaixaPreco           */
+Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::class)->group(function (){
+    Route::get('/variaveis-preco', 'readVariavelPrecificacao')->name('read.variavel');
+
+    Route::get('/variaveis-preco/cadastro', 'cadastroVariavelPrecificacao')->name('cadastro.variavel');
+    Route::post('/variaveis-preco/cadastro', 'createVariavelPrecificacao')->name('create.variavel');
+
+    Route::get('/variaveis-preco/alterar/{id}', 'alterarVariavelPrecificacao')->name('alteracao.variavel');
+    Route::post('/variaveis-preco/alterar/{id}', 'editVariavelPrecificacao')->name('edit.variavel');
+
+    Route::get('/variaveis-preco/excluir/{id}', 'deleteVariavelPrecificacao')->name('delete.variavel');
+    
+    Route::get('/faixa-preco/{id}', 'faixasPrecos')->name('faixa.preco');
+
+    Route::post('/faixa-preco/cadastro', 'createFaixaPreco')->name('create.faixa');
+    Route::post('/faixa-preco/alterar/{id}', 'editFaixaPreco')->name('edit.faixa');
+
+    Route::get('/faixa-preco/excluir/{id}', 'deleteFaixa')->name('delete.faixa');
+});
+
+/** --------------------------------------------- */
+/**            Rotas Classe Recomendador          */
+Route::middleware(['checkUserType:admin,comercial'])->controller(RecomendadoresController::class)->group(function (){
+    Route::get('/Recomendadores', 'readRecomendador')->name('read.recomendador');
+
+    Route::get('/Recomendadores/cadastro', 'cadastroRecomendador')->name('cadastro.recomendador');
+    Route::post('/Recomendadores/cadastro', 'createRecomendador')->name('create.recomendador');
+
+    Route::get('/Recomendadores/alterar/{id}', 'alteracaoRecomendador')->name('alteracao.recomendador');
+    Route::post('/variaveis/alterar/{id}', 'updateRecomendador')->name('edit.recomendador');
+
+    Route::get('/Recomendadores/excluir/{id}', 'deleteRecomendador')->name('delete.recomendador');
+});
