@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use vinicinbgs\Autentique\Utils\Api;
 use vinicinbgs\Autentique\Documents;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\AutentiqueRequest;
 
 class AutentiqueController extends Controller
 {
@@ -32,8 +33,8 @@ class AutentiqueController extends Controller
      * @throws \Exception
      *         Em caso de erro na comunicação com a API ou falha inesperada no processo.
      */
-    public function createDocument(Request $request){
-
+    public function createDocument(AutentiqueRequest $request){
+        $request->validated();
         $documento = $request->file('documento');
         $mimeType = $documento->getMimeType();
 
