@@ -768,11 +768,11 @@
             <input type="hidden" name="lead_id" value="{{$lead->id}}">
             <div class="mb-3">
               <label for="Nome_Documento" class="form-label fw-semibold">Nome do Documento</label>
-              <input type="text" name="nome_documento" class="form-control" id="Nome_Documento" placeholder="Ex: Contrato de Prestação de Serviços">
+              <input type="text" name="nome_documento" class="form-control" id="Nome_Documento" placeholder="Ex: Contrato de Prestação de Serviços" required>
             </div>
             <div class="mb-3">
               <label for="Documento" class="form-label fw-semibold">Documento para assinatura</label>
-              <input type="file" name="documento" id="Documento" class="form-control">
+              <input type="file" name="documento" id="Documento" class="form-control" required>
             </div>
             <div class="mb-3">
               <label class="form-label fw-semibold"><i class="bi bi-people"></i> Signatários</label>
