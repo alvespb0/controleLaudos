@@ -132,9 +132,6 @@
     </div>
 
     <!-- Paginação -->
-    <div class="d-flex justify-content-center mt-4">
-        {{ $comissoes->links() }}
-    </div>
     <div class="col-auto mx-auto">
         <nav aria-label="Navegação de páginas">
             <ul class="pagination">
