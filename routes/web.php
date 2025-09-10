@@ -251,4 +251,5 @@ Route::controller(GoogleController::class)->group(function(){
     Route::get('/google/login', 'loginOAuth2')->name('login.google');
     Route::get('/google/callback', 'callbackGoogle')->name('callback.google');
     Route::get('/calendar', 'listEvents')->name('calendar.index');
+    Route::post('/calendar/criar-evento', 'criarEvento')->name('calendar.createEvent');
 });

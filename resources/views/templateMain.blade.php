@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @yield('head')
     <style>
         :root {
             --primary-color: #437c90;
@@ -718,6 +719,7 @@
     @endif
 </script>
 
+@yield('scripts')
 
 </body>
 </html> 

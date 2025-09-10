@@ -1,124 +1,133 @@
 @extends('templateMain')
 
+@section('head')
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <!-- FullCalendar Locale -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/pt-br.global.min.js"></script>
+    <style>
+        .fc {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .fc-header-toolbar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            margin: 0;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .fc-button {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+            color: white !important;
+        }
+        
+        .fc-button:hover {
+            background-color: var(--hover-color) !important;
+            border-color: var(--hover-color) !important;
+        }
+        
+        .fc-button:focus {
+            box-shadow: 0 0 0 0.2rem rgba(67, 124, 144, 0.25) !important;
+        }
+        
+        .fc-button-active {
+            background-color: var(--accent-color) !important;
+            border-color: var(--accent-color) !important;
+            color: var(--secondary-color) !important;
+        }
+        
+        .fc-today {
+            background-color: #e3f2fd !important;
+        }
+        
+        .fc-daygrid-event {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        
+        .fc-event-title {
+            font-weight: 500;
+        }
+        
+        .fc-daygrid-day-number {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .fc-col-header-cell {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .fc-daygrid-day:hover {
+            background-color: #f8f9fa !important;
+        }
+        
+        .calendar-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .calendar-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px 10px 0 0;
+            margin: -1rem -1rem 1rem -1rem;
+        }
+        
+        .event-modal .modal-content {
+            border-radius: 10px;
+        }
+        
+        .event-modal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">
-                    <i class="bi bi-calendar3 me-2"></i>Calendário Google
-                </h1>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" onclick="location.reload()">
-                        <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
-                    </button>
-                    <a href="https://calendar.google.com" target="_blank" class="btn btn-primary">
-                        <i class="bi bi-calendar-plus me-1"></i>Abrir Google Calendar
-                    </a>
+            <div class="calendar-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>Calendário Google
+                    </h1>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-light" onclick="location.reload()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
+                        </button>
+                        <button class="btn btn-light" onclick="showInstructions()">
+                            <i class="bi bi-calendar-plus me-1"></i>Novo Evento
+                        </button>
+                        <a href="https://calendar.google.com" target="_blank" class="btn btn-light">
+                            <i class="bi bi-calendar3 me-1"></i>Abrir Google Calendar
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <!-- Calendário Visual -->
         <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-calendar3 me-2"></i>{{ now()->format('F Y') }}
-                    </h5>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-light" onclick="previousMonth()">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-light" onclick="nextMonth()">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <!-- Cabeçalho dos dias da semana -->
-                    <div class="calendar-header">
-                        <div class="calendar-day-header">Dom</div>
-                        <div class="calendar-day-header">Seg</div>
-                        <div class="calendar-day-header">Ter</div>
-                        <div class="calendar-day-header">Qua</div>
-                        <div class="calendar-day-header">Qui</div>
-                        <div class="calendar-day-header">Sex</div>
-                        <div class="calendar-day-header">Sáb</div>
-                    </div>
-                    
-                    <!-- Grid do calendário -->
-                    <div class="calendar-grid">
-                        @php
-                            $today = now();
-                            $firstDayOfMonth = $today->copy()->startOfMonth();
-                            $lastDayOfMonth = $today->copy()->endOfMonth();
-                            $startDate = $firstDayOfMonth->copy()->startOfWeek();
-                            $endDate = $lastDayOfMonth->copy()->endOfWeek();
-                            
-                            // Organizar eventos por data
-                            $eventsByDate = [];
-                            if($events->getItems()) {
-                                foreach($events->getItems() as $event) {
-                                    $start = $event->getStart();
-                                    $startDateTime = $start->getDateTime() ?? $start->getDate();
-                                    $eventDate = new \DateTime($startDateTime);
-                                    $dateKey = $eventDate->format('Y-m-d');
-                                    
-                                    if(!isset($eventsByDate[$dateKey])) {
-                                        $eventsByDate[$dateKey] = [];
-                                    }
-                                    $eventsByDate[$dateKey][] = $event;
-                                }
-                            }
-                            
-                            $currentDate = $startDate->copy();
-                        @endphp
-                        
-                        @while($currentDate->lte($endDate))
-                            @php
-                                $isCurrentMonth = $currentDate->month == $today->month;
-                                $isToday = $currentDate->isSameDay($today);
-                                $dateKey = $currentDate->format('Y-m-d');
-                                $dayEvents = $eventsByDate[$dateKey] ?? [];
-                            @endphp
-                            
-                            <div class="calendar-day {{ !$isCurrentMonth ? 'other-month' : '' }} {{ $isToday ? 'today' : '' }}">
-                                <div class="calendar-day-number">
-                                    {{ $currentDate->day }}
-                                </div>
-                                
-                                @if(count($dayEvents) > 0)
-                                    <div class="calendar-events">
-                                        @foreach(array_slice($dayEvents, 0, 3) as $event)
-                                            @php
-                                                $start = $event->getStart();
-                                                $isAllDay = $start->getDate() !== null;
-                                                $startDateTime = $start->getDateTime() ?? $start->getDate();
-                                                $eventDate = new \DateTime($startDateTime);
-                                            @endphp
-                                            <div class="calendar-event {{ $isAllDay ? 'all-day' : '' }}" 
-                                                 title="{{ $event->getSummary() ?? 'Sem título' }}{{ $event->getDescription() ? ' - ' . $event->getDescription() : '' }}">
-                                                @if(!$isAllDay)
-                                                    <small class="event-time">{{ $eventDate->format('H:i') }}</small>
-                                                @endif
-                                                <div class="event-title">{{ Str::limit($event->getSummary() ?? 'Sem título', 20) }}</div>
-                                            </div>
-                                        @endforeach
-                                        
-                                        @if(count($dayEvents) > 3)
-                                            <div class="calendar-event more-events">
-                                                +{{ count($dayEvents) - 3 }} mais
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endif
-                            </div>
-                            
-                            @php $currentDate->addDay(); @endphp
-                        @endwhile
+            <div class="calendar-container">
+                <div id="calendar" style="min-height: 600px; background-color: #f8f9fa; border: 2px dashed #dee2e6; display: flex; align-items: center; justify-content: center;">
+                    <div class="text-center">
+                        <i class="bi bi-hourglass-split display-4 text-muted"></i>
+                        <p class="mt-2 text-muted">Carregando calendário...</p>
                     </div>
                 </div>
             </div>
@@ -174,15 +183,19 @@
                     <ul class="list-unstyled mb-0">
                         <li class="mb-2">
                             <i class="bi bi-arrow-right text-primary me-2"></i>
-                            Clique em "Abrir Google Calendar" para gerenciar seus eventos
+                            Clique nos eventos para ver detalhes
                         </li>
                         <li class="mb-2">
                             <i class="bi bi-arrow-right text-primary me-2"></i>
-                            Use o botão "Atualizar" para sincronizar os dados
+                            Clique em um dia para ver a semana
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-arrow-right text-primary me-2"></i>
+                            Arraste e solte para selecionar horário
                         </li>
                         <li class="mb-0">
                             <i class="bi bi-arrow-right text-primary me-2"></i>
-                            Eventos de dia inteiro aparecem sem horário
+                            Mude a visualização (mês/semana/dia)
                         </li>
                     </ul>
                 </div>
@@ -191,186 +204,352 @@
     </div>
 </div>
 
-<style>
-.card {
-    border: none;
-    border-radius: 10px;
-}
+<!-- Modal para detalhes do evento -->
+<div class="modal fade event-modal" id="eventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalTitle">Detalhes do Evento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="eventModalBody">
+                <!-- Conteúdo será preenchido via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <a href="https://calendar.google.com" target="_blank" class="btn btn-primary">
+                    <i class="bi bi-calendar-plus me-1"></i>Abrir no Google Calendar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-.calendar-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: var(--light-color);
-    border-bottom: 2px solid var(--accent-color);
-}
+<!-- Modal para criar evento -->
+<div class="modal fade" id="createEventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-calendar-plus me-2"></i>Novo Evento
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('calendar.createEvent') }}" method="POST" id="createEventForm">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="summary" class="form-label">Título do Evento *</label>
+                        <input type="text" class="form-control" id="summary" name="summary" required placeholder="Digite o título do evento...">
+                    </div>
 
-.calendar-day-header {
-    padding: 12px 8px;
-    text-align: center;
-    font-weight: 600;
-    color: var(--secondary-color);
-    border-right: 1px solid #e0e0e0;
-}
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label">Início</label>
+                                <div class="form-control" id="startDisplay" style="background-color: #f8f9fa;">
+                                    <!-- Será preenchido via JavaScript -->
+                                </div>
+                                <input type="hidden" id="start" name="start">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fim</label>
+                                <div class="form-control" id="endDisplay" style="background-color: #f8f9fa;">
+                                    <!-- Será preenchido via JavaScript -->
+                                </div>
+                                <input type="hidden" id="end" name="end">
+                            </div>
+                        </div>
+                    </div>
 
-.calendar-day-header:last-child {
-    border-right: none;
-}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Período selecionado:</strong> Arraste e solte no calendário para selecionar o horário desejado.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="createEventBtn" disabled>
+                        <i class="bi bi-calendar-plus me-1"></i>Criar Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
 
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    min-height: 500px;
-}
+@section('scripts')
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM carregado, iniciando FullCalendar...');
+            
+            var calendarEl = document.getElementById('calendar');
+            
+            if (!calendarEl) {
+                console.error('Elemento calendar não encontrado!');
+                return;
+            }
+            
+            // Limpar conteúdo de loading
+            calendarEl.innerHTML = '';
+            calendarEl.style.background = 'white';
+            calendarEl.style.border = 'none';
+            
+            // Preparar eventos para o FullCalendar
+            var events = [];
+            
+            @if($events && $events->getItems())
+                @foreach($events->getItems() as $event)
+                    @php
+                        $start = $event->getStart();
+                        $end = $event->getEnd();
+                        $startDateTime = $start->getDateTime() ?? $start->getDate();
+                        $endDateTime = $end->getDateTime() ?? $end->getDate();
+                        $isAllDay = $start->getDate() !== null;
+                    @endphp
+                    events.push({
+                        id: '{{ $loop->index }}',
+                        title: "{{ addslashes($event->getSummary() ?? 'Sem título') }}",
+                        start: "{{ $startDateTime }}",
+                        @if($endDateTime)
+                        end: "{{ $endDateTime }}",
+                        @endif
+                        allDay: {{ $isAllDay ? 'true' : 'false' }},
+                        description: "{{ addslashes($event->getDescription() ?? '') }}",
+                        location: "{{ addslashes($event->getLocation() ?? '') }}",
+                        color: "{{ $isAllDay ? '#F7C548' : '#437c90' }}",
+                        textColor: "{{ $isAllDay ? '#255957' : 'white' }}"
+                    });
+                @endforeach
+            @endif
 
-.calendar-day {
-    border-right: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 8px;
-    min-height: 120px;
-    position: relative;
-    background-color: white;
-    transition: background-color 0.2s;
-}
+            console.log('Eventos carregados:', events);
+            
+            // Adicionar evento de teste se não houver eventos
+            if (events.length === 0) {
+                events.push({
+                    id: 'teste',
+                    title: 'Evento de Teste',
+                    start: new Date(),
+                    allDay: false,
+                    description: 'Este é um evento de teste para verificar se o calendário está funcionando.',
+                    color: '#437c90',
+                    textColor: 'white'
+                });
+            }
 
-.calendar-day:hover {
-    background-color: #f8f9fa;
-}
+            try {
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: events,
+                eventClick: function(info) {
+                    showEventModal(info.event);
+                },
+                dateClick: function(info) {
+                    // Mudar para visualização de semana quando clicar em um dia
+                    calendar.changeView('timeGridWeek', info.dateStr);
+                },
+                select: function(info) {
+                    // Abrir modal quando selecionar um período
+                    showCreateEventModal(info.start, info.end);
+                },
+                eventMouseEnter: function(info) {
+                    info.el.style.cursor = 'pointer';
+                },
+                dayMaxEvents: 3,
+                moreLinkClick: 'popover',
+                eventDisplay: 'block',
+                height: 'auto',
+                aspectRatio: 1.8,
+                nowIndicator: true,
+                dayMaxEventRows: 3,
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                slotMinTime: '06:00:00',
+                slotMaxTime: '22:00:00',
+                weekends: true,
+                firstDay: 0, // Domingo
+                showNonCurrentDates: true,
+                fixedWeekCount: false,
+                selectable: true,
+                selectMirror: true,
+                selectOverlap: false,
+                unselectAuto: false,
+                selectLongPressDelay: 100
+            });
 
-.calendar-day.other-month {
-    background-color: #f8f9fa;
-    color: #6c757d;
-}
+                calendar.render();
+                console.log('Calendário renderizado com sucesso');
+            } catch (error) {
+                console.error('Erro ao renderizar calendário:', error);
+                calendarEl.innerHTML = '<div class="alert alert-danger">Erro ao carregar o calendário: ' + error.message + '</div>';
+            }
+        });
 
-.calendar-day.today {
-    background-color: #e3f2fd;
-    border: 2px solid var(--primary-color);
-}
+        function showEventModal(event) {
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            const title = document.getElementById('eventModalTitle');
+            const body = document.getElementById('eventModalBody');
+            
+            title.textContent = event.title;
+            
+            let eventDetails = `
+                <div class="row">
+                    <div class="col-12">
+                        <h6><i class="bi bi-calendar3 me-2"></i>Informações do Evento</h6>
+                        <hr>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <strong>Início:</strong>
+                    </div>
+                    <div class="col-8">
+                        ${event.start ? event.start.toLocaleString('pt-BR') : 'Não definido'}
+                    </div>
+                </div>
+            `;
+            
+            if (event.end) {
+                eventDetails += `
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <strong>Fim:</strong>
+                        </div>
+                        <div class="col-8">
+                            ${event.end.toLocaleString('pt-BR')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (event.extendedProps.description) {
+                eventDetails += `
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <strong>Descrição:</strong>
+                        </div>
+                        <div class="col-8">
+                            ${event.extendedProps.description}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (event.extendedProps.location) {
+                eventDetails += `
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <strong>Local:</strong>
+                        </div>
+                        <div class="col-8">
+                            <i class="bi bi-geo-alt me-1"></i>${event.extendedProps.location}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            eventDetails += `
+                <div class="row">
+                    <div class="col-4">
+                        <strong>Tipo:</strong>
+                    </div>
+                    <div class="col-8">
+                        ${event.allDay ? '<span class="badge bg-warning text-dark">Dia inteiro</span>' : '<span class="badge bg-primary">Com horário</span>'}
+                    </div>
+                </div>
+            `;
+            
+            body.innerHTML = eventDetails;
+            modal.show();
+        }
 
-.calendar-day.today .calendar-day-number {
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
+        function showCreateEventModal(startDate, endDate) {
+            const modal = new bootstrap.Modal(document.getElementById('createEventModal'));
+            const form = document.getElementById('createEventForm');
+            const createBtn = document.getElementById('createEventBtn');
+            
+            // Limpar formulário
+            form.reset();
+            createBtn.disabled = true;
+            
+            // Se não há datas selecionadas, mostrar instruções
+            if (!startDate || !endDate) {
+                document.getElementById('startDisplay').innerHTML = '<em class="text-muted">Nenhum período selecionado</em>';
+                document.getElementById('endDisplay').innerHTML = '<em class="text-muted">Nenhum período selecionado</em>';
+                return;
+            }
+            
+            // Formatar datas para exibição
+            const startFormatted = formatDateTime(startDate);
+            const endFormatted = formatDateTime(endDate);
+            
+            document.getElementById('startDisplay').innerHTML = startFormatted;
+            document.getElementById('endDisplay').innerHTML = endFormatted;
+            
+            // Definir valores dos campos hidden
+            document.getElementById('start').value = startDate.toISOString();
+            document.getElementById('end').value = endDate.toISOString();
+            
+            // Habilitar botão de criar
+            createBtn.disabled = false;
+            
+            modal.show();
+        }
 
-.calendar-day-number {
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--secondary-color);
-}
+        function formatDateTime(date) {
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            
+            return date.toLocaleString('pt-BR', options);
+        }
 
-.calendar-events {
-    position: absolute;
-    top: 30px;
-    left: 4px;
-    right: 4px;
-    bottom: 4px;
-    overflow: hidden;
-}
+        // Habilitar botão quando título for preenchido
+        document.getElementById('summary').addEventListener('input', function() {
+            const createBtn = document.getElementById('createEventBtn');
+            const startValue = document.getElementById('start').value;
+            
+            if (this.value.trim() && startValue) {
+                createBtn.disabled = false;
+            } else {
+                createBtn.disabled = true;
+            }
+        });
 
-.calendar-event {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 2px 6px;
-    margin-bottom: 2px;
-    border-radius: 3px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.calendar-event:hover {
-    opacity: 0.8;
-}
-
-.calendar-event.all-day {
-    background-color: var(--accent-color);
-    color: var(--secondary-color);
-}
-
-.calendar-event.more-events {
-    background-color: #6c757d;
-    text-align: center;
-    font-style: italic;
-}
-
-.event-time {
-    font-size: 0.65rem;
-    opacity: 0.9;
-    display: block;
-}
-
-.event-title {
-    font-weight: 500;
-}
-
-.btn {
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.card-header {
-    border-radius: 10px 10px 0 0 !important;
-    border: none;
-}
-
-@media (max-width: 768px) {
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .d-flex.gap-2 {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .calendar-day {
-        min-height: 80px;
-        padding: 4px;
-    }
-    
-    .calendar-event {
-        font-size: 0.7rem;
-        padding: 1px 4px;
-    }
-}
-
-@media (max-width: 576px) {
-    .calendar-day {
-        min-height: 60px;
-        padding: 2px;
-    }
-    
-    .calendar-day-header {
-        padding: 8px 4px;
-        font-size: 0.8rem;
-    }
-    
-    .calendar-event {
-        font-size: 0.65rem;
-        padding: 1px 3px;
-    }
-}
-</style>
-
-<script>
-function previousMonth() {
-    // Implementar navegação para mês anterior
-    console.log('Mês anterior');
-}
-
-function nextMonth() {
-    // Implementar navegação para próximo mês
-    console.log('Próximo mês');
-}
-</script>
+        function showInstructions() {
+            const modal = new bootstrap.Modal(document.getElementById('createEventModal'));
+            const form = document.getElementById('createEventForm');
+            const createBtn = document.getElementById('createEventBtn');
+            
+            // Limpar formulário
+            form.reset();
+            createBtn.disabled = true;
+            
+            // Mostrar instruções
+            document.getElementById('startDisplay').innerHTML = '<em class="text-muted">Arraste e solte no calendário para selecionar</em>';
+            document.getElementById('endDisplay').innerHTML = '<em class="text-muted">Arraste e solte no calendário para selecionar</em>';
+            
+            modal.show();
+        }
+    </script>
 @endsection
