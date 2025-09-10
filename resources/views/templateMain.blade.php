@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @yield('head')
     <style>
         :root {
             --primary-color: #437c90;
@@ -496,6 +497,7 @@
                         @endif
                         <a href="/Recomendadores/" class="list-group-item list-group-item-action ps-5">Indicador Externo</a>
                         <a href="/Recomendadores/cadastro" class="list-group-item list-group-item-action ps-5">Novo Indicador Externo</a>
+                        <a href="/calendar" class="list-group-item list-group-item-action ps-5">Calendário</a>
                     </div>
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#clientesMenu" role="button" aria-expanded="false" aria-controls="clientesMenu">
                         <i class="bi bi-person-badge me-2"></i><span>Clientes</span>
@@ -560,6 +562,17 @@
                     <a href="/logout" class="list-group-item list-group-item-action py-2 ripple">
                         <i class="bi bi-box-arrow-right me-2"></i><span>Sair</span>
                     </a>
+                    @endif
+                    
+                    <!-- Status da Conta Google -->
+                    @if(auth()->user()->google_access_token)
+                        <div class="list-group-item list-group-item-action py-2 ripple" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                            <i class="bi bi-check-circle-fill me-2" style="color: #28a745;"></i><span>Google Vinculado</span>
+                        </div>
+                    @else
+                        <a href="{{route('login.google')}}" class="list-group-item list-group-item-action py-2 ripple" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                            <i class="bi bi-google me-2" style="color: #4285f4;"></i><span>Vincular Google</span>
+                        </a>
                     @endif
                 </div>
         </div>
@@ -707,6 +720,7 @@
     @endif
 </script>
 
+@yield('scripts')
 
 </body>
 </html> 
