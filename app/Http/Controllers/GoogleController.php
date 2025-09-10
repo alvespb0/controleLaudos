@@ -191,7 +191,7 @@ class GoogleController extends Controller
      * @throws \Google_Service_Exception Se houver erro na API do Google
      * @throws \Exception Se houver erro de configuração do cliente
      */
-    private function createEvent(array $data){
+    public static function createEvent(array $data){
         try{
             $user = auth()->user();
 
@@ -244,7 +244,7 @@ class GoogleController extends Controller
             \Log::error('Erro ao registrar sua conta google:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.dashboard');
+            return false;
         }
     }
 

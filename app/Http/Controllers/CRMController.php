@@ -95,7 +95,20 @@ class CRMController extends Controller
             'recomendador_id' => $request->recomendador_id
         ]);
 
-        session()->flash('mensagem', 'Lead criado com sucesso');
+        $evento = null;
+        if($request->adicionar_agenda){
+            $evento = \App\Http\Controllers\GoogleController::createEvent([
+                'summary' => 'Reunião com o cliente:'.$cliente->nome,
+                'start'   => \Carbon\Carbon::parse($request->proximo_contato)->toRfc3339String(),
+                'end'     => \Carbon\Carbon::parse($request->proximo_contato)->copy()->addHour()->toRfc3339String(),
+            ]);
+        }
+
+        if (!$evento && $request->adicionar_agenda) {
+            session()->flash('error', 'Lead criado, mas houve erro ao salvar no Google Agenda');
+        } else {
+            session()->flash('mensagem', 'Lead criado com sucesso!');
+        }
 
         return redirect()->route('show.CRM');
     }
@@ -239,6 +252,23 @@ class CRMController extends Controller
             ->performedOn($lead)
             ->causedBy(auth()->user())
             ->log("Atualizou dados do lead");
+
+        $evento = null;
+        if($request->adicionar_agenda){
+            $evento = \App\Http\Controllers\GoogleController::createEvent([
+                'summary' => 'Reunião com o cliente:'.$cliente->nome,
+                'start'   => \Carbon\Carbon::parse($request->proximo_contato)->toRfc3339String(),
+                'end'     => \Carbon\Carbon::parse($request->proximo_contato)->copy()->addHour()->toRfc3339String(),
+            ]);
+        }
+
+        if (!$evento && $request->adicionar_agenda) {
+            session()->flash('error', 'Lead criado, mas houve erro ao salvar no Google Agenda');
+        } else {
+            session()->flash('mensagem', 'Lead criado com sucesso!');
+        }
+
+        return redirect()->route('show.CRM');
 
         session()->flash('mensagem', 'Lead alterado com sucesso');
 
