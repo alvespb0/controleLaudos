@@ -14,6 +14,7 @@ use App\Http\Controllers\CRMController;
 use App\Http\Controllers\AutentiqueController;
 use App\Http\Controllers\FaixaPrecoController;
 use App\Http\Controllers\RecomendadoresController;
+use App\Http\Controllers\GoogleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -244,4 +245,10 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(RecomendadoresC
     Route::post('/variaveis/alterar/{id}', 'updateRecomendador')->name('edit.recomendador');
 
     Route::get('/Recomendadores/excluir/{id}', 'deleteRecomendador')->name('delete.recomendador');
+});
+
+Route::controller(GoogleController::class)->group(function(){
+    Route::get('/google/login', 'loginOAuth2')->name('login.google');
+    Route::get('/google/callback', 'callbackGoogle')->name('callback.google');
+
 });
