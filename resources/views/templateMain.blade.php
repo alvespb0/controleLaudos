@@ -561,6 +561,17 @@
                         <i class="bi bi-box-arrow-right me-2"></i><span>Sair</span>
                     </a>
                     @endif
+                    
+                    <!-- Status da Conta Google -->
+                    @if(auth()->user()->google_access_token)
+                        <div class="list-group-item list-group-item-action py-2 ripple" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                            <i class="bi bi-check-circle-fill me-2" style="color: #28a745;"></i><span>Google Vinculado</span>
+                        </div>
+                    @else
+                        <a href="{{route('login.google')}}" class="list-group-item list-group-item-action py-2 ripple" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                            <i class="bi bi-google me-2" style="color: #4285f4;"></i><span>Vincular Google</span>
+                        </a>
+                    @endif
                 </div>
         </div>
     </nav>
