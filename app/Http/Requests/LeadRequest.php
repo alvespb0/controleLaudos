@@ -28,7 +28,8 @@ class LeadRequest extends FormRequest
             'nome_contato' => 'nullable|string|min:4|max:255',
             'num_funcionarios' => 'nullable|numeric|min:1',
             'proximo_contato' => 'nullable|date',
-            'recomendador_id' => 'nullable|exists:recomendadores,id'
+            'recomendador_id' => 'nullable|exists:recomendadores,id',
+            'adicionar_agenda' => 'boolean'
         ];
     }
 

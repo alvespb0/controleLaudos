@@ -828,6 +828,21 @@
             <label for="observacoes" class="form-label">Próximo contato</label>
             <input type="datetime-local" name="proximo_contato" class="form-control" id="" value="{{$lead->proximo_contato ? date('Y-m-d\TH:i', strtotime($lead->proximo_contato)) : ''}}">
           </div>
+          @if(auth()->user()->google_access_token)
+          <div class="mb-3">
+            <label class="form-label d-block">Adicionar na sua agenda?</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="adicionar_agenda" id="agenda_sim_{{ $lead->id }}" value="1" {{ $lead->adicionar_agenda ? 'checked' : '' }}>
+              <label class="form-check-label" for="agenda_sim_{{ $lead->id }}">Sim</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="adicionar_agenda" id="agenda_nao_{{ $lead->id }}" value="0" {{ !$lead->adicionar_agenda ? 'checked' : '' }}>
+              <label class="form-check-label" for="agenda_nao_{{ $lead->id }}">Não</label>
+            </div>
+          </div>
+          @else 
+          <input type="hidden" name="adicionar_agenda" value="0">
+          @endif
           <div class="mb-3">
             <label for="email" class="form-label">Observações</label>
             <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{$lead->observacoes ? $lead->observacoes : ''}}</textarea>
@@ -920,6 +935,21 @@
             <label for="observacoes" class="form-label">Próximo contato</label>
             <input type="datetime-local" name="proximo_contato" class="form-control" id="">
           </div>
+          @if(auth()->user()->google_access_token)
+          <div class="mb-3">
+            <label class="form-label d-block">Adicionar na sua agenda?</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="adicionar_agenda" id="agenda_sim" value="1">
+              <label class="form-check-label" for="agenda_sim">Sim</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="adicionar_agenda" id="agenda_nao" value="0" checked>
+              <label class="form-check-label" for="agenda_nao">Não</label>
+            </div>
+          </div>
+          @else 
+          <input type="hidden" name="adicionar_agenda" value="0">
+          @endif
           <div class="mb-3">
             <label for="email" class="form-label">Observações</label>
             <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
