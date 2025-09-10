@@ -497,6 +497,7 @@
                         @endif
                         <a href="/Recomendadores/" class="list-group-item list-group-item-action ps-5">Indicador Externo</a>
                         <a href="/Recomendadores/cadastro" class="list-group-item list-group-item-action ps-5">Novo Indicador Externo</a>
+                        <a href="/calendar" class="list-group-item list-group-item-action ps-5">Calendário</a>
                     </div>
                     <a class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="collapse" href="#clientesMenu" role="button" aria-expanded="false" aria-controls="clientesMenu">
                         <i class="bi bi-person-badge me-2"></i><span>Clientes</span>
