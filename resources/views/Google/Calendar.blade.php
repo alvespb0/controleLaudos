@@ -300,38 +300,38 @@
             calendarEl.style.background = 'white';
             calendarEl.style.border = 'none';
             
-            // Preparar eventos para o FullCalendar
-            var events = [];
-            
-            @if($events && $events->getItems())
-                @foreach($events->getItems() as $event)
-                    @php
+            // Preparar eventos para o FullCalendar (usando JSON seguro)
+            @php
+                $eventsForJs = [];
+                if ($events && $events->getItems()) {
+                    foreach ($events->getItems() as $idx => $event) {
                         $start = $event->getStart();
                         $end = $event->getEnd();
                         $startDateTime = $start->getDateTime() ?? $start->getDate();
                         $endDateTime = $end->getDateTime() ?? $end->getDate();
                         $isAllDay = $start->getDate() !== null;
-                    @endphp
-                    events.push({
-                        id: '{{ $loop->index }}',
-                        title: "{{ addslashes($event->getSummary() ?? 'Sem título') }}",
-                        start: "{{ $startDateTime }}",
-                        @if($endDateTime)
-                        end: "{{ $endDateTime }}",
-                        @endif
-                        allDay: {{ $isAllDay ? 'true' : 'false' }},
-                        description: "{{ addslashes($event->getDescription() ?? '') }}",
-                        location: "{{ addslashes($event->getLocation() ?? '') }}",
-                        color: "{{ $isAllDay ? '#F7C548' : '#437c90' }}",
-                        textColor: "{{ $isAllDay ? '#255957' : 'white' }}"
-                    });
-                @endforeach
-            @endif
+
+                        $eventsForJs[] = [
+                            'id' => (string) $idx,
+                            'title' => $event->getSummary() ?? 'Sem título',
+                            'start' => $startDateTime,
+                            // FullCalendar aceita null, manter chave para consistência
+                            'end' => $endDateTime ?? null,
+                            'allDay' => $isAllDay,
+                            'description' => $event->getDescription() ?? '',
+                            'location' => $event->getLocation() ?? '',
+                            'color' => $isAllDay ? '#F7C548' : '#437c90',
+                            'textColor' => $isAllDay ? '#255957' : 'white',
+                        ];
+                    }
+                }
+            @endphp
+            var events = @json($eventsForJs);
 
             console.log('Eventos carregados:', events);
             
             // Adicionar evento de teste se não houver eventos
-            if (events.length === 0) {
+            if (!Array.isArray(events) || events.length === 0) {
                 events.push({
                     id: 'teste',
                     title: 'Evento de Teste',
