@@ -131,7 +131,7 @@ class GoogleController extends Controller
             \Log::error('Erro vincular sua conta google:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.dashboard');
+            return redirect()->route('dashboard.show');
         }
     }
 
