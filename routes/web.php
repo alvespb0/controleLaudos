@@ -15,6 +15,7 @@ use App\Http\Controllers\AutentiqueController;
 use App\Http\Controllers\FaixaPrecoController;
 use App\Http\Controllers\RecomendadoresController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\ContaAzulController;
 
 /*
 |--------------------------------------------------------------------------
@@ -247,9 +248,15 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(RecomendadoresC
     Route::get('/Recomendadores/excluir/{id}', 'deleteRecomendador')->name('delete.recomendador');
 });
 
+/** --------------------------------------------- */
+/**            Rotas Classe Recomendador          */
 Route::controller(GoogleController::class)->group(function(){
     Route::get('/google/login', 'loginOAuth2')->name('login.google');
     Route::get('/google/callback', 'callbackGoogle')->name('callback.google');
     Route::get('/calendar', 'listEvents')->name('calendar.index');
     Route::post('/calendar/criar-evento', 'criarEvento')->name('calendar.createEvent');
+});
+Route::controller(ContaAzulController::class)->group(function(){
+    Route::get('/contaazul/connect', 'getAuthorizationToken');
+    Route::get('/contaazul/auth', 'saveOrRefreshToken');
 });
