@@ -191,10 +191,26 @@ class ContaAzulController extends Controller
 
         #dd($token);
         $cliente_id = $this->getClienteUUID($lead, $token->access_token); 
-        dd($cliente_id);
+        $categoria_id = $this->getCategoriaFinanceiraUUID($token->access_token);
+        $centroCusto_id = $this->getCentroCustoFinanceiroUUID($token->access_token);
+        dd($centroCusto_id);
     }
 
-    public function getClienteUUID($lead, $access_token){ // CPF ou CNPJ + token 
+    /**
+     * Obtém o UUID do cliente na Conta Azul usando CPF ou CNPJ.
+     *
+     * Esta função consulta a API da Conta Azul para buscar um cliente pelo documento (CPF ou CNPJ).
+     * Se o cliente não existir, chama {@see createClienteCA()} para criar um novo registro.
+     *
+     * @param object $lead         Objeto lead que deve conter a relação `$lead->cliente->cnpj`.
+     * @param string $access_token Token de acesso OAuth2 da Conta Azul.
+     *
+     * @return string|int|\Illuminate\Http\RedirectResponse
+     *         - string: UUID do cliente na Conta Azul, caso exista ou seja criado com sucesso.
+     *         - int: Código de status HTTP se a API retornar erro.
+     *         - \Illuminate\Http\RedirectResponse: Redireciona para a rota 'show.CRM' em caso de exceção.
+     */
+    private function getClienteUUID($lead, $access_token){ // CPF ou CNPJ + token 
         try{
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '. $access_token
@@ -223,7 +239,21 @@ class ContaAzulController extends Controller
         }
     }
 
-    public function createClienteCa($lead, $access_token){
+    /**
+     * Cria um novo cliente na Conta Azul via API.
+     *
+     * Esta função envia uma requisição POST para o endpoint de clientes da Conta Azul,
+     * criando o cliente com base nos dados do lead fornecido.
+     * Determina automaticamente se é Pessoa Física ou Jurídica a partir do comprimento do documento.
+     *
+     * @param object $lead         Objeto lead que deve conter a relação `$lead->cliente` com `nome` e `cnpj`.
+     * @param string $access_token Token de acesso OAuth2 da Conta Azul.
+     *
+     * @return array|\Illuminate\Http\RedirectResponse
+     *         - array: Resposta JSON da API da Conta Azul contendo os dados do cliente criado.
+     *         - \Illuminate\Http\RedirectResponse: Redireciona para a rota 'show.CRM' em caso de exceção.
+     */
+    private function createClienteCa($lead, $access_token){
         try{
             $documentKey = strlen($lead->cliente->cnpj) === 11 ? 'cpf' : 'cnpj';
             $tipoPessoa = strlen($lead->cliente->cnpj) === 11 ? 'Física' : 'Jurídica'; #tem que ter acento, o enum deles é estranho
@@ -248,6 +278,85 @@ class ContaAzulController extends Controller
         }catch(\Exception $e){
             session()->flash('error', 'Erro ao acessar a API para criar o cliente do CA');
             \Log::error('Erro ao acessar a API para criar o cliente no Conta Azul:', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->route('show.CRM');
+        }
+    }
+
+    /**
+     * Obtém o UUID da categoria financeira "laudos" na Conta Azul.
+     *
+     * Esta função consulta a API de categorias da Conta Azul filtrando pelo nome "laudos".
+     * Caso a categoria não seja encontrada, exibe mensagem de erro e redireciona o usuário.
+     *
+     * @param string $access_token Token de acesso OAuth2 da Conta Azul.
+     *
+     * @return string|int|\Illuminate\Http\RedirectResponse
+     *         - string: UUID da categoria "laudos" se encontrada.
+     *         - int: Código de status HTTP em caso de falha na resposta da API.
+     *         - \Illuminate\Http\RedirectResponse: Redireciona para a rota 'show.CRM' em caso de exceção ou categoria não encontrada.
+     *
+     * @example
+     * $categoriaId = $this->getCategoriaFinanceiraUUID($access_token);
+     * // Retorna o UUID da categoria "laudos" para vinculação em lançamentos financeiros.
+     */
+    private function getCategoriaFinanceiraUUID($access_token){ # de momento sempre será laudos
+        try{
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $access_token
+            ])->get('https://api-v2.contaazul.com/v1/categorias', [
+                'campo_ordenado_descendente' => 'NOME',
+                'permite_apenas_filhos' => true,
+                'nome'=> 'laudos'
+            ]);
+
+            if($response->status() == 200){
+                $data = $response->json();
+                if($data['itens'] == null){
+                    session()->flash('error', 'Categoria LAUDOS não encontrada, favor comunicar o desenvolvedor do sistema');
+                    \Log::error('Categoria Laudos não encontrada');
+                    return null;
+                }else{
+                    return $data['itens'][0]['id'];
+                }
+            } else {
+                \Log::error('Erro ao acessar a API para resgatar a categoria financeira', ['status' => $response->status(), 'body' => $response->body()]);
+                return $response->status();
+            }
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para resgatar a Categoria Financeira do CA');
+            \Log::error('Erro ao acessar a API para resgatar a Categoria Financeira no Conta Azul:', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->route('show.CRM');
+        }
+    }
+
+    private function getCentroCustoFinanceiroUUID($access_token){
+        try{
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $access_token
+            ])->get('https://api-v2.contaazul.com/v1/centro-de-custo', [
+                'busca' => 'Setor COMERCIAL',
+            ]);
+
+            if($response->status() == 200){
+                $data = $response->json();
+                if($data['itens'] == null){
+                    session()->flash('error', 'Centro de Custo SETOR COMERCIAL não encontrado, favor comunicar o desenvolvedor do sistema');
+                    \Log::error('Centro de Custo Setor COMERIAL não encontrado');
+                    return null;
+                }else{
+                    return $data['itens'][0]['id'];
+                }
+            } else {
+                \Log::error('Erro ao acessar a API para resgatar o Centro de Custo', ['status' => $response->status(), 'body' => $response->body()]);
+                return $response->status();
+            }
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para resgatar o Centro de Custo do CA');
+            \Log::error('Erro ao acessar a API para resgatar o Centro de Custo no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
             return redirect()->route('show.CRM');
