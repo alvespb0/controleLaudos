@@ -249,14 +249,16 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(RecomendadoresC
 });
 
 /** --------------------------------------------- */
-/**            Rotas Classe Recomendador          */
+/**              Rotas Classe Google              */
 Route::controller(GoogleController::class)->group(function(){
     Route::get('/google/login', 'loginOAuth2')->name('login.google');
     Route::get('/google/callback', 'callbackGoogle')->name('callback.google');
     Route::get('/calendar', 'listEvents')->name('calendar.index');
     Route::post('/calendar/criar-evento', 'criarEvento')->name('calendar.createEvent');
 });
+
 Route::controller(ContaAzulController::class)->group(function(){
     Route::get('/contaazul/connect', 'getAuthorizationToken');
-    Route::get('/contaazul/auth', 'saveOrRefreshToken');
+    Route::get('/contaazul/test', 'saveOrRefreshToken');
+    Route::post('/contaazul/lancar-venda', 'lancarVenda')->name('lancar-venda.ca');
 });
