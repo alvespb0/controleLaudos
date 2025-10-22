@@ -193,7 +193,11 @@ class ContaAzulController extends Controller
         $cliente_id = $this->getClienteUUID($lead, $token->access_token); 
         $categoria_id = $this->getCategoriaFinanceiraUUID($token->access_token);
         $centroCusto_id = $this->getCentroCustoFinanceiroUUID($token->access_token);
-        dd($centroCusto_id);
+        $servico_id = $this->getServicoUUID($token->access_token);
+        dd(["Cliente_id" => $cliente_id,
+            "Categoria_id" => $categoria_id,
+            "CentroCusto_id" => $centroCusto_id,
+            "Servico_id" => $servico_id]);
     }
 
     /**
@@ -308,7 +312,7 @@ class ContaAzulController extends Controller
             ])->get('https://api-v2.contaazul.com/v1/categorias', [
                 'campo_ordenado_descendente' => 'NOME',
                 'permite_apenas_filhos' => true,
-                'nome'=> 'laudos'
+                'nome'=> env('CA_CATEGORIA_LAUDOS')
             ]);
 
             if($response->status() == 200){
@@ -333,12 +337,27 @@ class ContaAzulController extends Controller
         }
     }
 
+    /**
+     * Obtém o UUID do Centro de Custo na Conta Azul.
+     *
+     * Esta função consulta a API de centro de custo da Conta Azul utilizando a variável de ambiente
+     * `CA_CENTRO_CUSTO` como filtro de busca.  
+     * Caso não seja encontrado, exibe uma mensagem de erro e registra no log.
+     *
+     * @param string $access_token Token de acesso OAuth2 da Conta Azul.
+     *
+     * @return string|int|\Illuminate\Http\RedirectResponse|null
+     *         - string: UUID do centro de custo encontrado.
+     *         - int: Código de status HTTP em caso de falha na resposta da API.
+     *         - null: Se nenhum centro de custo for encontrado.
+     *         - \Illuminate\Http\RedirectResponse: Redireciona para 'show.CRM' em caso de exceção.
+     */
     private function getCentroCustoFinanceiroUUID($access_token){
         try{
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '. $access_token
             ])->get('https://api-v2.contaazul.com/v1/centro-de-custo', [
-                'busca' => 'Setor COMERCIAL',
+                'busca' => env('CA_CENTRO_CUSTO'),
             ]);
 
             if($response->status() == 200){
@@ -361,6 +380,50 @@ class ContaAzulController extends Controller
             ]);
             return redirect()->route('show.CRM');
         }
+    }
 
+    /**
+     * Obtém o UUID de um Serviço na Conta Azul.
+     *
+     * Esta função consulta a API de serviços da Conta Azul utilizando a variável de ambiente
+     * `CA_ITEM_SERVICO` como filtro de busca textual.  
+     * Caso não seja encontrado, exibe uma mensagem de erro e registra no log.
+     *
+     * @param string $access_token Token de acesso OAuth2 da Conta Azul.
+     *
+     * @return string|int|\Illuminate\Http\RedirectResponse|null
+     *         - string: UUID do serviço encontrado.
+     *         - int: Código de status HTTP em caso de falha na resposta da API.
+     *         - null: Se nenhum serviço for encontrado.
+     *         - \Illuminate\Http\RedirectResponse: Redireciona para 'show.CRM' em caso de exceção.
+     */
+    private function getServicoUUID($access_token){
+        try{
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $access_token
+            ])->get('https://api-v2.contaazul.com/v1/servicos', [
+                'busca_textual' => env('CA_ITEM_SERVICO'),
+            ]);
+
+            if($response->status() == 200){
+                $data = $response->json();
+                if($data['itens'] == null){
+                    session()->flash('error', 'Serviço '.env('CA_ITEM_SERVICO').' não encontrado, favor comunicar o desenvolvedor do sistema');
+                    \Log::error('Serviço da ENV não encontrado');
+                    return null;
+                }else{
+                    return $data['itens'][0]['id'];
+                }
+            } else {
+                \Log::error('Erro ao acessar a API para resgatar o Serviço', ['status' => $response->status(), 'body' => $response->body()]);
+                return $response->status();
+            }
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para resgatar o Serviço do CA');
+            \Log::error('Erro ao acessar a API para resgatar o Serviço no Conta Azul:', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->route('show.CRM');
+        }
     }
 }
