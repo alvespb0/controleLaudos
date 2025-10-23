@@ -263,7 +263,7 @@ class ContaAzulController extends Controller
 
         }catch(\Exception $e){
             session()->flash('error', 'Erro ao acessar a API para lança a venda do cliente do CA');
-            \Log::error('Erro ao acessar a API para resgatar o cliente no Conta Azul:', [
+            \Log::error('Erro ao acessar a API para lançar a venda do cliente no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
             return redirect()->route('show.CRM');
@@ -549,7 +549,8 @@ class ContaAzulController extends Controller
             ])->get('https://api-v2.contaazul.com/v1/venda/busca',[
                 'pagina' => 1,
                 'campo_ordenado_descendente' => 'numero',
-                'tamanho_pagina' => 1
+                'tamanho_pagina' => 1,
+                'data_criacao_de' => '2025-10-22'
             ]);
 
             if($response->status() == 200){
