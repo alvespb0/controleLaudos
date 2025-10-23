@@ -257,8 +257,10 @@ Route::controller(GoogleController::class)->group(function(){
     Route::post('/calendar/criar-evento', 'criarEvento')->name('calendar.createEvent');
 });
 
+/** --------------------------------------------- */
+/**            Rotas Classe Conta Azul            */
 Route::controller(ContaAzulController::class)->group(function(){
     Route::get('/contaazul/connect', 'getAuthorizationToken');
-    Route::get('/contaazul/test', 'saveOrRefreshToken');
+    #Route::get('/contaazul/test', 'saveOrRefreshToken');
     Route::post('/contaazul/lancar-venda', 'lancarVenda')->name('lancar-venda.ca');
 });

@@ -594,13 +594,22 @@ class ContaAzulController extends Controller
         try{
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '. $access_token
-            ])->get('https://api-v2.contaazul.com/v1/venda/vendedores',[
-                'nome' => $nome,
-            ]);
+            ])->get('https://api-v2.contaazul.com/v1/venda/vendedores');
 
             if($response->status() == 200){
                 $data = $response->json();
-                return $data[0]['id'];
+                $nomeFormatado = strtoupper($nome);
+
+                foreach($data as $vendedor){
+                    $nomeVendedorApi = strtoupper($vendedor['nome']);
+
+                    $partes = explode(' ', $nomeFormatado);
+                    $match = !empty(array_filter($partes, fn($parte) => str_contains($nomeVendedorApi, $parte)));
+
+                    if ($match) {
+                        return $vendedor['id'];
+                    }
+                }
             } else {
                 \Log::error('Erro ao acessar a API para resgatar o vendedor responsável', ['status' => $response->status(), 'body' => $response->body()]);
                 return null;
@@ -612,7 +621,6 @@ class ContaAzulController extends Controller
             ]);
             return null;
         }
-
     }
 
     private function gerarParcelas($dataInicial, $valorTotal, $numParcelas){
