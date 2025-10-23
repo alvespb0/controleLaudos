@@ -212,6 +212,7 @@ class ContaAzulController extends Controller
             $categoria_id = $this->getCategoriaFinanceiraUUID($token->access_token);
             $centroCusto_id = $this->getCentroCustoFinanceiroUUID($token->access_token);
             $servico_id = $this->getServicoUUID($token->access_token);
+            $vendedor_id = $this->getVendedorUUID($lead->vendedor->usuario, $token->access_token);
             $parcelas = $this->gerarParcelas($request->data_primeira_cobranca, $lead->valor_definido, $lead->num_parcelas);
 
             \Log::info('Preparando lançamento de venda no Conta Azul', [
@@ -223,6 +224,7 @@ class ContaAzulController extends Controller
                 'centro_custo_id' => $centroCusto_id,
                 'servico_id' => $servico_id,
                 'numero_venda' => $num_venda,
+                'vendedor_responsável' => $vendedor_id,
                 'parcelas' => $parcelas,
             ]);
 
@@ -236,6 +238,7 @@ class ContaAzulController extends Controller
                     'data_venda' => Carbon::now()->format('Y-m-d'),
                     'id_categoria' => $categoria_id,
                     'id_centro_custo' => $centroCusto_id,
+                    'id_vendedor' => $vendedor_id,
                     'observacoes' => "Venda do cliente {$lead->cliente->nome}, inscrito no CNPJ {$lead->cliente->cnpj}, cadastro feito através de integração",
                     'itens' => [
                         [
@@ -253,6 +256,18 @@ class ContaAzulController extends Controller
                 ]);
 
             if($response->ok()){
+                \Log::info('LEAD LANÇADO COM SUCESSO', [
+                    'lead_id' => $lead->id,
+                    'cliente_nome' => $lead->cliente->nome ?? null,
+                    'cliente_cnpj' => $lead->cliente->cnpj ?? null,
+                    'cliente_id' => $cliente_id,
+                    'categoria_id' => $categoria_id,
+                    'centro_custo_id' => $centroCusto_id,
+                    'servico_id' => $servico_id,
+                    'numero_venda' => $num_venda,
+                    'vendedor_responsável' => $vendedor_id,
+                    'parcelas' => $parcelas,
+                ]);
                 session()->flash('mensagem', 'Venda lançada no Conta Azul com sucesso!!');
                 return redirect()->route('show.CRM');
             }else{
@@ -574,6 +589,32 @@ class ContaAzulController extends Controller
             return redirect()->route('show.CRM');
         }
     }
+
+    private function getVendedorUUID($nome, $access_token){
+        try{
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $access_token
+            ])->get('https://api-v2.contaazul.com/v1/venda/vendedores',[
+                'nome' => $nome,
+            ]);
+
+            if($response->status() == 200){
+                $data = $response->json();
+                return $data[0]['id'];
+            } else {
+                \Log::error('Erro ao acessar a API para resgatar o vendedor responsável', ['status' => $response->status(), 'body' => $response->body()]);
+                return null;
+            }
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para resgatar o vendedor responsável');
+            \Log::error('Erro ao acessar a API para resgatar o vendedor responsável:', [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+
+    }
+
     private function gerarParcelas($dataInicial, $valorTotal, $numParcelas){
         $parcelas = [];
         $valorParcela = round($valorTotal / $numParcelas, 2);
