@@ -1151,6 +1151,61 @@
         });
       }
     });
+    
+    // Controle da modal de venda Conta Azul
+    const modalVendaContaAzul = document.getElementById('modalVendaContaAzul');
+    if (modalVendaContaAzul) {
+      const lancarSim = document.getElementById('lancar_sim');
+      const lancarNao = document.getElementById('lancar_nao');
+      const campoDataCobranca = document.getElementById('campoDataCobranca');
+      const btnConfirmarVenda = document.getElementById('btnConfirmarVenda');
+      const formVendaContaAzul = document.getElementById('formVendaContaAzul');
+      
+      // Controle da exibição do campo de data
+      lancarSim.addEventListener('change', function() {
+        if (this.checked) {
+          campoDataCobranca.style.display = 'block';
+        }
+      });
+      
+      lancarNao.addEventListener('change', function() {
+        if (this.checked) {
+          campoDataCobranca.style.display = 'none';
+        }
+      });
+      
+      // Controle do botão confirmar
+      btnConfirmarVenda.addEventListener('click', function() {
+        const lancarVenda = document.querySelector('input[name="lancar_venda"]:checked').value;
+        
+        if (lancarVenda === '1') {
+          const dataCobranca = document.getElementById('data_primeira_cobranca').value;
+          if (!dataCobranca) {
+            alert('Por favor, selecione a data da primeira cobrança.');
+            return;
+          }
+        }
+        
+        // Submeter o formulário
+        formVendaContaAzul.submit();
+      });
+      
+      // Fechar modal ao clicar no backdrop
+      modalVendaContaAzul.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.style.display = 'none';
+          document.querySelector('.modal-backdrop').remove();
+        }
+      });
+      
+      // Fechar modal com ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalVendaContaAzul.style.display === 'block') {
+          modalVendaContaAzul.style.display = 'none';
+          document.querySelector('.modal-backdrop').remove();
+        }
+      });
+    }
   });
 </script>
 
@@ -1200,4 +1255,75 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<!-- Modal para lançar venda no Conta Azul -->
+@if(session('showInsertVendaModal'))
+<div class="modal fade show" id="modalVendaContaAzul" tabindex="-1" aria-labelledby="modalVendaContaAzulLabel" aria-hidden="false" style="display: block;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e88e5, #1565c0); color: white;">
+        <h5 class="modal-title" id="modalVendaContaAzulLabel">
+          <i class="bi bi-cash-coin me-2"></i>Lançar Venda no Conta Azul
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info d-flex align-items-center mb-3">
+          <i class="bi bi-info-circle me-2"></i>
+          <div>
+            <strong>Lead Ganho!</strong><br>
+            Cliente: <strong>{{ session('lead_id_venda')['lead_nome'] ?? 'N/A' }}</strong>
+          </div>
+        </div>
+        
+        <form id="formVendaContaAzul" action="{{route('lancar-venda.ca')}}" method="POST">
+          @csrf
+          <input type="hidden" name="lead_id" value="{{ session('lead_id_venda')['lead_id'] ?? '' }}">
+          
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Deseja lançar a venda desse último lead no Conta Azul?</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="lancar_venda" id="lancar_sim" value="1">
+              <label class="form-check-label" for="lancar_sim">
+                <i class="bi bi-check-circle text-success me-1"></i>Sim, lançar venda
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="lancar_venda" id="lancar_nao" value="0" checked>
+              <label class="form-check-label" for="lancar_nao">
+                <i class="bi bi-x-circle text-danger me-1"></i>Não, não lançar agora
+              </label>
+            </div>
+          </div>
+          
+          <div class="mb-3" id="campoDataCobranca" style="display: none;">
+            <label for="data_primeira_cobranca" class="form-label fw-semibold">
+              <i class="bi bi-calendar-date me-1"></i>Data da primeira cobrança
+            </label>
+            <input type="date" 
+                   name="data_primeira_cobranca" 
+                   id="data_primeira_cobranca" 
+                   class="form-control" 
+                   min="{{ date('Y-m-d') }}"
+                   value="{{ date('Y-m-d', strtotime('+1 month')) }}">
+            <div class="form-text">
+              <i class="bi bi-info-circle me-1"></i>
+              Selecione a data para a primeira cobrança da venda. Esta data também definirá o dia das cobranças subsequentes.
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Fechar
+        </button>
+        <button type="button" class="btn btn-primary" id="btnConfirmarVenda">
+          <i class="bi bi-check-lg me-1"></i>Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show"></div>
+@endif
+
 @endsection

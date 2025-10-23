@@ -345,6 +345,8 @@ class CRMController extends Controller
 
         if($lead->status_id == 5){
             $this->createComissao($lead);
+            session()->flash('showInsertVendaModal', true);
+            session()->flash('lead_id_venda', ['lead_nome' => $lead->cliente->nome, 'lead_id' => $lead->id]);
         }
 
         session()->flash('mensagem', 'Etapa alterada com sucesso');
