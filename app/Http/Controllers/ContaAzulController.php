@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 use App\Models\CA_Tokens;
 use App\Models\Lead;
@@ -176,6 +177,22 @@ class ContaAzulController extends Controller
         }
     }
 
+    /**
+     * Lança uma venda no Conta Azul a partir de um lead interno.
+     *
+     * Este método integra o sistema com a API de Vendas da Conta Azul, criando automaticamente
+     * uma venda aprovada com base nos dados do cliente, serviço e condições de pagamento.
+     * 
+     * O método verifica se o token de acesso ainda é válido, renova se necessário,
+     * obtém os UUIDs de cliente, categoria, centro de custo e serviço, gera as parcelas,
+     * e então envia uma requisição POST à API.
+     *
+     * @param \Illuminate\Http\Request $request
+     *        Contém os dados do lead, número de parcelas, valor e data da primeira cobrança.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     *         Redireciona para 'show.CRM' com mensagens de sucesso ou erro.
+     */
     public function lancarVenda(Request $request){
         if(!$request->lancar_venda){
             return redirect()->route('show.CRM');
@@ -189,15 +206,68 @@ class ContaAzulController extends Controller
             $token->refresh();
         }
 
-        #dd($token);
-        $cliente_id = $this->getClienteUUID($lead, $token->access_token); 
-        $categoria_id = $this->getCategoriaFinanceiraUUID($token->access_token);
-        $centroCusto_id = $this->getCentroCustoFinanceiroUUID($token->access_token);
-        $servico_id = $this->getServicoUUID($token->access_token);
-        dd(["Cliente_id" => $cliente_id,
-            "Categoria_id" => $categoria_id,
-            "CentroCusto_id" => $centroCusto_id,
-            "Servico_id" => $servico_id]);
+        try{
+            $num_venda = $this->getNumVendaByVenda($token->access_token);
+            $cliente_id = $this->getClienteUUID($lead, $token->access_token); 
+            $categoria_id = $this->getCategoriaFinanceiraUUID($token->access_token);
+            $centroCusto_id = $this->getCentroCustoFinanceiroUUID($token->access_token);
+            $servico_id = $this->getServicoUUID($token->access_token);
+            $parcelas = $this->gerarParcelas($request->data_primeira_cobranca, $lead->valor_definido, $lead->num_parcelas);
+
+            \Log::info('Preparando lançamento de venda no Conta Azul', [
+                'lead_id' => $lead->id,
+                'cliente_nome' => $lead->cliente->nome ?? null,
+                'cliente_cnpj' => $lead->cliente->cnpj ?? null,
+                'cliente_id' => $cliente_id,
+                'categoria_id' => $categoria_id,
+                'centro_custo_id' => $centroCusto_id,
+                'servico_id' => $servico_id,
+                'numero_venda' => $num_venda,
+                'parcelas' => $parcelas,
+            ]);
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $token->access_token,
+                'Accept' => 'application/json',
+            ])->post('https://api-v2.contaazul.com/v1/venda', [
+                    'id_cliente' => $cliente_id,
+                    'numero' => $num_venda,
+                    'situacao' => 'APROVADO',
+                    'data_venda' => Carbon::now()->format('Y-m-d'),
+                    'id_categoria' => $categoria_id,
+                    'id_centro_custo' => $centroCusto_id,
+                    'observacoes' => "Venda do cliente {$lead->cliente->nome}, inscrito no CNPJ {$lead->cliente->cnpj}, cadastro feito através de integração",
+                    'itens' => [
+                        [
+                            'descricao' => "Venda do cliente {$lead->cliente->nome}, inscrito no CNPJ {$lead->cliente->cnpj}, no valor de R$ {$lead->valor_definido} em {$lead->num_parcelas}X",
+                            'quantidade' => 1,
+                            'valor' => (float)$lead->valor_definido,
+                            'id' => $servico_id
+                        ]
+                    ],
+                    'condicao_pagamento' => [
+                        'tipo_pagamento' => "BOLETO_BANCARIO",
+                        'opcao_condicao_pagamento' => $lead->num_parcelas.'x',
+                        'parcelas' => $parcelas
+                    ]
+                ]);
+
+            if($response->ok()){
+                session()->flash('mensagem', 'Venda lançada no Conta Azul com sucesso!!');
+                return redirect()->route('show.CRM');
+            }else{
+                session()->flash('error', 'Erro ao lançar a venda no CA, favor comunicar o desenvolvedor do sistema');
+                \Log::error('Erro ao acessar a API para resgatar o cliente no Conta Azul:', ['status' => $response->status(), 'body' => $response->body()]);
+                return redirect()->route('show.CRM');
+            }
+
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para lança a venda do cliente do CA');
+            \Log::error('Erro ao acessar a API para resgatar o cliente no Conta Azul:', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->route('show.CRM');
+        }
     }
 
     /**
@@ -311,7 +381,6 @@ class ContaAzulController extends Controller
                 'Authorization' => 'Bearer '. $access_token
             ])->get('https://api-v2.contaazul.com/v1/categorias', [
                 'campo_ordenado_descendente' => 'NOME',
-                'permite_apenas_filhos' => true,
                 'nome'=> env('CA_CATEGORIA_LAUDOS')
             ]);
 
@@ -425,5 +494,104 @@ class ContaAzulController extends Controller
             ]);
             return redirect()->route('show.CRM');
         }
+    }
+
+    /**
+     * Obtém o próximo número de venda a ser utilizado no Conta Azul.
+     *
+     * Esta função consulta o endpoint `/v1/venda/proximo-numero` da API Conta Azul,
+     * utilizando o access_token OAuth2 informado. 
+     * Caso o endpoint esteja indisponível ou retorne erro, a função registra logs detalhados
+     * e exibe uma mensagem genérica ao usuário.
+     *
+     * @param string $access_token Token de acesso OAuth2 válido.
+     * @return mixed Retorna o número da próxima venda em caso de sucesso, 
+     *               ou o código HTTP de erro em caso de falha.
+     */
+    private function getNumVenda($access_token){
+        try{
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $access_token
+            ])->get('https://api-v2.contaazul.com/api/v1/venda/proximo-numero');
+
+            if($response->status() == 200){
+                $data = $response->json();
+                return $data;
+            } else {
+                \Log::error('Erro ao acessar a API para resgatar o próximo numero de venda', ['status' => $response->status(), 'body' => $response->body()]);
+                return $response->status();
+            }
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para resgatar o próximo numero de venda');
+            \Log::error('Erro ao acessar a API para resgatar o próximo numero de venda:', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->route('show.CRM');
+        }
+    }
+
+    /**
+     * Recupera o número da última venda registrada e calcula o próximo número de venda.
+     *
+     * Esta função é utilizada como alternativa quando o endpoint `/v1/venda/proximo-numero`
+     * apresenta inconsistências. Ela busca a última venda cadastrada (ordenada pelo número)
+     * e retorna o próximo número incremental.
+     *
+     * @param string $access_token Token de acesso OAuth2 válido.
+     * @return mixed Retorna o número da próxima venda em caso de sucesso, 
+     *               null se não houver registros, 
+     *               ou o código HTTP de erro em caso de falha.
+     */
+    private function getNumVendaByVenda($access_token){ # usa o endpoint venda para capturar o num venda até o endpoint proximo-numero ser arrumada
+        try{
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '. $access_token
+            ])->get('https://api-v2.contaazul.com/v1/venda/busca',[
+                'pagina' => 1,
+                'campo_ordenado_descendente' => 'numero',
+                'tamanho_pagina' => 1
+            ]);
+
+            if($response->status() == 200){
+                $data = $response->json();
+                if($data['itens'] == null){
+                    session()->flash('error', 'Erro ao localizar o número da venda, favor comunicar o desenvolvedor do sistema');
+                    \Log::error('Erro ao localizar o número da venda pela função getNumVendaByVenda');
+                    return null;
+                }else{
+                    return $data['itens'][0]['numero'] + 1;
+                }
+            } else {
+                \Log::error('Erro ao acessar a API de venda para conseguir o próximo numero de venda pela função getNumVendaByVenda', ['status' => $response->status(), 'body' => $response->body()]);
+                return $response->status();
+            }
+        }catch(\Exception $e){
+            session()->flash('error', 'Erro ao acessar a API para resgatar o próximo numero de venda pela função getNumVendaByVenda');
+            \Log::error('Erro ao acessar a API para resgatar o próximo numero de vendapela função getNumVendaByVenda:', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->route('show.CRM');
+        }
+    }
+    private function gerarParcelas($dataInicial, $valorTotal, $numParcelas){
+        $parcelas = [];
+        $valorParcela = round($valorTotal / $numParcelas, 2);
+        $soma = $valorParcela * $numParcelas;
+        $diferenca = round($valorTotal - $soma, 2); // pode ser positivo ou negativo
+
+        for ($i = 0; $i < $numParcelas; $i++) {
+            $valor = $valorParcela;
+            if ($i === $numParcelas - 1) {
+                $valor += $diferenca; // corrige a última parcela
+            }
+
+            $parcelas[] = [
+                'data_vencimento' => Carbon::parse($dataInicial)->addMonths($i)->format('Y-m-d'),
+                'valor' => $valor,
+                'descricao' => 'Parcela ' . ($i + 1)
+            ];
+        }
+
+        return $parcelas;
     }
 }
