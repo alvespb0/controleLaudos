@@ -324,7 +324,7 @@ class ContaAzulController extends Controller
             \Log::error('Erro ao acessar a API para resgatar o cliente no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
@@ -369,7 +369,7 @@ class ContaAzulController extends Controller
             \Log::error('Erro ao acessar a API para criar o cliente no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
@@ -417,7 +417,7 @@ class ContaAzulController extends Controller
             \Log::error('Erro ao acessar a API para resgatar a Categoria Financeira no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
@@ -462,7 +462,7 @@ class ContaAzulController extends Controller
             \Log::error('Erro ao acessar a API para resgatar o Centro de Custo no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
@@ -507,7 +507,7 @@ class ContaAzulController extends Controller
             \Log::error('Erro ao acessar a API para resgatar o Serviço no Conta Azul:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
@@ -527,21 +527,21 @@ class ContaAzulController extends Controller
         try{
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '. $access_token
-            ])->get('https://api-v2.contaazul.com/api/v1/venda/proximo-numero');
+            ])->get('https://api-v2.contaazul.com/v1/venda/proximo-numero');
 
             if($response->status() == 200){
                 $data = $response->json();
                 return $data;
             } else {
-                \Log::error('Erro ao acessar a API para resgatar o próximo numero de venda', ['status' => $response->status(), 'body' => $response->body()]);
-                return $response->status();
+                \Log::error('Erro ao acessar a API para resgatar o próximo numero de venda chamado fallback de getNumVendaByVenda', ['status' => $response->status(), 'body' => $response->body()]);
+                return $this->getNumVendaByVenda($access_token);
             }
         }catch(\Exception $e){
             session()->flash('error', 'Erro ao acessar a API para resgatar o próximo numero de venda');
             \Log::error('Erro ao acessar a API para resgatar o próximo numero de venda:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
@@ -586,7 +586,7 @@ class ContaAzulController extends Controller
             \Log::error('Erro ao acessar a API para resgatar o próximo numero de vendapela função getNumVendaByVenda:', [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('show.CRM');
+            return null;
         }
     }
 
