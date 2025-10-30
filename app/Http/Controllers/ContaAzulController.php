@@ -207,7 +207,7 @@ class ContaAzulController extends Controller
         }
 
         try{
-            $num_venda = $this->getNumVendaByVenda($token->access_token);
+            $num_venda = $this->getNumVenda($token->access_token);
             $cliente_id = $this->getClienteUUID($lead, $token->access_token); 
             $categoria_id = $this->getCategoriaFinanceiraUUID($token->access_token);
             $centroCusto_id = $this->getCentroCustoFinanceiroUUID($token->access_token);
