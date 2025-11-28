@@ -33,7 +33,7 @@ class CRMController extends Controller
      * Retorna a view 'Crm/CRM_index' com os dados carregados.
      */
     public function showCRM(){
-        $clientes = Cliente::all();
+        $clientes = Cliente::orderBy('nome', 'asc')->get();
         $comercial = Op_Comercial::all();
         $status_crm = Status_Crm::orderBy('position', 'asc')->get();
         $recomendadores = Recomendadores::all();
@@ -267,8 +267,6 @@ class CRMController extends Controller
         } else {
             session()->flash('mensagem', 'Lead criado com sucesso!');
         }
-
-        return redirect()->route('show.CRM');
 
         session()->flash('mensagem', 'Lead alterado com sucesso');
 

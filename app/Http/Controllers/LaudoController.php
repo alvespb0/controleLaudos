@@ -27,7 +27,7 @@ class LaudoController extends Controller
      * @return View
      */
    public function cadastroLaudo(){
-        $clientes = Cliente::all();
+        $clientes = Cliente::oderBy('nome', 'asc')->get();
         $comercial = Op_Comercial::all();
         return view("Laudo/Laudo_new", ['clientes'=> $clientes, 'comerciais'=> $comercial]);
     }
