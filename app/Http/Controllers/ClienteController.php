@@ -32,9 +32,11 @@ class ClienteController extends Controller
    public function createCliente(ClienteRequest $request){
        $request->validated();
 
+       $cnpjFormatado = preg_replace('/\D/', '', $request->cnpj);
+       
        $cliente = Cliente::create([
             'nome'=> $request->nome,
-            'cnpj' => $request->cnpj,
+            'cnpj' => $cnpjFormatado,
             'email' => $request->email,
             'tipo_cliente' => $request->tipo_cliente
        ]);
@@ -126,9 +128,11 @@ class ClienteController extends Controller
  
         $cliente = Cliente::findOrFail($id);
  
+        $cnpjFormatado = preg_replace('/\D/', '', $request->cnpj);
+
         $cliente->update([
             'nome'=> $request->nome,
-            'cnpj' => $request->cnpj,
+            'cnpj' => $cnpjFormatado,
             'email' => $request->email,
             'tipo_cliente' => $request->tipo_cliente
         ]);
