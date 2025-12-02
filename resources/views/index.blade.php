@@ -107,7 +107,6 @@
         box-shadow: 0 0 0 2px rgba(0,0,0,0.04);
     }
     .save-btn {
-        background: var(--primary-color);
         border: none;
         font-weight: 600;
         letter-spacing: 0.5px;
@@ -501,7 +500,7 @@
                             </div>
                         <hr>
                     <div class="d-flex justify-content-between mt-3 gap-2">
-                        <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>
+                        <button type="submit" class="btn btn-modern-primary save-btn" disabled>Salvar</button>
                     </form>
                             
                         <div class="dropdown-acoes">
