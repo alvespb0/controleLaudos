@@ -17,7 +17,7 @@
     }
     .crm-kanban-container {
         width: 100%;
-        max-width: 100%;
+        max-width: 1400px; /* limite total da página do CRM */
         margin: 0 auto;
         padding: 0;
         min-height: 100vh;
