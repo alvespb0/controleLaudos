@@ -32,12 +32,6 @@
     @stack('styles')
     @yield('styles')
     
-    {{-- Livewire Styles (só renderiza se Livewire estiver instalado/configurado) --}}
-    @php
-        if (class_exists(\Livewire\Livewire::class)) {
-            echo \Livewire\Livewire::styles();
-        }
-    @endphp
 </head>
 <body>
     <div class="app-wrapper">
@@ -417,13 +411,8 @@
         @endif
     </script>
     
-    {{-- Livewire Scripts (só renderiza se Livewire estiver instalado/configurado) --}}
-    @php
-        if (class_exists(\Livewire\Livewire::class)) {
-            echo \Livewire\Livewire::scripts();
-        }
-    @endphp
-    
+    @livewireScripts
+
     {{-- Scripts adicionais da página --}}
     @stack('scripts')
     @yield('scripts')
