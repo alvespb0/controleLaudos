@@ -307,6 +307,6 @@
     </div>
 
 
-    <livewire:DocumentsFilter/>
+    <livewire:DocumentsControl/>
 
 @endsection 

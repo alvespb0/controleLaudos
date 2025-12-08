@@ -405,10 +405,15 @@
         @if(session('mensagem'))
         toastr.success("{{ session('mensagem') }}");
         @endif
-        
+
         @if(session('error'))
         toastr.error("{{ session('error') }}");
         @endif
+  
+        window.addEventListener('toast-sucesso', event => {
+            toastr.success(event.detail.message);
+        });
+
     </script>
     
     @livewireScripts

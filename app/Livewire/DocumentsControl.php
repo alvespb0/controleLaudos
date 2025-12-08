@@ -10,10 +10,8 @@ use App\Models\Documentos_Tecnicos;
 use App\Models\Cliente;
 use App\Models\Op_Tecnico;
 
-class DocumentsFilter extends Component
+class DocumentsControl extends Component
 {
-    use WithPagination;
-
     public $clienteFilter = '';
     public $dataFilterMes = '';
     public $statusFilter = '';
@@ -61,12 +59,11 @@ class DocumentsFilter extends Component
         $query->orderBy('data_elaboracao', "{$this->ordenarPor}");
         
         $documentos = $query->paginate(6);
-        return view('livewire.documents-filter', ['status' => $status, 'documentos' => $documentos, 'tecnicos' => $tecnicos]);
+        return view('livewire.documents-control', ['status' => $status, 'documentos' => $documentos, 'tecnicos' => $tecnicos]);
     }
 
     public function toggleOrdenacao()
     {
         $this->ordenarPor = $this->ordenarPor === 'desc' ? 'asc' : 'desc';
     }
-
 }
