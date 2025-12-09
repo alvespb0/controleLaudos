@@ -1,108 +1,105 @@
 <div>
     <div class="card h-100 position-relative">
         <div class="card-body">
-            <form id="form-laudo-{{ $laudo->id }}" action="{{ route('update.laudoIndex') }}" method="POST">
-                @csrf
-                <input type="hidden" name="laudo_id" value="{{$laudo->id}}">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title mb-0">{{$laudo->nome}}</h5>
-                    <div class="status-container position-relative">
-                        <div class="status-indicator" style="background-color: {{ $laudo->status ? $laudo->status->cor : '#808080' }}"></div>
-                        <select class="status-select" name="status">
-                            @if(!$laudo->status)
-                                <option value="" selected disabled>Sem Status</option>
-                            @endif
-                            @foreach($status as $s)
-                                <option value="{{$s->id}}" data-color="{{$s->cor}}" {{ $laudo->status && $laudo->status->id === $s->id ? 'selected' : '' }}>
-                                    {{$s->nome}}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+            <input type="hidden" name="laudo_id" value="{{$laudo->id}}">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">{{$laudo->nome}}</h5>
+                <div class="status-container position-relative">
+                    <div class="status-indicator" style="background-color: {{ $laudo->status ? $laudo->status->cor : '#808080' }}"></div>
+                    <select class="status-select" wire:model.live.debounce.300ms="statusAlterado">
+                        @if(!$laudo->status)
+                            <option value="">Sem Status</option>
+                        @endif
+                        @foreach($status as $s)
+                            <option value="{{ $s->id }}" data-color="{{ $s->cor }}">
+                                {{$s->nome}}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
-                <p class="card-text">
-                    <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}}
-                    @if($laudo->esocial)
-                        <span class="badge bg-primary rounded-pill">Esocial</span>
-                    @endif 
-                    @if($laudo->cliente->tipo_cliente == 'novo')
-                        <span class="badge bg-success rounded-pill">Cliente Novo</span>
-                    @elseif($laudo->cliente->tipo_cliente == 'renovacao')
-                        <span class="badge bg-warning rounded-pill">Cliente Renovação</span>
-                    @elseif($laudo->cliente->tipo_cliente == 'resgatado')
-                        <span class="badge bg-warning rounded-pill">Cliente Resgatado</span>
-                    @endif
-                    <br>
-                    <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
-                    <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
-                    <strong>Data de Aceite: </strong>{{$laudo->data_aceite !== null ? $laudo->data_aceite : 'Data de aceite não definido'}} <br>
-                    <strong>Data Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$laudo->data_conclusao !== null ? $laudo->data_conclusao : ''}}"> <br> 
-                    <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}} <br><br>
-                    <button type="button" class="btn btn-info" id="toggleContatosBtn{{$laudo->id}}">
+            </div>
+            <p class="card-text">
+                <strong>Cliente: </strong>{{$laudo->cliente ? $laudo->cliente->nome : 'Cliente não definido'}}
+                @if($laudo->esocial)
+                    <span class="badge bg-primary rounded-pill">Esocial</span>
+                @endif 
+                @if($laudo->cliente->tipo_cliente == 'novo')
+                    <span class="badge bg-success rounded-pill">Cliente Novo</span>
+                @elseif($laudo->cliente->tipo_cliente == 'renovacao')
+                    <span class="badge bg-warning rounded-pill">Cliente Renovação</span>
+                @elseif($laudo->cliente->tipo_cliente == 'resgatado')
+                    <span class="badge bg-warning rounded-pill">Cliente Resgatado</span>
+                @endif
+                <br>
+                <strong>Numero de Funcionários: </strong>{{$laudo->numero_clientes}} <br>
+                <strong>Data Previsão: </strong>{{$laudo->data_previsao !== null ? $laudo->data_previsao : 'Data de previsão não definida'}} <br> 
+                <strong>Data de Aceite: </strong>{{$laudo->data_aceite !== null ? $laudo->data_aceite : 'Data de aceite não definido'}} <br>
+                <strong>Data Conclusao: </strong><input type="date" wire:model.blur="dataConclusaoAlterado" class="border border-light"> <br> 
+                <strong>Vendedor: </strong>{{$laudo->comercial ? $laudo->comercial->usuario : 'Vendedor não definido'}}
+                <div x-data="{ open: false }">
+                    <button class="btn btn-info" @click="open = !open">
                         <i class="bi bi-phone"></i> Ver Dados do cliente
                     </button>
-                    <div id="contatos{{$laudo->id}}" class="mt-2" style="display: none;">
+                    <div x-show="open" class="mt-2">
                         <strong>Email: </strong>{{ $laudo->cliente->email }} <br>
                         <strong>Telefone(s): </strong>
                         @foreach($laudo->cliente->telefone as $telefone)
                             {{ $telefone->telefone }} <br>
                         @endforeach
-                        <strong>CNPJ:</strong> {{$laudo->cliente->cnpj}} <br>
-                        <br>
+                        <strong>CNPJ:</strong> {{$laudo->cliente->cnpj}} 
                     </div>
-                    <Strong>Técnico Responsável: </Strong>
-                    <select name="tecnicoResponsavel" class="form-select mt-2">
-                        <option value="" selected>Selecione um Técnico Responsável</option>
-                        @foreach($tecnicos as $tecnico)
-                        <option value="{{$tecnico->id}}" {{ ($laudo->tecnico && $laudo->tecnico->id == $tecnico->id) ? 'selected' : '' }}>
-                            {{$tecnico->usuario}}
-                        </option>
-                        @endforeach
-                    </select>
-                    </p>
-                    <div class="mb-2 position-relative group">
-                        <strong class="d-block mb-1 text-muted small">Observação:</strong>
-                        {{-- Exibição --}}
-                        <div id="obs-display-{{ $laudo->id }}" 
-                            class="obs-display {{ !$laudo->observacao ? 'empty' : '' }}" 
-                            onmouseover="this.classList.add('hovering')" 
-                            onmouseout="this.classList.remove('hovering')">
-                            
-                            <div id="obs-text-{{ $laudo->id }}" class="text-truncate-obs {{ !$laudo->observacao ? 'empty-obs' : '' }}">
-                                {{ $laudo->observacao ?? 'Nenhuma observação' }}
-                            </div>
-                            @if(strlen($laudo->observacao) > 200)
-                                <a href="javascript:void(0)" 
-                                id="toggle-link-{{ $laudo->id }}"
-                                class="toggle-link" 
-                                onclick="toggleExpandObservacao({{ $laudo->id }})">
-                                    Ver mais...
-                                </a>
-                            @endif
-                            <button type="button" class="edit-btn" 
-                                    onclick="toggleObservacao({{ $laudo->id }})" 
-                                    title="Editar observação">
-                                <i class="bi bi-pencil"></i>
+                </div>
+                <br>
+                <Strong>Técnico Responsável: </Strong>
+                <select name="tecnicoResponsavel" wire:model.live.debounce.300ms="tecnicoAlterado" class="form-select mt-2">
+                    <option value="">Selecione um Técnico Responsável</option>
+                    @foreach($tecnicos as $tecnico)
+                    <option value="{{$tecnico->id}}">
+                        {{$tecnico->usuario}}
+                    </option>
+                    @endforeach
+                </select>
+                </p>
+                <div class="mb-2 position-relative group">
+                    <strong class="d-block mb-1 text-muted small">Observação:</strong>
+                    {{-- Exibição --}}
+                    <div id="obs-display-{{ $laudo->id }}" 
+                        class="obs-display {{ !$laudo->observacao ? 'empty' : '' }}" 
+                        onmouseover="this.classList.add('hovering')" 
+                        onmouseout="this.classList.remove('hovering')">
+                        
+                        <div id="obs-text-{{ $laudo->id }}" class="text-truncate-obs {{ !$laudo->observacao ? 'empty-obs' : '' }}">
+                            {{ $laudo->observacao ?? 'Nenhuma observação' }}
+                        </div>
+                        @if(strlen($laudo->observacao) > 200)
+                            <a href="javascript:void(0)" 
+                            id="toggle-link-{{ $laudo->id }}"
+                            class="toggle-link" 
+                            onclick="toggleExpandObservacao({{ $laudo->id }})">
+                                Ver mais...
+                            </a>
+                        @endif
+                        <button type="button" class="edit-btn" 
+                                onclick="toggleObservacao({{ $laudo->id }})" 
+                                title="Editar observação">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                    {{-- Edição --}}
+                    <div id="obs-edit-{{ $laudo->id }}" class="mt-2" style="display: none;">
+                        <textarea  wire:model.blur="observacaoAlterado" class="form-control form-control-sm auto-expand" rows="2"
+                                placeholder="Digite uma observação..."
+                                >{{ $laudo->observacao }}</textarea>
+                        <div class="mt-1 d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancelEditObservacao({{ $laudo->id }})">
+                                Cancelar
                             </button>
                         </div>
-                        {{-- Edição --}}
-                        <div id="obs-edit-{{ $laudo->id }}" class="mt-2" style="display: none;">
-                            <textarea name="observacao" class="form-control form-control-sm auto-expand" rows="2"
-                                    placeholder="Digite uma observação..."
-                                    oninput="enableSave({{ $laudo->id }})">{{ $laudo->observacao }}</textarea>
-                            <div class="mt-1 d-flex gap-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancelEditObservacao({{ $laudo->id }})">
-                                    Cancelar
-                                </button>
-                            </div>
-                        </div>
                     </div>
-                <hr>
-            <div class="d-flex justify-content-between mt-3 gap-2">
-                <button type="submit" class="btn btn-modern-primary save-btn" disabled>Salvar</button>
-            </form>
-                    
-                <div class="dropdown-acoes">
+                </div>
+            <hr>
+            <div class="d-flex justify-content-between mt-3 gap-2">                    
+                <div class="dropdown-acoes ms-auto">
                     <button type="button" class="btn btn-light btn-acao" title="Ações" onclick="this.parentNode.classList.toggle('open')">
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>

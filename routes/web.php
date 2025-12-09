@@ -127,8 +127,6 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
     Route::get('documentos/excluir/{id}', 'deleteDocTecnico')->name('delete.documento'); # deleta o documento no banco
 
     Route::get('documentos/controle', 'indexDocTecnico')->name('show.docIndex');
-    Route::post('documentos/controle', 'updateDocIndex')->name('update.docIndex');
-    Route::get('documentos/controle/filtered', 'filterDocIndex')->name('filter.docIndex');
 });
 
 Route::middleware(['checkUserType:admin'])->controller(Documentos_TecnicosController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin

@@ -12,11 +12,27 @@ use App\Models\Op_Tecnico;
 
 class LaudosControl extends Component
 {
+    use WithPagination;
+    
     public $clienteFilter;
     public $dataFilterMes;
     public $statusFilter;
     public $dataFilterConclusao;
     public $ordenarPor = 'desc';
+    public $initialPage;
+
+    /**
+     * Método executado na inicialização do componente.
+     *
+     * Permite definir a página inicial da paginação com base na navegação.
+     *
+     * @param int $initialPage Página inicial para ser carregada.
+     * @return void
+     */
+    public function mount($initialPage)
+    {
+        $this->setPage($initialPage);
+    }
 
     /**
      * Reseta a paginação quando algum campo de busca é atualizado.

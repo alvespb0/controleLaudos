@@ -66,30 +66,47 @@
             </div>
         </div>
 
-        @if(!$laudos->isEmpty())
-        <div class="col-auto ms-auto">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    @if ($laudos->currentPage() > 1)
-                    <li class="page-item">
-                    <a class="page-link" href="{{ $laudos->previousPageUrl() }}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="{{ $laudos->previousPageUrl() }}">{{ $laudos->currentPage() - 1}}</a></li>
-                    @endif
-                    <li class="page-item active"><a class="page-link" href="{{ $laudos->nextPageUrl() }}">{{ $laudos->currentPage() }}</a></li>
-                    @if ($laudos->hasMorePages())
-                    <li class="page-item"><a class="page-link" href="{{ $laudos->nextPageUrl() }}">{{ $laudos->currentPage() + 1 }}</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $laudos->nextPageUrl() }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    @endif
-                </ul>
-            </nav>
-        </div>
-        @endif
+    @if(!$laudos->isEmpty())
+    <div class="col-auto ms-auto">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                
+                {{-- Página anterior --}}
+                @if ($laudos->currentPage() > 1)
+                <li class="page-item">
+                    <button class="page-link" wire:click="previousPage">«</button>
+                </li>
+
+                <li class="page-item">
+                    <button class="page-link" wire:click="gotoPage({{ $laudos->currentPage() - 1 }})">
+                        {{ $laudos->currentPage() - 1 }}
+                    </button>
+                </li>
+                @endif
+
+                {{-- Página atual --}}
+                <li class="page-item active">
+                    <button class="page-link">
+                        {{ $laudos->currentPage() }}
+                    </button>
+                </li>
+
+                {{-- Próxima página --}}
+                @if ($laudos->hasMorePages())
+                <li class="page-item">
+                    <button class="page-link" wire:click="gotoPage({{ $laudos->currentPage() + 1 }})">
+                        {{ $laudos->currentPage() + 1 }}
+                    </button>
+                </li>
+
+                <li class="page-item">
+                    <button class="page-link" wire:click="nextPage">»</button>
+                </li>
+                @endif
+
+            </ul>
+        </nav>
+    </div>
+    @endif
     </div>
 </div>

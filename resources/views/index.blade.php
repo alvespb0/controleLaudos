@@ -330,9 +330,7 @@
         </div>
     </div>
 
-    <livewire:LaudosControl/>
-
-
+    <livewire:LaudosControl :initialPage="request()->get('page', 1)" key="documents"/>
 
 <script>
     // PARTE DAS OBSERVAÇÕES DO LAUDO
@@ -351,23 +349,6 @@
         textarea.value = originalText === 'Nenhuma observação' ? '' : originalText;
     }
 
-    function toggleExpandObservacao(id) {
-        const obsText = document.getElementById('obs-text-' + id);
-        const toggleLink = document.getElementById('toggle-link-' + id);
-
-        obsText.classList.toggle('expanded');
-
-        if (obsText.classList.contains('expanded')) {
-            toggleLink.textContent = 'Ver menos...';
-        } else {
-            toggleLink.textContent = 'Ver mais...';
-        }
-    }
-
-    function enableSave(id) {
-        const btn = document.querySelector(`#form-laudo-${id} .save-btn`);
-        if (btn) btn.disabled = false;
-    }
 
     document.addEventListener('input', function (e) {
         if (e.target.tagName.toLowerCase() !== 'textarea') return;
@@ -379,124 +360,13 @@
         textarea.style.height = textarea.scrollHeight + 'px';
     }
 
-    document.querySelectorAll('form[id^="form-laudo-"]').forEach(form => {
-        form.querySelectorAll('input, select, textarea').forEach(input => {
-            input.addEventListener('change', () => {
-                const btn = form.querySelector('.save-btn');
-                if (btn) btn.disabled = false;
-            });
-        });
-    });
     // FIM DAS OBSERVAÇÕES DO LAUDO
-
-    document.addEventListener('DOMContentLoaded', () => {
-        function toggleContatos(laudoId) {
-            const contatosDiv = document.getElementById('contatos' + laudoId);
-            const button = document.getElementById('toggleContatosBtn' + laudoId);
-
-            if (contatosDiv.style.display === "none") {
-                contatosDiv.style.display = "block";
-                button.innerHTML = '<i class="bi bi-phone"></i> Ocultar Dados';
-            } else {
-                contatosDiv.style.display = "none";
-                button.innerHTML = '<i class="bi bi-phone"></i> Ver Dados do Cliente';
-            }
-        }
-
-    document.querySelectorAll('.btn-info').forEach(button => {
-        button.addEventListener('click', () => {
-            const laudoId = button.id.replace('toggleContatosBtn', '');
-            toggleContatos(laudoId);
-        });
-    });
 
     // --- Modal de mensagens ---
     const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
     const messageModalBody = document.getElementById('messageModalBody');
 
-    function showMessage(message, isError = false) {
-        messageModalBody.innerHTML = message;
-        messageModal.show();
-    }
-
     // --- Inicializa cada formulário de laudo ---
-    function initializeCard(form) {
-        const saveBtn = form.querySelector('.save-btn');
-        const statusSelect = form.querySelector('.status-select');
-        const statusIndicator = form.querySelector('.status-indicator');
-        const dataConclusaoInput = form.querySelector('input[name="dataConclusao"]');
-
-        // Define cor inicial do status
-        function updateStatusColor() {
-            const selectedOption = statusSelect.options[statusSelect.selectedIndex];
-            const color = selectedOption.dataset.color;
-            statusIndicator.style.backgroundColor = color;
-        }
-
-        updateStatusColor();
-
-        // Habilita botão salvar se status mudar
-        statusSelect.addEventListener('change', () => {
-            updateStatusColor();
-            saveBtn.disabled = false;
-        });
-
-        // Habilita botão salvar se data de conclusão mudar
-        if (dataConclusaoInput) {
-            dataConclusaoInput.addEventListener('change', () => {
-                saveBtn.disabled = false;
-            });
-        }
-
-        // Habilita botão salvar se algum select mudar (exceto status)
-        const selects = form.querySelectorAll('select');
-        selects.forEach(select => {
-            if (select !== statusSelect) {
-                select.addEventListener('change', () => {
-                    saveBtn.disabled = false;
-                });
-            }
-        });
-
-        // --- Listener do submit do formulário ---
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(this);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const laudoId = this.querySelector('input[name="laudo_id"]').value;
-
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Erro na requisição');
-                return response.json();
-            })
-            .then(data => {
-                if (data.message) {
-                    showMessage(data.message);
-                    if (saveBtn) saveBtn.disabled = true;
-                } else if (data.error) {
-                    showMessage(data.error, true);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao atualizar o laudo:', error);
-                showMessage('Ocorreu um erro ao atualizar o laudo. Por favor, tente novamente.', true);
-            });
-        });
-    }
-
-    // --- Inicializa todos os forms de laudos ---
-    document.querySelectorAll('form[id^="form-laudo-"]').forEach(form => {
-        initializeCard(form);
-    });
 
     // Fechar dropdown de ações ao clicar fora
     window.addEventListener('click', function(e) {
@@ -516,6 +386,6 @@
             collapse.classList.add('show');
         }
     });
-});
+
 </script>
 @endsection 
