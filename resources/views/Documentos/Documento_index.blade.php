@@ -307,6 +307,6 @@
     </div>
 
 
-    <livewire:DocumentsControl/>
+    <livewire:DocumentsControl :initialPage="request()->get('page', 1)" key="documents"/>
 
 @endsection 

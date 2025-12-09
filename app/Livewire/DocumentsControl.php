@@ -12,18 +12,51 @@ use App\Models\Op_Tecnico;
 
 class DocumentsControl extends Component
 {
-    #use WithPagination;
+    use WithPagination;
 
     public $clienteFilter = '';
     public $dataFilterMes = '';
     public $statusFilter = '';
     public $dataFilterConclusao = '';
     public $ordenarPor = 'desc';
+    public $initialPage;
 
+    /**
+     * Método executado na inicialização do componente.
+     *
+     * Permite definir a página inicial da paginação com base na navegação.
+     *
+     * @param int $initialPage Página inicial para ser carregada.
+     * @return void
+     */
+    public function mount($initialPage)
+    {
+        $this->setPage($initialPage);
+    }
+
+    /**
+     * Reseta a paginação quando algum campo de busca é atualizado.
+     *
+     * Este método é automaticamente identificado pelo Livewire
+     * por conta do prefixo "updating".
+     *
+     * @return void
+     */
     public function updatingSearch()
     {
         $this->resetPage();
     }
+   
+    /**
+     * Renderiza o componente carregando:
+     * - lista de status
+     * - lista de técnicos
+     * - documentos filtrados conforme os critérios do usuário
+     *
+     * Aplica filtros dinâmicos conforme cada campo preenchido.
+     *
+     * @return \Illuminate\View\View
+     */
     public function render()
     {
         $status = Status::all();
@@ -64,6 +97,13 @@ class DocumentsControl extends Component
         return view('livewire/documentos/documents-control', ['status' => $status, 'documentos' => $documentos, 'tecnicos' => $tecnicos]);
     }
 
+    /**
+     * Alterna a ordenação entre ASC e DESC.
+     *
+     * Usado em botões de ordenação da interface.
+     *
+     * @return void
+     */
     public function toggleOrdenacao()
     {
         $this->ordenarPor = $this->ordenarPor === 'desc' ? 'asc' : 'desc';

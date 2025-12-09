@@ -69,27 +69,45 @@
     <div class="col-auto ms-auto">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
+                
+                {{-- Página anterior --}}
                 @if ($documentos->currentPage() > 1)
                 <li class="page-item">
-                <a class="page-link" href="{{ $documentos->previousPageUrl() }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
+                    <button class="page-link" wire:click="previousPage">«</button>
                 </li>
-                <li class="page-item"><a class="page-link" href="{{ $documentos->previousPageUrl() }}">{{ $documentos->currentPage() - 1}}</a></li>
-                @endif
-                <li class="page-item active"><a class="page-link" href="{{ $documentos->nextPageUrl() }}">{{ $documentos->currentPage() }}</a></li>
-                @if ($documentos->hasMorePages())
-                <li class="page-item"><a class="page-link" href="{{ $documentos->nextPageUrl() }}">{{ $documentos->currentPage() + 1 }}</a></li>
+
                 <li class="page-item">
-                    <a class="page-link" href="{{ $documentos->nextPageUrl() }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
+                    <button class="page-link" wire:click="gotoPage({{ $documentos->currentPage() - 1 }})">
+                        {{ $documentos->currentPage() - 1 }}
+                    </button>
                 </li>
                 @endif
+
+                {{-- Página atual --}}
+                <li class="page-item active">
+                    <button class="page-link">
+                        {{ $documentos->currentPage() }}
+                    </button>
+                </li>
+
+                {{-- Próxima página --}}
+                @if ($documentos->hasMorePages())
+                <li class="page-item">
+                    <button class="page-link" wire:click="gotoPage({{ $documentos->currentPage() + 1 }})">
+                        {{ $documentos->currentPage() + 1 }}
+                    </button>
+                </li>
+
+                <li class="page-item">
+                    <button class="page-link" wire:click="nextPage">»</button>
+                </li>
+                @endif
+
             </ul>
         </nav>
     </div>
     @endif
+
 
     </div>  
     <script>
