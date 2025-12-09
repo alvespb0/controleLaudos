@@ -12,6 +12,8 @@ use App\Models\Op_Tecnico;
 
 class DocumentsControl extends Component
 {
+    #use WithPagination;
+
     public $clienteFilter = '';
     public $dataFilterMes = '';
     public $statusFilter = '';
@@ -59,7 +61,7 @@ class DocumentsControl extends Component
         $query->orderBy('data_elaboracao', "{$this->ordenarPor}");
         
         $documentos = $query->paginate(6);
-        return view('livewire.documents-control', ['status' => $status, 'documentos' => $documentos, 'tecnicos' => $tecnicos]);
+        return view('livewire/documentos/documents-control', ['status' => $status, 'documentos' => $documentos, 'tecnicos' => $tecnicos]);
     }
 
     public function toggleOrdenacao()

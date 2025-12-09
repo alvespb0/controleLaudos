@@ -108,94 +108,9 @@
         }
 
 
-
     // --- Modal de mensagens ---
     const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
     const messageModalBody = document.getElementById('messageModalBody');
-
-    function showMessage(message, isError = false) {
-        messageModalBody.innerHTML = message;
-        messageModal.show();
-    }
-
-    // --- Inicializa cada formulário de documento ---
-    function initializeCard(form) {
-        const saveBtn = form.querySelector('.save-btn');
-        const statusSelect = form.querySelector('.status-select');
-        const statusIndicator = form.querySelector('.status-indicator');
-        const dataConclusaoInput = form.querySelector('input[name="dataConclusao"]');
-
-        // Define cor inicial do status
-        function updateStatusColor() {
-            const selectedOption = statusSelect.options[statusSelect.selectedIndex];
-            const color = selectedOption.dataset.color;
-            statusIndicator.style.backgroundColor = color;
-        }
-
-        updateStatusColor();
-
-        // Habilita botão salvar se status mudar
-        statusSelect.addEventListener('change', () => {
-            updateStatusColor();
-            saveBtn.disabled = false;
-        });
-
-        // Habilita botão salvar se data de conclusão mudar
-        if (dataConclusaoInput) {
-            dataConclusaoInput.addEventListener('change', () => {
-                saveBtn.disabled = false;
-            });
-        }
-
-        // Habilita botão salvar se algum select mudar (exceto status)
-        const selects = form.querySelectorAll('select');
-        selects.forEach(select => {
-            if (select !== statusSelect) {
-                select.addEventListener('change', () => {
-                    saveBtn.disabled = false;
-                });
-            }
-        });
-
-        // --- Listener do submit do formulário ---
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(this);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const documentoId = this.querySelector('input[name="documento_id"]').value;
-
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Erro na requisição');
-                return response.json();
-            })
-            .then(data => {
-                if (data.message) {
-                    showMessage(data.message);
-                    if (saveBtn) saveBtn.disabled = true;
-                } else if (data.error) {
-                    showMessage(data.error, true);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao atualizar o documento:', error);
-                showMessage('Ocorreu um erro ao atualizar o documento. Por favor, tente novamente.', true);
-            });
-        });
-    }
-
-    // --- Inicializa todos os forms de documento ---
-    document.querySelectorAll('form[id^="form-documento-"]').forEach(form => {
-        initializeCard(form);
-    });
 
     // Fechar dropdown de ações ao clicar fora
     window.addEventListener('click', function(e) {

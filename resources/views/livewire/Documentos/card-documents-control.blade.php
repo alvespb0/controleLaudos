@@ -25,15 +25,15 @@
                 <br>
                 <strong>Data de Solicitação: </strong>{{$documento->data_elaboracao !== null ? $documento->data_elaboracao : 'Data de aceite não definido'}} 
                 <br>
-                <strong>Data de Conclusao: </strong><input type="date" name="dataConclusao" class="border border-light" value="{{$documento->data_conclusao !== null ? $documento->data_conclusao : ''}}"> 
+                <strong>Data de Conclusao: </strong><input type="date" wire:model.blur="dataConclusaoAlterado" class="border border-light"> 
                 <br> 
                 <strong>Descrição: </strong>{{$documento->descricao !== null ? $documento->descricao : 'nenhuma descrição definida'}}
                 <br>
                 <Strong>Técnico Responsável: </Strong>
-                <select name="tecnicoResponsavel" class="form-select mt-2">
-                    <option value="" selected>Selecione um Técnico Responsável</option>
+                <select wire:model.live.debounce.300ms="tecnicoAlterado" class="form-select mt-2">
+                    <option value="">Selecione um Técnico Responsável</option>
                     @foreach($tecnicos as $tecnico)
-                    <option value="{{$tecnico->id}}" {{ ($documento->tecnico && $documento->tecnico->id == $tecnico->id) ? 'selected' : '' }}>
+                    <option value="{{$tecnico->id}}">
                         {{$tecnico->usuario}}
                     </option>
                     @endforeach
@@ -41,8 +41,7 @@
                 </p>
             <hr>
             <div class="d-flex justify-content-between mt-3 gap-2">
-                <button type="submit" class="btn btn-success save-btn" disabled>Salvar</button>                    
-                <div class="dropdown-acoes">
+                <div class="dropdown-acoes ms-auto">
                     <button type="button" class="btn btn-light btn-acao" title="Ações" onclick="this.parentNode.classList.toggle('open')">
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
@@ -57,8 +56,7 @@
                             class="btn btn-acao-menu w-100"
                             data-bs-toggle="modal"
                             data-bs-target="#whatsappModal{{ $documento->id }}"
-                            title="Iniciar atendimento via WhatsApp"
-                        >
+                            title="Iniciar atendimento via WhatsApp">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </button>
                     </div>
