@@ -8,7 +8,6 @@ use App\Mail\ClienteMail;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\LaudoRequest; 
-use App\Http\Requests\LaudoUpdateRequest; 
 use App\Http\Requests\UpdateKanbanRequest; 
 
 use App\Models\Laudo;
@@ -194,26 +193,6 @@ class LaudoController extends Controller
         $contagemPorStatus['sem_status'] = $semStatusCount;
 
         return view("index", ["status" => $status, "contagemPorStatus" => $contagemPorStatus]);
-    }
-
-    /**
-     * Recebe uma request válida os dados através do LaudoUpdateRequest e retorna um json
-     * @param LaudoUpdateRequest
-     * @return Json
-     */
-    public function updateLaudoIndex(LaudoUpdateRequest $request){
-        $request->validated();
-
-        $laudo = Laudo::findOrFail($request->laudo_id);
-
-        $laudo->update([
-            'data_conclusao' => $request->dataConclusao,
-            'status_id' => $request->status,
-            'tecnico_id' => $request->tecnicoResponsavel,
-            'observacao' => $request->observacao,
-        ]);
-
-        return response()->json(['message' => 'Laudo Atualizado com sucesso']);
     }
 
     /**

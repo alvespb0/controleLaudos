@@ -290,23 +290,37 @@
         box-shadow: 0 6px 24px rgba(44,100,92,0.18);
     }
 </style>
-<div class="sidebar-discreta">
-    <span class="icon" title="Ir para o topo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></span>
-    <span class="icon" title="Indicadores" id="sidebarIndicadores"><i class="bi bi-bar-chart"></i></span>
-    <span class="icon" title="Kanban" onclick="window.location.href='/dashboard/kanban'"><i class="bi bi-kanban"></i></span>
-</div>
-<div class="container">
-    <!-- Modal de Mensagem -->
-    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+<div 
+    class="container" 
+    x-data="{ showIndicadores: false }"
+>
+    <!-- Sidebar discreta -->
+    <div class="sidebar-discreta">
+        <span class="icon" title="Ir para o topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <i class="bi bi-arrow-up"></i>
+        </span>
+
+        <!-- Agora controlado via Alpine -->
+        <span class="icon" 
+            title="Indicadores"
+            @click="showIndicadores = !showIndicadores"
+        >
+            <i class="bi bi-bar-chart"></i>
+        </span>
+
+        <span class="icon" title="Kanban" onclick="window.location.href='/dashboard/kanban'">
+            <i class="bi bi-kanban"></i>
+        </span>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="messageModalLabel">Mensagem</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header"><h5 class="modal-title">Mensagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="messageModalBody">
-                    <!-- Mensagem será inserida aqui -->
-                </div>
+                <div class="modal-body" id="messageModalBody"></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
                 </div>
@@ -314,7 +328,14 @@
         </div>
     </div>
 
-    <div class="collapse mb-4" id="indicadores">
+    <!-- INDICADORES — controlado 100% pelo Alpine -->
+    <div 
+        id="indicadores"
+        x-show="showIndicadores"
+        x-transition
+        class="mb-4"
+        style="display: none;"
+    >
         <div class="row g-3">
             @foreach ($status as $s)
                 <div class="col-6 col-md-4 col-lg-3">
@@ -332,6 +353,7 @@
 
     <livewire:LaudosControl :initialPage="request()->get('page', 1)" key="documents"/>
 
+
 <script>
     // PARTE DAS OBSERVAÇÕES DO LAUDO
     function toggleObservacao(id) {
@@ -343,12 +365,10 @@
         document.getElementById('obs-edit-' + id).style.display = 'none';
         document.getElementById('obs-display-' + id).style.display = 'block';
         
-        // Restaura o valor original do textarea
         const textarea = document.querySelector(`#obs-edit-${id} textarea[name="observacao"]`);
         const originalText = document.querySelector(`#obs-text-${id}`).textContent.trim();
         textarea.value = originalText === 'Nenhuma observação' ? '' : originalText;
     }
-
 
     document.addEventListener('input', function (e) {
         if (e.target.tagName.toLowerCase() !== 'textarea') return;
@@ -360,15 +380,11 @@
         textarea.style.height = textarea.scrollHeight + 'px';
     }
 
-    // FIM DAS OBSERVAÇÕES DO LAUDO
-
-    // --- Modal de mensagens ---
+    // --- Modal ---
     const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
     const messageModalBody = document.getElementById('messageModalBody');
 
-    // --- Inicializa cada formulário de laudo ---
-
-    // Fechar dropdown de ações ao clicar fora
+    // Fechar dropdown ao clicar fora
     window.addEventListener('click', function(e) {
         document.querySelectorAll('.dropdown-acoes').forEach(function(drop) {
             if (!drop.contains(e.target)) {
@@ -376,16 +392,6 @@
             }
         });
     });
-
-    // Sidebar: mostrar indicadores ao clicar no ícone de gráfico
-    document.getElementById('sidebarIndicadores').addEventListener('click', function() {
-        const collapse = document.getElementById('indicadores');
-        if (collapse.classList.contains('show')) {
-            collapse.classList.remove('show');
-        } else {
-            collapse.classList.add('show');
-        }
-    });
-
 </script>
-@endsection 
+
+@endsection
