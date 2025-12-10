@@ -60,7 +60,6 @@ Route::middleware(['checkUserType:seguranca,admin'])->controller(StatusControlle
 /**              Rotas Classe Cliente             */
 Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteController::class)->group(function () {
     Route::get('/cliente','readCliente')->name('readCliente'); # retorna a view contendo os clientes cadastrados
-    Route::get('/cliente/filtered', 'filterCliente')->name('filter.cliente');
 
     Route::get('/cliente/cadastro','cadastroCliente')->name('cadastro.cliente'); # retorna o formulario de cadastro de cliente
     Route::post('/cliente/cadastro','createCliente')->name('create.cliente'); # salva o cliente no bd
@@ -128,8 +127,6 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
     Route::get('documentos/excluir/{id}', 'deleteDocTecnico')->name('delete.documento'); # deleta o documento no banco
 
     Route::get('documentos/controle', 'indexDocTecnico')->name('show.docIndex');
-    Route::post('documentos/controle', 'updateDocIndex')->name('update.docIndex');
-    Route::get('documentos/controle/filtered', 'filterDocIndex')->name('filter.docIndex');
 });
 
 Route::middleware(['checkUserType:admin'])->controller(Documentos_TecnicosController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
@@ -146,9 +143,6 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
 
     Route::get('/dashboard/kanban', 'showKanban')->name('kanban.show');
 
-    Route::get('/dashboard/filtered', 'filterDashboard')->name('dashboard.filter');
-
-    Route::post('/dashboard','updateLaudoIndex')->name('update.laudoIndex');
     Route::post('/dashboard/envia-email', 'enviaEmailCli')->name('envia-email.cliente');
 
     Route::post('/dashboard/kanban', 'updateLaudoKanban')->name('update.laudoKanban');
