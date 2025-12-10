@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\DocumentoRequest; 
-use App\Http\Requests\DocumentoUpdateRequest; 
 
 use App\Models\Cliente;
 use App\Models\Op_Tecnico;
@@ -136,9 +135,7 @@ class Documentos_TecnicosController extends Controller
      * Retorna a view da index de controle de documento técnico
      */
     public function indexDocTecnico(){
-        $documentos = Documentos_Tecnicos::orderBy('data_elaboracao', 'desc')->paginate(6);
         $status = Status::all();
-        $tecnicos = Op_Tecnico::all();
 
         $contagemPorStatus = [];
         foreach ($status as $s) {
@@ -152,26 +149,7 @@ class Documentos_TecnicosController extends Controller
         ]);
         $contagemPorStatus['sem_status'] = $semStatusCount;
 
-        return view("/Documentos/Documento_index", ["documentos"=> $documentos, "status" => $status, "tecnicos"=> $tecnicos, "contagemPorStatus" => $contagemPorStatus]);
-    }
-
-    /**
-     * Recebe uma request vinda da index através de fetch, valida, e dá update no banco
-     * @param DocumentoUpdateRequest $request
-     * @return json
-     */
-    public function updateDocIndex(DocumentoUpdateRequest $request){
-        $request->validated();
-
-        $documento = Documentos_Tecnicos::findOrFail($request->documento_id);
-
-        $documento->update([
-            'status_id' => $request->status,
-            'data_conclusao' => $request->dataConclusao,
-            'tecnico_id' => $request->tecnicoResponsavel
-        ]);
-
-        return response()->json(['message' => $documento->tipo_documento.' Atualizado com sucesso']);
+        return view("/Documentos/Documento_index", ["status" => $status, "contagemPorStatus" => $contagemPorStatus]);
     }
 
     /**

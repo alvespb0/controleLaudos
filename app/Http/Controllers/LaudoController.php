@@ -8,7 +8,6 @@ use App\Mail\ClienteMail;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\LaudoRequest; 
-use App\Http\Requests\LaudoUpdateRequest; 
 use App\Http\Requests\UpdateKanbanRequest; 
 
 use App\Models\Laudo;
@@ -172,92 +171,6 @@ class LaudoController extends Controller
 
         return redirect()->route('readLaudo');
     }
-
-    /**
-     * Recebe uma solicitação GET com uma request de filtro
-     * @param Request
-     * @return View
-     */
-    public function filterDashboard(Request $request){
-
-        $laudos = Laudo::query();
-        $status = Status::all();
-        $tecnicos = Op_Tecnico::all(); 
-
-        /* Filtro de Search Cliente */
-        if($request->filled('search')){
-            $clientes = Cliente::where('nome', 'like', "%{$request->input('search')}%")->pluck('id');
-            if($clientes->isNotEmpty()){
-                $laudos = $laudos->whereIn('cliente_id', $clientes);
-            }else{
-                session()->flash('Error', 'Nenhum cliente localizado');
-                return view("index", [
-                    "laudos" => collect(),
-                    "status" => $status,
-                    "tecnicos" => $tecnicos
-                ]);
-            }
-        }
-    
-        /* Filtro de Search Mes de competencia (pela data de aceite) */
-        if($request->filled('mesCompetencia')){
-            [$ano, $mes] = explode('-', $request->mesCompetencia);
-
-            $laudos = $laudos->whereYear('data_aceite', $ano)
-                             ->whereMonth('data_aceite', $mes);
-        }
-
-        /* Filtro de Search pelo status do laudo */
-        if($request->filled('status')){
-            if($request->status == "sem_status"){
-                $laudos = $laudos->where('status_id', null);
-            }else{
-                $laudos = $laudos->where('status_id', $request->status);
-            }
-        }
-    
-        /* Filtro de Search pela data de conclusão (específica) */
-        if($request->filled('dataConclusao')){
-            $laudos = $laudos->where('data_conclusao', $request->dataConclusao);
-        }
-    
-        $laudosFiltrados = clone $laudos;
-
-        // Calcula indicadores com base na query filtrada
-        $contagemPorStatus = [];
-
-        foreach ($status as $s) {
-            $contagemPorStatus[$s->id] = (clone $laudosFiltrados)->where('status_id', $s->id)->count();
-        }
-
-        $semStatusCount = (clone $laudosFiltrados)->whereNull('status_id')->count();
-
-        $status->push((object)[
-            'id' => 'sem_status',
-            'nome' => 'Sem status',
-            'cor' => '#6c757d'
-        ]);
-
-        $contagemPorStatus['sem_status'] = $semStatusCount;
-        
-        /* Filtro pela ordenação */
-        $ordem = $request->input('ordenarPor', 'mais_novos'); 
-
-        if ($ordem === 'mais_antigos') {
-            $laudos = $laudos->orderBy('created_at', 'asc');
-        } else {
-            $laudos = $laudos->orderBy('created_at', 'desc');
-        }
-    
-        $laudos = $laudos->paginate(6)->appends($request->query());
-
-        return view("index", [
-            "laudos" => $laudos, 
-            "status" => $status,
-            "tecnicos" => $tecnicos,
-            "contagemPorStatus" => $contagemPorStatus
-        ]);
-    }
     
     /**
      * retorna a pagina index levando todos os laudos, status e tecnicos de segurança
@@ -266,7 +179,6 @@ class LaudoController extends Controller
     public function showDashboard(){
         $laudos = Laudo::orderBy('created_at', 'desc')->paginate(6);
         $status = Status::all();
-        $tecnicos = Op_Tecnico::all();
 
         $contagemPorStatus = [];
         foreach ($status as $s) {
@@ -280,27 +192,7 @@ class LaudoController extends Controller
         ]);
         $contagemPorStatus['sem_status'] = $semStatusCount;
 
-        return view("index", ["laudos"=> $laudos, "status" => $status, "tecnicos"=> $tecnicos, "contagemPorStatus" => $contagemPorStatus]);
-    }
-
-    /**
-     * Recebe uma request válida os dados através do LaudoUpdateRequest e retorna um json
-     * @param LaudoUpdateRequest
-     * @return Json
-     */
-    public function updateLaudoIndex(LaudoUpdateRequest $request){
-        $request->validated();
-
-        $laudo = Laudo::findOrFail($request->laudo_id);
-
-        $laudo->update([
-            'data_conclusao' => $request->dataConclusao,
-            'status_id' => $request->status,
-            'tecnico_id' => $request->tecnicoResponsavel,
-            'observacao' => $request->observacao,
-        ]);
-
-        return response()->json(['message' => 'Laudo Atualizado com sucesso']);
+        return view("index", ["status" => $status, "contagemPorStatus" => $contagemPorStatus]);
     }
 
     /**

@@ -215,18 +215,6 @@ class ClienteController extends Controller
    }
 
     /**
-     * recebe uma request e busca no banco um cliente com esse nome ou CNPJ utilizando like
-     * @param Request
-     * @return Array
-     */
-    public function filterCliente(Request $request){
-        $cliente = Cliente::where('nome', 'like', '%'. $request->cliente .'%')
-                        ->orWhere('cnpj', 'like', '%'. $request->cliente . '%')
-                        ->paginate(10);
-        return view('Cliente/Cliente_show', ['clientes'=> $cliente]);
-    }
-   
-    /**
      * Obtém as coordenadas geográficas (latitude e longitude) de um endereço utilizando o serviço
      * Nominatim (OpenStreetMap).
      *
