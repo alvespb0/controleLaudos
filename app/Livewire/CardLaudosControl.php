@@ -83,7 +83,24 @@ class CardLaudosControl extends Component
      * @return void
      */
     public function updatedResponsavelLevantamentoAlterado(){
-        
+
+        if (empty($this->responsavelLevantamentoAlterado)) {
+
+            $responsavel = $this->laudo->tecnicoLevantamento();
+
+            if ($responsavel) {
+                $responsavel->delete();
+            }
+
+            $this->laudo->refresh();
+
+            return $this->dispatch(
+                'toast-sucesso',
+                message: 'Responsável pelo levantamento removido com sucesso'
+            );
+        }
+
+
         Responsaveis::updateOrCreate(
             [
                 'laudo_id' => $this->laudo->id,
@@ -108,6 +125,22 @@ class CardLaudosControl extends Component
      */
     public function updatedResponsavelDigitacaoAlterado(){
         
+        if (empty($this->responsavelDigitacaoAlterado)) {
+
+            $responsavel = $this->laudo->responsavelDigitacao();
+
+            if ($responsavel) {
+                $responsavel->delete();
+            }
+
+            $this->laudo->refresh();
+
+            return $this->dispatch(
+                'toast-sucesso',
+                message: 'Responsável pela digitação removido com sucesso'
+            );
+        }
+
         Responsaveis::updateOrCreate(
             [
                 'laudo_id' => $this->laudo->id,
@@ -131,7 +164,22 @@ class CardLaudosControl extends Component
      * @return void
      */
     public function updatedResponsavelEngenheiroAlterado(){
-        
+        if (empty($this->responsavelEngenheiroAlterado)) {
+
+            $responsavel = $this->laudo->engenheiroResponsavel();
+
+            if ($responsavel) {
+                $responsavel->delete();
+            }
+
+            $this->laudo->refresh();
+
+            return $this->dispatch(
+                'toast-sucesso',
+                message: 'Engenheiro responsável removido com sucesso'
+            );
+        }
+
         Responsaveis::updateOrCreate(
             [
                 'laudo_id' => $this->laudo->id,
