@@ -50,15 +50,72 @@
                     </div>
                 </div>
                 <br>
-                <Strong>Técnico Responsável: </Strong>
-                <select name="tecnicoResponsavel" wire:model.live.debounce.300ms="tecnicoAlterado" class="form-select mt-2">
-                    <option value="">Selecione um Técnico Responsável</option>
-                    @foreach($tecnicos as $tecnico)
-                    <option value="{{$tecnico->id}}">
-                        {{$tecnico->usuario}}
-                    </option>
-                    @endforeach
-                </select>
+                <div x-data="{ open: false }" class="border rounded p-3 bg-white shadow-sm">
+
+                    <!-- Cabeçalho -->
+                    <button 
+                        @click="open = !open" 
+                        class="btn btn-info"
+                    >
+                        <span class="font-semibold text-gray-700">Responsáveis</span>
+                        
+                        <span x-show="!open">+</span>
+                        <span x-show="open">−</span>
+                    </button>
+
+                    <!-- Conteúdo -->
+                    <div 
+                        x-show="open"
+                        x-transition
+                        class="mt-3 space-y-4"
+                    >
+
+                        <!-- Técnico Responsável -->
+                        <div>
+                            <strong>Técnico Responsável pelo Levantamento:</strong>
+                            <select 
+                                name="tecnicoResponsavelLevantamento"
+                                wire:model.live.debounce.300ms="responsavelLevantamentoAlterado"
+                                class="form-select mt-2"
+                            >
+                                <option value="">Selecione...</option>
+                                @foreach($tecnicos as $tecnico)
+                                    <option value="{{ $tecnico->id }}">{{ $tecnico->usuario }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <strong>Engenheiro Responsável:</strong>
+                            <select 
+                                name="engenheiroResponsavel"
+                                wire:model.live.debounce.300ms="responsavelEngenheiroAlterado"
+                                class="form-select mt-2"
+                            >
+                                <option value="">Selecione...</option>
+                                @foreach($tecnicos as $tecnico)
+                                    <option value="{{ $tecnico->id }}">{{ $tecnico->usuario }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <strong>Responsável pela Digitação:</strong>
+                            <select 
+                                name="responsavelDigitacao"
+                                wire:model.live.debounce.300ms="responsavelDigitacaoAlterado"
+                                class="form-select mt-2"
+                            >
+                                <option value="">Selecione...</option>
+                                @foreach($tecnicos as $tecnico)
+                                    <option value="{{ $tecnico->id }}">{{ $tecnico->usuario }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
                 </p>
                 <div class="mb-2 position-relative group">
                     <strong class="d-block mb-1 text-muted small">Observação:</strong>

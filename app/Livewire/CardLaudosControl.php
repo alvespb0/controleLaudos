@@ -7,13 +7,16 @@ use App\Models\Status;
 use App\Models\Laudo;
 use App\Models\Cliente;
 use App\Models\Op_Tecnico;
+use App\Models\Responsaveis;
 
 class CardLaudosControl extends Component
 {
     public $laudo;
     public $statusAlterado;
     public $dataConclusaoAlterado;
-    public $tecnicoAlterado;
+    public $responsavelLevantamentoAlterado;
+    public $responsavelEngenheiroAlterado;
+    public $responsavelDigitacaoAlterado;
     public $observacaoAlterado;
     
     /**
@@ -28,7 +31,9 @@ class CardLaudosControl extends Component
         $this->laudo = $laudo;
         $this->statusAlterado = $laudo->status_id;
         $this->dataConclusaoAlterado = $laudo->data_conclusao;
-        $this->tecnicoAlterado = $laudo->tecnico_id;
+        $this->responsavelLevantamentoAlterado = optional($laudo->tecnicoLevantamento())->tecnico_id;
+        $this->responsavelEngenheiroAlterado = optional($laudo->engenheiroResponsavel())->tecnico_id;
+        $this->responsavelDigitacaoAlterado = optional($laudo->responsavelDigitacao())->tecnico_id;
         $this->observacaoAlterado = $laudo->observacao;
     }
 
@@ -70,21 +75,75 @@ class CardLaudosControl extends Component
         $this->dispatch('toast-sucesso', message: 'Data de conclusão atualizado com sucesso');   
     }
 
-    /**
-     * Atualiza o técnico do laudo quando a variável `tecnicoAlterado` é modificada.
+   /**
+     * Atualiza o técnico do laudo quando a variável `responsavelLevantamentoAlterado` é modificada.
+     * Tabela responsáveis, considerando as relações N:N
      *
-     * Atualiza o campo `tecnico_id` do laudo no banco de dados e envia uma notificação de sucesso.
      *
      * @return void
      */
-    public function updatedTecnicoAlterado(){
-        $this->laudo->update([
-            'tecnico_id' => $this->tecnicoAlterado
-        ]);
-
+    public function updatedResponsavelLevantamentoAlterado(){
+        
+        Responsaveis::updateOrCreate(
+            [
+                'laudo_id' => $this->laudo->id,
+                'tipo' => 'levantamento'
+            ],
+            [
+                'tecnico_id' => $this->responsavelLevantamentoAlterado
+            ]
+        );
         $this->laudo->refresh();
 
-        $this->dispatch('toast-sucesso', message: 'Técnico atualizado com sucesso');   
+        $this->dispatch('toast-sucesso', message: 'Técnico responsável pelo levantamento atualizado com sucesso');   
+    }
+
+    
+    /**
+     * Atualiza o técnico do laudo quando a variável `responsavelDigitacaoAlterado` é modificada.
+     * Tabela responsáveis, considerando as relações N:N
+     *
+     *
+     * @return void
+     */
+    public function updatedResponsavelDigitacaoAlterado(){
+        
+        Responsaveis::updateOrCreate(
+            [
+                'laudo_id' => $this->laudo->id,
+                'tipo' => 'digitacao'
+            ],
+            [
+                'tecnico_id' => $this->responsavelDigitacaoAlterado
+            ]
+        );
+        $this->laudo->refresh();
+
+        $this->dispatch('toast-sucesso', message: 'Técnico responsável pela digitação atualizado com sucesso');   
+    }
+
+    
+    /**
+     * Atualiza o técnico do laudo quando a variável `ResponsavelEngenheiroAlterad` é modificada.
+     * Tabela responsáveis, considerando as relações N:N
+     *
+     *
+     * @return void
+     */
+    public function updatedResponsavelEngenheiroAlterado(){
+        
+        Responsaveis::updateOrCreate(
+            [
+                'laudo_id' => $this->laudo->id,
+                'tipo' => 'engenheiro'
+            ],
+            [
+                'tecnico_id' => $this->responsavelEngenheiroAlterado
+            ]
+        );
+        $this->laudo->refresh();
+
+        $this->dispatch('toast-sucesso', message: 'Engenheiro responsável atualizado com sucesso');   
     }
 
     public function updatedObservacaoAlterado(){
