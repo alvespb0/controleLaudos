@@ -17,4 +17,7 @@ class Responsaveis extends Model
         'tipo' #enum
     ];
 
+    public function tecnico(){
+        return $this->belongsTo(Op_Tecnico::class, 'tecnico_id');
+    }
 }
