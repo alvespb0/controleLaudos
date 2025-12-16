@@ -15,6 +15,7 @@ class Status_Crm extends Model
         'nome',
         'descricao',
         'position',
-        'padrao_sistema'
+        'padrao_sistema',
+        'slug' #identificador unique para resgatarmos as etapas sem usar id ou descricao
     ];
 }
