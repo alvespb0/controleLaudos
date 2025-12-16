@@ -302,10 +302,14 @@ class CRMController extends Controller
     public function alterStatusLead($lead_id, $etapa_id){
         $lead = Lead::findOrFail($lead_id);
 
+        $newEtapa = Status_Crm::findOrFail($etapa_id);
+
+        $slug = $newEtapa->slug;
+        
         $oldEtapa_id = $lead->status->id;
         $oldEtapa_nome = $lead->status->nome;
 
-        if ($etapa_id == 5) {
+        if ($slug == 'ganho') {
             if (!$this->validaDadosCobranca($lead)) {
                 session()->flash('error', 'Atualize os dados de cobrança antes de continuar');
                 return redirect()->route('show.CRM');
@@ -322,7 +326,7 @@ class CRMController extends Controller
             }
         }
 
-        if($lead->status_id == 5 && $etapa_id != 5 && $lead->comissao){
+        if($lead->status->slug == 'ganho' && $slug != 'ganho' && $lead->comissao){
             $lead->comissao()->delete();
         }
 
@@ -341,7 +345,7 @@ class CRMController extends Controller
                 ])
                 ->log("Mudou o status do lead de '{$oldEtapa_nome}' para '{$lead->status->nome}'");
 
-        if($lead->status_id == 5){
+        if($lead->status->slug == 'ganho'){
             $this->createComissao($lead);
             session()->flash('showInsertVendaModal', true);
             session()->flash('lead_id_venda', ['lead_nome' => $lead->cliente->nome, 'lead_id' => $lead->id]);
