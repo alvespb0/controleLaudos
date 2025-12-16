@@ -33,9 +33,27 @@
     
         <div class="col-md-4 d-flex justify-content-center mb-4">
             <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
-                <h5 class="text-center mb-3">Laudos por técnico</h5>
+                <h5 class="text-center mb-3">Responsáveis por Levantamentos</h5>
                 <div style="height: 300px;">
-                    {!! $chartTecnico->container() !!}
+                    {!! $chartTecnicoLevantamento->container() !!}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Engenheiros Responsáveis</h5>
+                <div style="height: 300px;">
+                    {!! $chartEngenheiroResponsavel->container() !!}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex justify-content-center mb-4">
+            <div class="border p-3 shadow-sm rounded" style="width: 100%; max-width: 400px;">
+                <h5 class="text-center mb-3">Responsáveis pela Digitação</h5>
+                <div style="height: 300px;">
+                    {!! $chartResponsavelDigitacao->container() !!}
                 </div>
             </div>
         </div>
@@ -107,7 +125,9 @@
     {{-- Carrega Chart.js --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {!! $chartStatus->script() !!}
-    {!! $chartTecnico->script() !!}
+    {!! $chartTecnicoLevantamento->script() !!}
+    {!! $chartEngenheiroResponsavel->script() !!}
+    {!! $chartResponsavelDigitacao->script() !!}
     {!! $chartVendedor->script() !!}
     {!! $chartClientes->script() !!}
     {!! $chartOrcamentos->script() !!}

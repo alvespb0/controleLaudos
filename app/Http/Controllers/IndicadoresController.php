@@ -26,7 +26,11 @@ class IndicadoresController extends Controller
     public function dashboardGerencial(Request $request){
         $chartStatus = $this->indicadorLaudoStatus($request->dataInicial, $request->dataFinal);
 
-        $chartTecnico = $this->indicadorLaudoPorTecnico($request->dataInicial, $request->dataFinal);
+        $chartTecnicoLevantamento = $this->indicadorResponsaveisLevantamento($request->dataInicial, $request->dataFinal);
+
+        $chartEngenheiroResponsavel = $this->indicadorEngenheiroResponsavel($request->dataInicial, $request->dataFinal);
+
+        $chartResponsavelDigitacao = $this->indicadorResponsavelDogotacap($request->dataInicial, $request->dataFinal);
 
         $chartVendedor = $this->indicadorLaudoPorVendedor($request->dataInicial, $request->dataFinal);
 
@@ -42,8 +46,8 @@ class IndicadoresController extends Controller
         
         $chartValorTotalMes = $this->lucroPresumidoMesLead($request->dataInicial, $request->dataFinal);
 
-        return view('Dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnico' => $chartTecnico, 'chartVendedor' => $chartVendedor, 
-                    'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos, 'chartDocsStatus' => $chartDocsStatus, 'chartDocsTecnico' => $chartDocsTecnico,
+        return view('dashboard_gerencial', ['chartStatus' => $chartStatus, 'chartTecnicoLevantamento' => $chartTecnicoLevantamento, 'chartEngenheiroResponsavel' => $chartEngenheiroResponsavel, 'chartResponsavelDigitacao' => $chartResponsavelDigitacao,
+                    'chartVendedor' => $chartVendedor, 'chartClientes' => $chartClientes, 'chartOrcamentos' => $chartOrcamentos, 'chartDocsStatus' => $chartDocsStatus, 'chartDocsTecnico' => $chartDocsTecnico,
                     'chartLeadsGanhosMes' => $chartLeadsGanhosMes, 'chartValorTotalMes' => $chartValorTotalMes]);
     }
 
@@ -71,26 +75,81 @@ class IndicadoresController extends Controller
         return $chartStatus;
     }
 
-    private function indicadorLaudoPorTecnico($dataInicio = null, $dataFim = null){
+    private function indicadorResponsaveisLevantamento($dataInicio = null, $dataFim = null){
         /* LAUDOS POR TÉCNICO RESPONSÁVEL */
-        $tecnicosList = Op_Tecnico::withCount(['laudos' => function ($query) use ($dataInicio, $dataFim) {
-            if ($dataInicio) {
-                $query->whereDate('data_aceite', '>=', $dataInicio);
+        $tecnicosList = Op_Tecnico::withCount([
+            'levantamento' => function ($query) use ($dataInicio, $dataFim) {
+
+                if ($dataInicio) {
+                    $query->whereDate('created_at', '>=', $dataInicio);
+                }
+
+                if ($dataFim) {
+                    $query->whereDate('created_at', '<=', $dataFim);
+                }
             }
-            if ($dataFim) {
-                $query->whereDate('data_aceite', '<=', $dataFim);
-            }
-        }])->get();
+        ])->get();
 
         $labelsTecnico = $tecnicosList->pluck('usuario');
-        $dataTecnico = $tecnicosList->pluck('laudos_count');
+        $dataTecnico = $tecnicosList->pluck('levantamento_count');
 
         $chartTecnico = new Chart;
         $chartTecnico->labels($labelsTecnico);
-        $chartTecnico->dataset('Laudos por técnico', 'bar', $dataTecnico);
+        $chartTecnico->dataset('Responsáveis por levantamento', 'bar', $dataTecnico);
 
         return $chartTecnico;
     }
+
+    private function indicadorEngenheiroResponsavel($dataInicio = null, $dataFim = null){
+        /* LAUDOS POR TÉCNICO RESPONSÁVEL */
+        $tecnicosList = Op_Tecnico::withCount([
+            'engenheiro' => function ($query) use ($dataInicio, $dataFim) {
+
+                if ($dataInicio) {
+                    $query->whereDate('created_at', '>=', $dataInicio);
+                }
+
+                if ($dataFim) {
+                    $query->whereDate('created_at', '<=', $dataFim);
+                }
+            }
+        ])->get();
+
+        $labelsTecnico = $tecnicosList->pluck('usuario');
+        $dataTecnico = $tecnicosList->pluck('engenheiro_count');
+
+        $chartTecnico = new Chart;
+        $chartTecnico->labels($labelsTecnico);
+        $chartTecnico->dataset('Engenheiro Responsável', 'bar', $dataTecnico);
+
+        return $chartTecnico;
+    }
+
+    private function indicadorResponsavelDogotacap($dataInicio = null, $dataFim = null){
+        /* LAUDOS POR TÉCNICO RESPONSÁVEL */
+        $tecnicosList = Op_Tecnico::withCount([
+            'digitacao' => function ($query) use ($dataInicio, $dataFim) {
+
+                if ($dataInicio) {
+                    $query->whereDate('created_at', '>=', $dataInicio);
+                }
+
+                if ($dataFim) {
+                    $query->whereDate('created_at', '<=', $dataFim);
+                }
+            }
+        ])->get();
+
+        $labelsTecnico = $tecnicosList->pluck('usuario');
+        $dataTecnico = $tecnicosList->pluck('digitacao_count');
+
+        $chartTecnico = new Chart;
+        $chartTecnico->labels($labelsTecnico);
+        $chartTecnico->dataset('Responsável pela Digitação', 'bar', $dataTecnico);
+
+        return $chartTecnico;
+    }
+
 
     private function indicadorLaudoPorVendedor($dataInicio = null, $dataFim = null){
         /* LAUDOS POR VENDEDOR */

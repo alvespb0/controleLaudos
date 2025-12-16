@@ -20,12 +20,25 @@ class Op_Tecnico extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
-
-    public function laudos(){
-        return $this->hasMany(Laudo::class, 'tecnico_id');
-    }
-
+    
     public function documentos(){
         return $this->hasMany(Documentos_Tecnicos::class, 'tecnico_id');
+    }
+
+    public function responsavel(){
+        return $this->hasMany(Responsaveis::class, 'tecnico_id');
+    }
+
+    public function levantamento(){
+        return $this->responsavel()->where('tipo', 'levantamento');
+
+    }
+
+    public function engenheiro(){
+        return $this->responsavel()->where('tipo', 'engenheiro');
+    }
+
+    public function digitacao(){
+        return $this->responsavel()->where('tipo', 'digitacao');
     }
 }
