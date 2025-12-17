@@ -307,10 +307,6 @@
         >
             <i class="bi bi-bar-chart"></i>
         </span>
-
-        <span class="icon" title="Kanban" onclick="window.location.href='/dashboard/kanban'">
-            <i class="bi bi-kanban"></i>
-        </span>
     </div>
 
     <!-- Modal -->
