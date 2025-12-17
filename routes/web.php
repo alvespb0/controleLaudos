@@ -109,8 +109,6 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
     Route::get('/laudo/excluidos-anteriormente','laudosExcluidos')->name('read.deletedLaudo'); # Abre a view dos excluídos anteriormente
 
     Route::get('/laudo/excluidos-anteriormente/restaurar/{id}', 'restoreLaudo')->name('restore.deletedLaudo'); # restaura o dado excluído
-    Route::post('/dashboard/kanban/update-all-positions', 'updateAllPositions')->name('update.all.positions');
-    Route::post('/dashboard/kanban/update-column-position', 'updateColumnPosition')->name('update.column.position');
 });
 
 /** --------------------------------------------- */
@@ -141,11 +139,7 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
     Route::get('/','showDashboard')->name('dashboard.show');
 
-    Route::get('/dashboard/kanban', 'showKanban')->name('kanban.show');
-
     Route::post('/dashboard/envia-email', 'enviaEmailCli')->name('envia-email.cliente');
-
-    Route::post('/dashboard/kanban', 'updateLaudoKanban')->name('update.laudoKanban');
 });
 
 /** --------------------------------------------- */
