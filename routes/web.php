@@ -68,6 +68,8 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteControll
     Route::post('/cliente/alteracao/{id}','updateCliente')->name('update.cliente'); # faz o update do cliente no banco
 
     Route::get('/cliente/excluir/{id}','deleteCliente')->name('delete.cliente'); # faz a exclusão do cliente no banco
+    Route::get('/cliente/inativos', 'clientesExcluidos')->name('inactives.cliente');
+    Route::get('/cliente/inativos/restarurar/{id}', 'restoreLaudo')->name('restore.cliente');
 });
 
 /** --------------------------------------------- */

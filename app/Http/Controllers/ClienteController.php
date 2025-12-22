@@ -215,6 +215,31 @@ class ClienteController extends Controller
    }
 
     /**
+     * Retorna a view da 'lixeira' contendo os clientes deletados com softdelete
+     * @return View
+     */
+    public function clientesExcluidos(){
+        $clientes = Cliente::onlyTrashed()->orderByDesc('deleted_at')->paginate(10);
+
+        return view('/Cliente/Cliente_deleted', ['clientesExcluidos' => $clientes]);
+    }
+
+    /**
+     * recebe um ID via get e restaura esse cliente excluído
+     * @param int
+     * @return view
+     */
+    public function restoreLaudo($id){
+        $cliente = Cliente::withTrashed()->findOrFail($id);
+
+        $cliente->restore();
+
+        session()->flash('mensagem', 'Cliente restaurado com sucesso');
+
+        return redirect()->route('readCliente');
+    }
+    
+    /**
      * Obtém as coordenadas geográficas (latitude e longitude) de um endereço utilizando o serviço
      * Nominatim (OpenStreetMap).
      *

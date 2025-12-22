@@ -26,6 +26,6 @@ class Endereco_Cliente extends Model
     ];
 
     public function cliente(){
-        return $this->belongsTo(Cliente::class);
+        return $this->belongsTo(Cliente::class)->withTrashed();
     }
 }
