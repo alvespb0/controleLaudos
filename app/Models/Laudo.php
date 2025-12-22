@@ -36,7 +36,7 @@ class Laudo extends Model
     ];
 
     public function cliente(){
-        return $this->belongsTo(Cliente::class);
+        return $this->belongsTo(Cliente::class)->withTrashed();
     }
 
     public function comercial(){

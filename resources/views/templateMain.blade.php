@@ -134,6 +134,10 @@
                                 <i class="bi bi-circle"></i>
                                 <span class="nav-text">Clientes Cadastrados</span>
                             </a>
+                            <a href="/cliente/inativos" class="nav-link {{ request()->is('cliente/inativos')  ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i>
+                                <span class="nav-text">Clientes Inativos</span>
+                            </a>
                             <a href="/orcamento" class="nav-link {{ request()->is('orcamento') ? 'active' : '' }}">
                                 <i class="bi bi-circle"></i>
                                 <span class="nav-text">Gerar Orçamento</span>

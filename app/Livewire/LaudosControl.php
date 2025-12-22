@@ -54,7 +54,7 @@ class LaudosControl extends Component
         $query = Laudo::query();
 
         if($this->clienteFilter){
-            $clientes = Cliente::where('nome', 'like', "%{$this->clienteFilter}%")->pluck('id');
+            $clientes = Cliente::withTrashed()->where('nome', 'like', "%{$this->clienteFilter}%")->pluck('id');
             if($clientes->isNotEmpty()){
                 $query->whereIn('cliente_id', $clientes);
             }
