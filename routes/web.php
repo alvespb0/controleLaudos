@@ -16,6 +16,7 @@ use App\Http\Controllers\FaixaPrecoController;
 use App\Http\Controllers\RecomendadoresController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ContaAzulController;
+use App\Http\Controllers\IntegracaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -253,4 +254,14 @@ Route::controller(ContaAzulController::class)->group(function(){
     Route::get('/contaazul/connect', 'getAuthorizationToken');
     #Route::get('/contaazul/test', 'saveOrRefreshToken');
     Route::post('/contaazul/lancar-venda', 'lancarVenda')->name('lancar-venda.ca');
+});
+
+Route::middleware(['checkUserType:dev'])->controller(IntegracaoController::class)->group(function(){
+    Route::get('integracoes', 'readIntegracao')->name('read.integracao');
+    
+    Route::get('integracoes/cadastro', 'cadastroIntegracao')->name('cadastro.integracao');
+    Route::post('integracoes/cadastro', 'createIntegracao')->name('create.integracao');
+
+    Route::get('integracoes/alterar/{id}', 'alteracaoIntegracao')->name('alteracao.integracao');
+    
 });
