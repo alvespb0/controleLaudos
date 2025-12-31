@@ -14,6 +14,7 @@ class Empresas_Soc extends Model
     protected $fillable = [
         'nome',
         'codigo_soc',
+        'cnpj',
         'cliente_id'
     ];
 

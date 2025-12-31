@@ -25,7 +25,7 @@ class IntegracaoRequest extends FormRequest
         return [
             'sistema'   => 'required|string|max:100',
             'descricao' => 'nullable|string|max:255',
-            'slug' => 'required|string|max:150|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'
+            'slug' => 'required|string|max:150|regex:/^[a-z0-9_]+(?:-[a-z0-9_]+)*$/'
                     . '|unique:integracoes,slug,' . $id,
             'endpoint' => 'required|string|max:255|url',
             'auth' => 'required|string|in:basic,bearer,wss',

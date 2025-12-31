@@ -31,5 +31,14 @@ class IntegracoesSeeder extends Seeder
             'tipo' => 'rest'
         ]);
 
+        Integracao::create([
+            'sistema' => 'SOC',
+            'descricao' => 'WS Soc para resgatar o codigo ged dos laudos',
+            'endpoint' => 'https://ws1.soc.com.br/WebSoc/exportadados',
+            'slug' => 'ws_soc_resgata_cod_ged',
+            'auth' => 'bearer',
+            'tipo' => 'rest'
+        ]);
+
     }
 }

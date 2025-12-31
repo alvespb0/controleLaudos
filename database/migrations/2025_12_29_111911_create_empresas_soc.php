@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nome');
             $table->string('codigo_soc')->unique();
+            $table->string('cnpj')->nullable();
             $table->unsignedBigInteger('cliente_id')->nullable(); # usuario pode vincular o cliente ao cadastro soc, facilitando a busca do cliente ao clicar em baixar ged
             $table->foreign('cliente_id')->references('id')->on('cliente')->nullOnDelete();
             $table->timestamps();

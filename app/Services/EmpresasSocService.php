@@ -46,6 +46,7 @@ class EmpresasSocService
                         ['codigo_soc' => $dado['CODIGO']],
                         [
                             'nome' => $dado['RAZAOSOCIAL'],
+                            'cnpj' => $dado['CNPJ']
                         ]
                     );
                 }
