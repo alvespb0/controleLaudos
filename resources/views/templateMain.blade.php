@@ -267,6 +267,28 @@
                 </div>
                 @endif
                 
+                @if(Auth::user()->tipo === 'dev')
+                {{-- Integracoes --}}
+                <div class="nav-section">
+                    <div class="nav-item">
+                        <a href="#integracoesMenu" class="nav-link has-submenu" data-bs-toggle="collapse" aria-expanded="false">
+                            <i class="bi bi-arrows"></i>
+                            <span class="nav-text">Integrações</span>
+                        </a>
+                        <div class="collapse nav-submenu" id="integracoesMenu">
+                            <a href="/integracoes/cadastro" class="nav-link {{ request()->is('integracoes/cadastro') ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i>
+                                <span class="nav-text">Nova Integrações</span>
+                            </a>
+                            <a href="/integracoes" class="nav-link {{ request()->is('integracoes') && !request()->is('integracoes/cadastro') ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i>
+                                <span class="nav-text">Integrações Cadastradas</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial' || Auth::user()->tipo === 'dev')
                 {{-- Relatórios --}}
                 <div class="nav-section">
