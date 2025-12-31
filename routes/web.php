@@ -257,11 +257,17 @@ Route::controller(ContaAzulController::class)->group(function(){
 });
 
 Route::middleware(['checkUserType:dev'])->controller(IntegracaoController::class)->group(function(){
-    Route::get('integracoes', 'readIntegracao')->name('read.integracao');
+    Route::get('/integracoes', 'readIntegracao')->name('read.integracao');
     
-    Route::get('integracoes/cadastro', 'cadastroIntegracao')->name('cadastro.integracao');
-    Route::post('integracoes/cadastro', 'createIntegracao')->name('create.integracao');
+    Route::get('/integracoes/cadastro', 'cadastroIntegracao')->name('cadastro.integracao');
+    Route::post('/integracoes/cadastro', 'createIntegracao')->name('create.integracao');
 
-    Route::get('integracoes/alterar/{id}', 'alteracaoIntegracao')->name('alteracao.integracao');
-    
+    Route::get('/integracoes/alterar/{id}', 'alteracaoIntegracao')->name('alteracao.integracao');
+    Route::post('/integracoes/alterar/{id}', 'updateIntegracao')->name('update.integracao');
+
+    Route::get('/integracoes/excluir/{id}', 'deleteIntegracao')->name('inativa.integracao');
+    Route::get('/integracoes/reativar/{id}', 'restoreIntegracao')->name('reativa.integracao');
+
+    Route::get('/integracoes/auth/{id}', 'authIntegracao')->name('auth.integracao');
+    Route::post('/integracoes/auth/atualizar/{id}', 'setAuthIntegracao')->name('auth.integracao.update');
 });

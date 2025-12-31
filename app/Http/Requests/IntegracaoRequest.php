@@ -21,10 +21,12 @@ class IntegracaoRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('id');
         return [
             'sistema'   => 'required|string|max:100',
             'descricao' => 'nullable|string|max:255',
-            'slug' => 'required|string|max:150|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/|unique:integracoes,slug',
+            'slug' => 'required|string|max:150|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'
+                    . '|unique:integracoes,slug,' . $id,
             'endpoint' => 'required|string|max:255|url',
             'auth' => 'required|string|in:basic,bearer,wss',
             'tipo' => 'required|string|in:soap,rest',

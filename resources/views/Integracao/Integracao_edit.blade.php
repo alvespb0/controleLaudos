@@ -13,8 +13,8 @@
                     </ul>
                 </div>
             @endif
-            <h3 class="card-title mb-4 text-center text-dark">Cadastro de Integração</h3>
-            <form action="{{route('create.integracao')}}" method="POST">
+            <h3 class="card-title mb-4 text-center text-dark">Editar de Integração</h3>
+            <form action="{{route('update.integracao', $integracao->id)}}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <i class="bi bi-file-earmark-text"></i><label for="sistema" class="form-label">&nbspSistema</label>
@@ -48,7 +48,7 @@
                     </select>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary px-4">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary px-4">Editar</button>
                     <button type="reset" class="btn btn-secondary px-4">Limpar</button>
                 </div>
             </form>
