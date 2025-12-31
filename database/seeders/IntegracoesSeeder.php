@@ -21,5 +21,15 @@ class IntegracoesSeeder extends Seeder
             'auth' => 'wss',
             'tipo' => 'soap'
         ]);
+
+        Integracao::create([
+            'sistema' => 'SOC',
+            'descricao' => 'WS Soc para cadastro de empresas',
+            'endpoint' => 'https://ws1.soc.com.br/WebSoc/exportadados',
+            'slug' => 'ws_soc_empresas_cadastradas',
+            'auth' => 'bearer',
+            'tipo' => 'rest'
+        ]);
+
     }
 }
