@@ -42,11 +42,12 @@ class EmpresasSocService
                 }
 
                 foreach($dados as $dado){
+                    $cnpj = preg_replace('/\D/', '', $dado['CNPJ']);
                     Empresas_Soc::updateOrCreate(
                         ['codigo_soc' => $dado['CODIGO']],
                         [
                             'nome' => $dado['RAZAOSOCIAL'],
-                            'cnpj' => $dado['CNPJ']
+                            'cnpj' => $cnpj
                         ]
                     );
                 }
