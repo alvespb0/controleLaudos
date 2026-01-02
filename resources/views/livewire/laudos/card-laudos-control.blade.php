@@ -168,12 +168,20 @@
                             <i class="bi bi-envelope"></i> Enviar Email
                         </button>
                         <button type="button"
-                            class="btn btn-acao-menu w-100"
+                            class="btn btn-acao-menu w-100 mb-1"
                             data-bs-toggle="modal"
                             data-bs-target="#whatsappModal{{ $laudo->id }}"
                             title="Iniciar atendimento via WhatsApp"
                         >
                             <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
+                        <button type="button"
+                            class="btn btn-acao-menu w-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#socGedModal{{ $laudo->id }}"
+                            title="Baixar GED do SOC"
+                        >
+                            <i class="bi bi-download"></i> SOC GED
                         </button>
                     </div>
                 </div>
@@ -255,4 +263,21 @@
     </div>
 </div>
 <!-- FIM DA MODAL DE WHATSAPP -->
+<!-- MODAL PARA SOC GED -->
+<div class="modal fade" id="socGedModal{{ $laudo->id }}" tabindex="-1" aria-labelledby="socGedModalLabel{{ $laudo->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-download"></i> Baixar GED do SOC - {{ $laudo->nome }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <livewire:soc-ged :laudo="$laudo" :wire:key="'soc-ged-'.$laudo->id" />
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIM DA MODAL SOC GED -->
 </div>

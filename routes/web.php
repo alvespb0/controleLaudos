@@ -16,6 +16,7 @@ use App\Http\Controllers\FaixaPrecoController;
 use App\Http\Controllers\RecomendadoresController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ContaAzulController;
+use App\Http\Controllers\IntegracaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +31,7 @@ use App\Http\Controllers\ContaAzulController;
 
 /** --------------------------------------------- */
 /**         Rotas Classe Auth (para admins)       */
-Route::middleware(['checkUserType:admin'])->controller(AuthController::class)->group(function (){
+Route::middleware(['checkUserType:admin,dev'])->controller(AuthController::class)->group(function (){
     Route::get('/user','readUsers')->name('readUsers');
 
     Route::get('/user/register','register')->name('cadastro.user');
@@ -44,7 +45,7 @@ Route::middleware(['checkUserType:admin'])->controller(AuthController::class)->g
 
 /** --------------------------------------------- */
 /**              Rotas Classe Status              */
-Route::middleware(['checkUserType:seguranca,admin'])->controller(StatusController::class)->group(function () { 
+Route::middleware(['checkUserType:seguranca,admin,dev'])->controller(StatusController::class)->group(function () { 
     Route::get('/status','readStatus')->name('readStatus'); # retorna a view contendo os status cadastrados
 
     Route::get('/status/cadastro','cadastroStatus')->name('cadastro.status'); # retorna o formulario de cadastro de status
@@ -58,7 +59,7 @@ Route::middleware(['checkUserType:seguranca,admin'])->controller(StatusControlle
 
 /** --------------------------------------------- */
 /**              Rotas Classe Cliente             */
-Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteController::class)->group(function () {
+Route::middleware(['checkUserType:comercial,admin,dev'])->controller(ClienteController::class)->group(function () {
     Route::get('/cliente','readCliente')->name('readCliente'); # retorna a view contendo os clientes cadastrados
 
     Route::get('/cliente/cadastro','cadastroCliente')->name('cadastro.cliente'); # retorna o formulario de cadastro de cliente
@@ -74,7 +75,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(ClienteControll
 
 /** --------------------------------------------- */
 /**              Rotas Classe File                */
-Route::middleware(['checkUserType:comercial,admin'])->controller(FileController::class)->group(function () {
+Route::middleware(['checkUserType:comercial,admin,dev'])->controller(FileController::class)->group(function () {
     Route::get('/orcamento', 'entradaOrcamento')->name('entrada.orcamento'); # Retorna a view de orcamento_new0
     Route::get('/orcamento/formulario', 'formularioOrcamento')->name('gerar.orcamento'); # Retorna a view de orcament_new dado os parâmetros da new0
 
@@ -94,7 +95,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(FileController:
 
 /** --------------------------------------------- */
 /**              Rotas Classe Laudo               */
-Route::middleware(['checkUserType:comercial,admin'])->controller(LaudoController::class)->group(function () {
+Route::middleware(['checkUserType:comercial,admin,dev'])->controller(LaudoController::class)->group(function () {
     Route::get('/laudo','readLaudo')->name('readLaudo'); # retorna a view contendo os laudos
     Route::get('/laudo/filtered', 'filterCliente')->name('filter.laudo-cliente'); # Filtro de cliente para a showLaudo
 
@@ -107,7 +108,7 @@ Route::middleware(['checkUserType:comercial,admin'])->controller(LaudoController
     Route::get('/laudo/excluir/{id}','deleteLaudo')->name('delete.laudo');
 });
 
-Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
+Route::middleware(['checkUserType:admin,dev'])->controller(LaudoController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
     Route::get('/laudo/excluidos-anteriormente','laudosExcluidos')->name('read.deletedLaudo'); # Abre a view dos excluídos anteriormente
 
     Route::get('/laudo/excluidos-anteriormente/restaurar/{id}', 'restoreLaudo')->name('restore.deletedLaudo'); # restaura o dado excluído
@@ -115,7 +116,7 @@ Route::middleware(['checkUserType:admin'])->controller(LaudoController::class)->
 
 /** --------------------------------------------- */
 /**              Rotas Classe documentos          */
-Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_TecnicosController::class)->group(function (){
+Route::middleware(['checkUserType:admin,seguranca,dev'])->controller(Documentos_TecnicosController::class)->group(function (){
     Route::get('/documentos', 'readDocsTecnicos')->name('readDocs'); # retorna a listagem do documentos técnicos
 
     Route::get('/documentos/cadastro', 'cadastroDocTecnico')->name('cadastro.documento'); # retorna a view da tela de cadastro de documento tecnico
@@ -129,7 +130,7 @@ Route::middleware(['checkUserType:admin,seguranca'])->controller(Documentos_Tecn
     Route::get('documentos/controle', 'indexDocTecnico')->name('show.docIndex');
 });
 
-Route::middleware(['checkUserType:admin'])->controller(Documentos_TecnicosController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
+Route::middleware(['checkUserType:admin,dev'])->controller(Documentos_TecnicosController::class)->group(function () { # separado da group function padrão, por ser algo apenas de user admin
     Route::get('/documentos/excluidos-anteriormente','docsExcluidos')->name('read.deletedDoc'); # Abre a view dos excluídos anteriormente
 
     Route::get('/documentos/excluidos-anteriormente/restaurar/{id}', 'restoreDoc')->name('restore.deletedDoc'); # restaura o dado excluído
@@ -137,7 +138,7 @@ Route::middleware(['checkUserType:admin'])->controller(Documentos_TecnicosContro
 
 /** --------------------------------------------- */
 /**    Rotas Classe Laudo para main dashboard     */
-Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(LaudoController::class)->group(function (){
+Route::middleware(['checkUserType:seguranca,comercial,admin,dev'])->controller(LaudoController::class)->group(function (){
     Route::get('/dashboard','showDashboard')->name('dashboard.show');
     Route::get('/','showDashboard')->name('dashboard.show');
 
@@ -146,13 +147,13 @@ Route::middleware(['checkUserType:seguranca,comercial,admin'])->controller(Laudo
 
 /** --------------------------------------------- */
 /**             Rotas Classe indicadores          */
-Route::middleware(['checkUserType:admin'])->controller(IndicadoresController::class)->group(function (){
+Route::middleware(['checkUserType:admin,dev'])->controller(IndicadoresController::class)->group(function (){
     Route::get('/graphs', 'dashboardGerencial')->name('dashboard.indicadores'); # tela somente para admins, por isso não vai fazer parte da group class anterior
 });
 
 /** --------------------------------------------- */
 /**              Rotas Classe Relatorio           */
-Route::middleware(['checkUserType:admin,comercial,seguranca'])->controller(RelatorioLaudoController::class)->group(function (){
+Route::middleware(['checkUserType:admin,comercial,seguranca,dev'])->controller(RelatorioLaudoController::class)->group(function (){
     Route::get('/relatorios', 'tipoRelatorio')->name('tipo.relatorio');
     Route::post('/relatorios/download', 'gerarRelatorio')->name('gerar.relatorio');
 });
@@ -175,14 +176,14 @@ Route::controller(AuthController::class)->group(function (){
 
 /** --------------------------------------------- */
 /**              Rotas Classe integracao          */
-Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
-Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('orcamento/enviar', [ZappyController::class, 'encaminhaOrcamentoCliente'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
-Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/atendimento', [ZappyController::class, 'encaminhaWhatsLead'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
-Route::middleware(['checkUserType:admin,comercial,seguranca'])->post('CRM/testeAutentique', [AutentiqueController::class, 'createDocument'])->name('teste.autentique'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca,dev'])->post('dashboard/atendimento', [ZappyController::class, 'createAtendimento'])->name('atendimento.zappy'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca,dev'])->post('orcamento/enviar', [ZappyController::class, 'encaminhaOrcamentoCliente'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca,dev'])->post('CRM/atendimento', [ZappyController::class, 'encaminhaWhatsLead'])->name('orcamento.zappy'); # rota para criação de atendimentos no zappy
+Route::middleware(['checkUserType:admin,comercial,seguranca,dev'])->post('CRM/testeAutentique', [AutentiqueController::class, 'createDocument'])->name('teste.autentique'); # rota para criação de atendimentos no zappy
 
 /** --------------------------------------------- */
 /**                  Rotas Classe CRM             */
-Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::class)->group(function (){
+Route::middleware(['checkUserType:admin,comercial,dev'])->controller(CRMController::class)->group(function (){
     Route::get('/CRM', 'showCRM')->name('show.CRM'); # Retorna a view do CRM
     Route::post('/CRM/cadastrar-lead', 'createLead')->name('create.lead'); # Cria um LEAD baseado a etapa id
     Route::get('/CRM/mudar-etapa/{lead_id}/{etapa_id}', 'alterStatusLead')->name('alterStatus.lead'); # altera a etapa do lead
@@ -192,7 +193,7 @@ Route::middleware(['checkUserType:admin,comercial'])->controller(CRMController::
     Route::post('/CRM/atualiza-investimento', 'updateInvestimentoLead')->name('update.investimento-lead');
 });
 
-Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->group(function (){
+Route::middleware(['checkUserType:admin,dev'])->controller(CRMController::class)->group(function (){
     Route::get('/CRM/comissoes', 'readComissoes')->name('read.comissoes');
     Route::post('/CRM/comissoes/{comissao_id}/{status}', 'updateStatusComissao')->name('update-status.comissao');
     Route::post('/CRM/comissao-personalizada', 'updateComissaoPersonalizada')->name('update.comissao-personalizada');
@@ -205,7 +206,7 @@ Route::middleware(['checkUserType:admin'])->controller(CRMController::class)->gr
 
 /** --------------------------------------------- */
 /**             Rotas Classe FaixaPreco           */
-Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::class)->group(function (){
+Route::middleware(['checkUserType:admin,dev'])->controller(FaixaPrecoController::class)->group(function (){
     Route::get('/variaveis-preco', 'readVariavelPrecificacao')->name('read.variavel');
 
     Route::get('/variaveis-preco/cadastro', 'cadastroVariavelPrecificacao')->name('cadastro.variavel');
@@ -226,7 +227,7 @@ Route::middleware(['checkUserType:admin'])->controller(FaixaPrecoController::cla
 
 /** --------------------------------------------- */
 /**            Rotas Classe Recomendador          */
-Route::middleware(['checkUserType:admin,comercial'])->controller(RecomendadoresController::class)->group(function (){
+Route::middleware(['checkUserType:admin,comercial,dev'])->controller(RecomendadoresController::class)->group(function (){
     Route::get('/Recomendadores', 'readRecomendador')->name('read.recomendador');
 
     Route::get('/Recomendadores/cadastro', 'cadastroRecomendador')->name('cadastro.recomendador');
@@ -253,4 +254,20 @@ Route::controller(ContaAzulController::class)->group(function(){
     Route::get('/contaazul/connect', 'getAuthorizationToken');
     #Route::get('/contaazul/test', 'saveOrRefreshToken');
     Route::post('/contaazul/lancar-venda', 'lancarVenda')->name('lancar-venda.ca');
+});
+
+Route::middleware(['checkUserType:dev'])->controller(IntegracaoController::class)->group(function(){
+    Route::get('/integracoes', 'readIntegracao')->name('read.integracao');
+    
+    Route::get('/integracoes/cadastro', 'cadastroIntegracao')->name('cadastro.integracao');
+    Route::post('/integracoes/cadastro', 'createIntegracao')->name('create.integracao');
+
+    Route::get('/integracoes/alterar/{id}', 'alteracaoIntegracao')->name('alteracao.integracao');
+    Route::post('/integracoes/alterar/{id}', 'updateIntegracao')->name('update.integracao');
+
+    Route::get('/integracoes/excluir/{id}', 'deleteIntegracao')->name('inativa.integracao');
+    Route::get('/integracoes/reativar/{id}', 'restoreIntegracao')->name('reativa.integracao');
+
+    Route::get('/integracoes/auth/{id}', 'authIntegracao')->name('auth.integracao');
+    Route::post('/integracoes/auth/atualizar/{id}', 'setAuthIntegracao')->name('auth.integracao.update');
 });

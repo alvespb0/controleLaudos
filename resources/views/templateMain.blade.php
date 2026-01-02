@@ -62,19 +62,19 @@
                             <span class="nav-text">Dashboard</span>
                         </a>
                         <div class="collapse nav-submenu" id="dashboardMenu">
-                            @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                            @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial' || Auth::user()->tipo === 'dev')
                             <a href="/dashboard" class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
                                 <i class="bi bi-circle"></i>
                                 <span class="nav-text">Controle de Laudos</span>
                             </a>
                             @endif
-                            @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
+                            @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'dev')
                             <a href="/documentos/controle" class="nav-link {{ request()->is('documentos/controle') ? 'active' : '' }}">
                                 <i class="bi bi-circle"></i>
                                 <span class="nav-text">Documentos Técnicos</span>
                             </a>
                             @endif
-                            @if(Auth::user()->tipo === 'admin')
+                            @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'dev')
                             <a href="/graphs" class="nav-link {{ request()->is('graphs') ? 'active' : '' }}">
                                 <i class="bi bi-circle"></i>
                                 <span class="nav-text">Dashboard Gerencial</span>
@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 
-                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial' || Auth::user()->tipo === 'dev')
                 {{-- CRM --}}
                 <div class="nav-section">
                     <div class="nav-section-title">CRM</div>
@@ -147,7 +147,7 @@
                 </div>
                 @endif
                 
-                @if(Auth::user()->tipo === 'admin')
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'dev')
                 {{-- Operadores --}}
                 <div class="nav-section">
                     <div class="nav-section-title">Administração</div>
@@ -191,7 +191,7 @@
                 </div>
                 @endif
                 
-                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'dev')
                 {{-- Documentos --}}
                 <div class="nav-section">
                     <div class="nav-section-title">Documentos</div>
@@ -218,7 +218,7 @@
                 </div>
                 @endif
                 
-                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial')
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'comercial' || Auth::user()->tipo === 'dev')
                 {{-- Laudos --}}
                 <div class="nav-section">
                     <div class="nav-section-title">Laudos</div>
@@ -245,7 +245,7 @@
                 </div>
                 @endif
                 
-                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca')
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'dev')
                 {{-- Status --}}
                 <div class="nav-section">
                     <div class="nav-item">
@@ -267,7 +267,29 @@
                 </div>
                 @endif
                 
-                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                @if(Auth::user()->tipo === 'dev')
+                {{-- Integracoes --}}
+                <div class="nav-section">
+                    <div class="nav-item">
+                        <a href="#integracoesMenu" class="nav-link has-submenu" data-bs-toggle="collapse" aria-expanded="false">
+                            <i class="bi bi-arrows"></i>
+                            <span class="nav-text">Integrações</span>
+                        </a>
+                        <div class="collapse nav-submenu" id="integracoesMenu">
+                            <a href="/integracoes/cadastro" class="nav-link {{ request()->is('integracoes/cadastro') ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i>
+                                <span class="nav-text">Nova Integrações</span>
+                            </a>
+                            <a href="/integracoes" class="nav-link {{ request()->is('integracoes') && !request()->is('integracoes/cadastro') ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i>
+                                <span class="nav-text">Integrações Cadastradas</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial' || Auth::user()->tipo === 'dev')
                 {{-- Relatórios --}}
                 <div class="nav-section">
                     <a href="/relatorios" class="nav-link {{ request()->is('relatorios') ? 'active' : '' }}">
@@ -293,7 +315,7 @@
                 </div>
                 
                 {{-- Logout --}}
-                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial')
+                @if(Auth::user()->tipo === 'admin' || Auth::user()->tipo === 'seguranca' || Auth::user()->tipo === 'comercial' || Auth::user()->tipo === 'dev')
                 <div class="nav-section">
                     <a href="/logout" class="nav-link">
                         <i class="bi bi-box-arrow-right"></i>
