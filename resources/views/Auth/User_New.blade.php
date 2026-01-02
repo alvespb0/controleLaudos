@@ -38,6 +38,9 @@
                         <option value="admin">admin</option>
                         <option value="comercial">comercial</option>
                         <option value="seguranca">seguranca</option>
+                        @if(Auth::user()->tipo === 'dev')
+                        <option value="dev">desenvolvedor</option>
+                        @endif
                     </select>
                 </div>
 

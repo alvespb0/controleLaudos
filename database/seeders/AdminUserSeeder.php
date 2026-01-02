@@ -23,5 +23,15 @@ class AdminUserSeeder extends Seeder
                 'tipo' => 'admin'
             ]
         );
+
+        User::updateOrCreate(
+            ['email' => 'dev@mudar123.com'], // Evita duplicar
+            [
+                'name' => 'dev',
+                'email' => 'dev@mudar123.com',
+                'password' => 'dev123456',
+                'tipo' => 'dev'
+            ]
+        );
     }
 }

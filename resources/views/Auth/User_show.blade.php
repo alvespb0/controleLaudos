@@ -31,8 +31,12 @@
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->tipo }}</td>
                                 <td>
-                                    <a href="{{ route('alteracao.user', $user->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <a href="{{ route('delete.user', $user->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Excluir</a>
+                                    @if(Auth::user()->tipo === 'dev' || $user->tipo !== 'dev')
+                                        <a href="{{ route('alteracao.user', $user->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                                        <a href="{{ route('delete.user', $user->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Excluir</a>
+                                    @else
+                                        <span class="badge bg-secondary">Dev imutáveis</span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

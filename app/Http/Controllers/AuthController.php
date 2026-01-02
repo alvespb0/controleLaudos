@@ -114,6 +114,17 @@ class AuthController extends Controller
     
             return redirect()->route('readUsers');
 
+        }else if($request->tipo == 'dev'){
+            $user = User::create([
+                'name' => $request->usuario,
+                'email' => $request->email,
+                'password' => $request->password,
+                'tipo' => 'dev'
+            ]);    
+
+            session()->flash('mensagem', 'Dev registrado com sucesso');
+    
+            return redirect()->route('readUsers');
         }else{
             session()->flash('error', 'tipo selecionado inválido');
     
