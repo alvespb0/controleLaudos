@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\NotificarVendedoresProximoContato;
 use App\Jobs\NotificarVendedorValidadeLaudo;
+use App\Jobs\EmpresasSocJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -16,6 +17,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new NotificarVendedoresProximoContato)->dailyAt('08:00');
         $schedule->job(new NotificarVendedorValidadeLaudo)->dailyAt('08:00');
+        $schedule->job(new EmpresasSocJob)->dailyAt('03:00');
     }
 
     /**
