@@ -17,7 +17,7 @@ class EmpresasSocService
      * 
      * @return bool|string Retorna true em caso de sucesso ou uma string com mensagem de erro
      */
-    public function GetEmpresasSoc(){
+    public function getEmpresasSoc(){
         $integracao = Integracao::where('slug', 'ws_soc_empresas_cadastradas')->first();
 
         $codEmpresaPrincipal = ENV('COD_EMPRESA_SOC');
