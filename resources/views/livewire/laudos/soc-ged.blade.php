@@ -9,7 +9,7 @@
                 <div class="mb-3">
                     <label for="codGed" class="form-label">
                         <strong>Qual o tipo de laudo desejado?</strong>
-                    </label>f
+                    </label>
                     <select 
                         id="codGed" 
                         class="form-select" 

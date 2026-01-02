@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('endpoint');
             $table->string('username')->nullable(); # nem todas as integrações necessitam username, os que necessitarem de oAuth2.0 serão feitas tabelas separadas
-            $table->string('password_enc')->nullable(); # Vai ser lançado como nullable, para que seja lançado as integrações disponiveis (sistema e nome) e posteriormente o usuario coloque o pass
+            $table->text('password_enc')->nullable(); # Vai ser lançado como nullable, para que seja lançado as integrações disponiveis (sistema e nome) e posteriormente o usuario coloque o pass
             $table->enum('auth', ['basic', 'bearer', 'wss']);
             $table->enum('tipo', ['soap', 'rest']);
             $table->softDeletes();

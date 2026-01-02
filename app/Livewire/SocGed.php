@@ -2,16 +2,21 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Response;
+
 use Livewire\Component;
 use App\Models\Laudo;
-use App\Models\Integracoes;
+use App\Models\Integracao;
 use App\Models\Empresas_Soc;
+
+use App\Services\DownloadSocGedService;
 
 class SocGed extends Component
 {
     public $codGed;
-    public $gedsEncontrados = [];
+    public $gedsEncontrados = array();
     public $laudo;
+    public $codEmpresa;
 
     public function mount($laudo){
         $this->laudo = $laudo;
@@ -23,12 +28,33 @@ class SocGed extends Component
     }
 
     public function buscarGeds(){
-        $codEmpresa = Empresas_Soc::where('cnpj', $this->laudo->cliente->cnpj)
+        $empresa = Empresas_Soc::where('cliente_id', $this->laudo->cliente_id)
+                            ->orWhere('cnpj', $this->laudo->cliente->cnpj)
                             ->orWhere('nome', 'like', '%' . $this->laudo->cliente->nome . '%')
-                            ->first()
-                            ->codigo_soc ?? null;
-        $this->gedsEncontrados = (new \App\Services\CodigoSocGedService)->getCodigoGed($this->codGed, $codEmpresa);
+                            ->first();
+        
+        if (!$empresa) {
+            throw new \Exception('Empresa SOC não encontrada para este cliente');
+        }
+
+        if($empresa != null && !$empresa->cliente_id){
+            $empresa->update([
+                'cliente_id' => $this->laudo->cliente_id
+            ]);
+        }
+
+        $this->codEmpresa = $empresa->codigo_soc;
+        $this->gedsEncontrados = (new \App\Services\CodigoSocGedService)->getCodigoGed($this->codGed, $this->codEmpresa);
     }
 
+    public function baixarGed($codGed){
+        $auth = Integracao::where('slug', 'ws_soc_download_ged')->first();
+        $service = new \App\Services\DownloadSocGedService($auth->username, $auth->getDecryptedPassword(), $this->codEmpresa, $codGed);
 
+        $file = $service->requestDownload();
+
+        if($file['success']){
+            return Response::download(storage_path($file['file']))->deleteFileAfterSend(true);;
+        }
+    }
 }

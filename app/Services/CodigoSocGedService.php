@@ -44,7 +44,7 @@ class CodigoSocGedService
 
                 if(empty($dados)){
                     \Log::error('Não localizado código ged pela api de exporta dados do SOC');
-                    return null;
+                    return [];
                 }
 
                 foreach($dados as $dado){

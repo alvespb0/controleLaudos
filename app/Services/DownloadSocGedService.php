@@ -2,7 +2,6 @@
 namespace App\Services;
 
 use App\Models\Empresas_Soc;
-use App\Models\Cliente;
 use App\Models\Integracao;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
@@ -21,13 +20,13 @@ class DownloadSocGedService
      * 
      * @param string $username Nome de usuário para autenticação WSS (ex: U3338099)
      * @param string $password Senha/chave para autenticação WSS
-     * @param Cliente $cliente Instância do modelo Cliente relacionado ao download
+     * @param int $codEmpresa Codigo da empresa, resgatado no inicio do fluxo
      * @param string|int $codigoGed Código do GED a ser baixado
      */
-    public function __construct($username, $password, Cliente $cliente, $codigoGed){
+    public function __construct($username, $password, $codEmpresa, $codigoGed){
         $this->username = $username;
         $this->password = $password;
-        $this->cliente = $cliente;
+        $this->codEmpresa = $codEmpresa;
         $this->codigoGed = $codigoGed;
     }
 
@@ -125,7 +124,7 @@ class DownloadSocGedService
 
             return [
                 'success' => true,
-                'file'    => "storage/app/soc/{$filename}",
+                'file'    => "app/soc/{$filename}",
             ];
         }catch(\Exception $e){
             \Log::error('Falha no download GED SOC', [
@@ -169,10 +168,7 @@ class DownloadSocGedService
      * @return string XML do body da requisição SOAP
      */
     private function buildBody(): string{
-        $codigoEmpresa = Empresas_Soc::where('cnpj', $this->cliente->cnpj)
-                                    ->orWhere('nome', 'like', '%' . $this->cliente->nome . '%')
-                                    ->first()
-                                    ->codigo_soc ?? null;
+        $codigoEmpresa = $this->codEmpresa;
         $empresaPrincipal = ENV('COD_EMPRESA_SOC');
         $codigoResponsavel = ENV('COD_RESPONSAVEL_SOC');
         $codigoUsuario = ENV('COD_USUARIO_INTEGRA_SOC');
