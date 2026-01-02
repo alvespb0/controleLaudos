@@ -17,6 +17,7 @@ class SocGed extends Component
     public $gedsEncontrados = array();
     public $laudo;
     public $codEmpresa;
+    public ?string $erroGed = null;
 
     public function mount($laudo){
         $this->laudo = $laudo;
@@ -28,23 +29,42 @@ class SocGed extends Component
     }
 
     public function buscarGeds(){
-        $empresa = Empresas_Soc::where('cliente_id', $this->laudo->cliente_id)
-                            ->orWhere('cnpj', $this->laudo->cliente->cnpj)
-                            ->orWhere('nome', 'like', '%' . $this->laudo->cliente->nome . '%')
-                            ->first();
         
-        if (!$empresa) {
-            throw new \Exception('Empresa SOC não encontrada para este cliente');
-        }
+        $this->erroGed = null;
+        $this->gedsEncontrados = [];
 
-        if($empresa != null && !$empresa->cliente_id){
-            $empresa->update([
-                'cliente_id' => $this->laudo->cliente_id
+        try{
+            $empresa = Empresas_Soc::where('cliente_id', $this->laudo->cliente_id)
+                                ->orWhere('cnpj', $this->laudo->cliente->cnpj)
+                                ->orWhere('nome', 'like', '%' . $this->laudo->cliente->nome . '%')
+                                ->first();
+            
+            if (!$empresa) {
+                $this->erroGed = 'Empresa não encontrada no SOC para este cliente.';
+                return;
+            }
+
+            if($empresa != null && !$empresa->cliente_id){
+                $empresa->update([
+                    'cliente_id' => $this->laudo->cliente_id
+                ]);
+            }
+
+            $this->codEmpresa = $empresa->codigo_soc;
+            $this->gedsEncontrados = (new \App\Services\CodigoSocGedService)->getCodigoGed($this->codGed, $this->codEmpresa);
+            
+            if (empty($this->gedsEncontrados)) {
+                $this->erroGed = 'Nenhum GED encontrado para o tipo selecionado.';
+            }
+
+        }catch (\Throwable $e) {
+            logger()->error('Erro ao buscar GEDs', [
+                'erro' => $e->getMessage()
             ]);
+
+            $this->erroGed = 'Erro inesperado ao buscar GEDs. Tente novamente.';
         }
 
-        $this->codEmpresa = $empresa->codigo_soc;
-        $this->gedsEncontrados = (new \App\Services\CodigoSocGedService)->getCodigoGed($this->codGed, $this->codEmpresa);
     }
 
     public function baixarGed($codGed){

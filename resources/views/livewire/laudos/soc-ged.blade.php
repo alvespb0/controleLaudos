@@ -32,6 +32,13 @@
                 </div>
             </form>
                 <hr>
+                @if($erroGed)
+                    <div class="alert alert-danger d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{ $erroGed }}
+                    </div>
+                @endif
+
                 <h6 class="mb-3">GEDs Encontrados:</h6>
                 <div class="list-group">
                     @forelse($gedsEncontrados as $ged)
