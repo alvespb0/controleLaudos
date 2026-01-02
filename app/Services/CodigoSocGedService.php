@@ -55,7 +55,7 @@ class CodigoSocGedService
                     ];
                 }
                 
-                \Log::info('Finalizado busca pelo ged');
+                \Log::info('Finalizado busca pelo ged', [$ged]);
 
                 return $ged;
             }
