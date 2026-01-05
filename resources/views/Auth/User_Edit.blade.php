@@ -38,6 +38,10 @@
                         <option value="admin" {{$user->tipo == 'admin' ? 'selected' : ''}}>admin</option>
                         <option value="comercial" {{$user->tipo == 'comercial' ? 'selected' : ''}}>comercial</option>
                         <option value="seguranca" {{$user->tipo == 'seguranca' ? 'selected' : ''}}>seguranca</option>
+                        @if(Auth::user()->tipo === 'dev')
+                            <option value="dev" {{$user->tipo == 'dev' ? 'selected' : ''}}>desenvolvedor</option>
+                        @endif
+
                     </select>
                 </div>
                 <div class="text-center">
