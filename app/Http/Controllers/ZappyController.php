@@ -88,7 +88,7 @@ class ZappyController extends Controller
         $token = env('ZAPPY_TOKEN');
         try{
             if(Auth::user()->tipo == 'seguranca'){
-                $queue = 2; # setor de segurança
+                $queue = 13; # setor de segurança
             }else if(Auth::user()->tipo == 'comercial'){
                 $queue = 7; # setor de comercial
             }else{
